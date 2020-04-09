@@ -1,0 +1,23 @@
+{
+  "name": "pure-pursuit-visualizer",
+  "version": "1.0.0",
+  "description": "Web app that allows you to visualize the actions taken by an adaptive pure pursuit controller. An adaptive pure pursuit controller is a path-following algorithm that is frequently used in the First Robotic Competition.",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ryan10145/Pure-Pursuit-Visualizer.git"
+  },
+  "author": "ryan10145",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/Ryan10145/Pure-Pursuit-Visualizer/issues"
+  },
+  "homepage": "https://github.com/Ryan10145/Pure-Pursuit-Visualizer#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
