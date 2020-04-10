@@ -8,8 +8,8 @@ app.get("/", (request, response) => {
 })
 
 let port = process.env.PORT;
-if (port == null || port == "") {
-  port = 1257;
+if(port == null || port == "") {
+    port = 1257;
 }
 
 app.listen(port, () => {
