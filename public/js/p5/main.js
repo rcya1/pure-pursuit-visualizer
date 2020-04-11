@@ -1,30 +1,37 @@
-const widthScaling = 0.9;
-const heightScaling = 0.6;
+const p5 = require('./p5.min');
+const Vector = require("./vector");
 
-let canvas;
-let testSlider;
+var currentSketch = new p5(function(sketch) {
+    
+    const widthScaling = 0.9;
+    const heightScaling = 0.6;
 
-function styleCanvas() {
-    canvas.style('display', 'block');
-    canvas.style('margin', '10px');
-    let x = (windowWidth - width) / 2;
-    canvas.position(x);
-}
+    let canvas; // purely for stylizing purposes
+    let testSlider;
+    
+    sketch.setup = function() {
+        canvas = sketch.createCanvas(sketch.windowWidth * widthScaling, sketch.windowHeight * heightScaling);
+        styleCanvas();
+    
+        testSlider = sketch.select('#test-slider');
+    }
+    
+    sketch.draw = function() {
+        sketch.background(255);
+        sketch.rectMode(sketch.CENTER);
+        sketch.rect(sketch.width / 2, sketch.height / 2, 
+            testSlider.value() / 100.0 * sketch.width, testSlider.value() / 100.0 * sketch.height);
+    }
+    
+    sketch.windowResized = function() {
+        sketch.resizeCanvas(sketch.windowWidth * widthScaling, sketch.windowHeight * heightScaling);
+        styleCanvas();
+    }
 
-function setup() {
-    canvas = createCanvas(windowWidth * widthScaling, windowHeight * heightScaling);
-    styleCanvas();
-
-    testSlider = select('#test-slider');
-}
-
-function draw() {
-    background(255);
-    rectMode(CENTER);
-    rect(width / 2, height / 2, testSlider.value() / 100.0 * width, testSlider.value() / 100.0 * height);
-}
-
-function windowResized() {
-    resizeCanvas(windowWidth * widthScaling, windowHeight * heightScaling);
-    styleCanvas();
-}
+    function styleCanvas() {
+        canvas.style('display', 'block');
+        canvas.style('margin', '10px');
+        let x = (sketch.windowWidth - sketch.width) / 2;
+        canvas.position(x);
+    }
+})
