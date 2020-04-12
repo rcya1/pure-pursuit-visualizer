@@ -12,6 +12,10 @@ let Vector = class {
         this.#magSq = -1;
     }
 
+    copy() {
+        return new Vector(this.getX(), this.getY());
+    }
+
     getX() {
         return this.#x;
     }
@@ -70,7 +74,12 @@ let Vector = class {
     }
 
     getDistanceTo(other) {
-        return sqrt((this.getX() - other.getX()) * (this.getX() - other.getX()) +
+        return Math.sqrt((this.getX() - other.getX()) * (this.getX() - other.getX()) +
+            (this.getY() - other.getY()) * (this.getY() - other.getY()));
+    }
+
+    getDistanceToSq(other) {
+        return ((this.getX() - other.getX()) * (this.getX() - other.getX()) +
             (this.getY() - other.getY()) * (this.getY() - other.getY()));
     }
 
