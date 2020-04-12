@@ -1,5 +1,6 @@
-.slidecontainer {
-    width: 100%;
+.slider-container {
+    width: 50%;
+    margin-left: 10px;
 }
 
 .slider {
@@ -37,4 +38,8 @@
     border-radius: 50%;
     background: #4CAF50;
     cursor: pointer;
+}
+
+.checkbox-label {
+    margin-left: 10px;
 }

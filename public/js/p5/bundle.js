@@ -44,18 +44,26 @@ var currentSketch = new p5(function(sketch) {
     const heightScaling = 0.6;
 
     let canvas; // purely for stylizing purposes
-    let testSlider;
+
+    let keys = [];
+    let keyCodes = [];
+    
+    let userWaypointSizeSlider;
+    let deletePointsCheckbox;
+
     let userPoints = [];
     let mouseState = MouseState.DEFAULT;
     let mouseClickVector = null;
     let activePoint = -1;
+    let deletingPoints = false;
     
     sketch.setup = function() {
         canvas = sketch.createCanvas(sketch.windowWidth * widthScaling, sketch.windowHeight * heightScaling);
         canvas.mouseOut(mouseOut);
         styleCanvas();
     
-        testSlider = sketch.select('#test-slider');
+        userWaypointSizeSlider = sketch.select('#user-waypoint-size-slider');
+        deletePointsCheckbox = sketch.select('#delete-points-checkbox');
     }
     
     sketch.draw = function() {
@@ -65,7 +73,7 @@ var currentSketch = new p5(function(sketch) {
 
     update = function() {
         if(mouseState != MouseState.DRAGGING) {
-            let closestDist = 1.5 * 1.5;
+            let closestDist = userWaypointSizeSlider.value() * userWaypointSizeSlider.value();
             activePoint = -1;
             mouseVector = new Vector(conv.cx(sketch.mouseX, sketch.width), conv.cx(sketch.mouseY, sketch.height));
             for(pointIndex in userPoints) {
@@ -79,6 +87,8 @@ var currentSketch = new p5(function(sketch) {
 
         if(mouseState == MouseState.DRAGGING) {
             if(activePoint != -1 && mouseClickVector != null) {
+                // ensure that the translation of the active point is only moved relative to the last mouse location
+                // this way, when you drag it off-center it doesn't jump 
                 userPoints[activePoint].setX(userPoints[activePoint].getX() + 
                     conv.cx(sketch.mouseX, sketch.width) - mouseClickVector.getX());
                 userPoints[activePoint].setY(userPoints[activePoint].getY() + 
@@ -92,13 +102,10 @@ var currentSketch = new p5(function(sketch) {
     display = function() {
         sketch.background(200);
         sketch.rectMode(sketch.CENTER);
-
-        sketch.fill(255);
-        sketch.rect(sketch.width / 2, sketch.height / 2, 
-            testSlider.value() / 100.0 * sketch.width, testSlider.value() / 100.0 * sketch.height);
         
+        // draw all of the points
         for(pointIndex in userPoints) {
-            userPoints[pointIndex].draw(sketch, pointIndex == activePoint);
+            userPoints[pointIndex].draw(sketch, userWaypointSizeSlider.value(), pointIndex == activePoint);
         }
     }
     
@@ -116,17 +123,27 @@ var currentSketch = new p5(function(sketch) {
     }
 
     sketch.mousePressed = function() {
+        // ensure the mouse is within the sketch window doing anything
         if(sketch.mouseX >= 0 && sketch.mouseX <= sketch.width && 
             sketch.mouseY >= 0 && sketch.mouseY <= sketch.height) {
 
-            mouseClickVector = new Vector(conv.cx(sketch.mouseX, sketch.width), conv.cy(sketch.mouseY, sketch.height));
-            if(activePoint == -1) {
-                let wp = new Waypoint(mouseClickVector.copy());
-                userPoints.push(wp);
-                activePoint = userPoints.length - 1;
+            if(deletePointsCheckbox.elt.checked) {
+                // delete the current point
+                if(activePoint != -1) {
+                    userPoints.splice(activePoint, 1);
+                }
             }
+            else {
+                // add a point or drag the currently selected point
+                mouseClickVector = new Vector(conv.cx(sketch.mouseX, sketch.width), conv.cy(sketch.mouseY, sketch.height));
+                if(activePoint == -1) {
+                    let wp = new Waypoint(mouseClickVector.copy());
+                    userPoints.push(wp);
+                    activePoint = userPoints.length - 1;
+                }
 
-            mouseState = MouseState.DRAGGING;
+                mouseState = MouseState.DRAGGING;
+            }
         }
     }
 
@@ -146,6 +163,24 @@ var currentSketch = new p5(function(sketch) {
 
     mouseOut = function() {
         
+    }
+
+    sketch.keyPressed = function() {
+        keyCodes.push(sketch.keyCode);
+        keys.push(sketch.key);
+
+        if(sketch.keyCode == sketch.SHIFT) {
+            deletePointsCheckbox.elt.checked = true;
+        }
+    }
+
+    sketch.keyReleased = function() {
+        keyCodes.splice(keyCodes.indexOf(sketch.keyCode), 1);
+        keys.splice(keys.indexOf(sketch.key), 1);
+
+        if(sketch.keyCode == sketch.SHIFT) {
+            deletePointsCheckbox.elt.checked = false;
+        }
     }
 })
 
@@ -324,10 +359,9 @@ let Waypoint = class {
         this.#targetVelocity = targetVelocity;
     }
 
-    draw(sketch, active) {
+    draw(sketch, radius, active) {
         sketch.fill(0);
-
-        let drawRadius = active ? 2 : 1.5;
+        let drawRadius = active ? radius * 1.25 : radius;
         sketch.ellipse(conv.px(this.getX(), sketch.width), conv.py(this.getY(), sketch.height),
             conv.px(drawRadius, sketch.width), conv.px(drawRadius, sketch.width));
     }
