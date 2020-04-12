@@ -6,7 +6,7 @@
   "scripts": {
     "start": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "watch": "watchify ./public/js/p5/main.js -o ./public/js/p5/bundle.js"
+    "watch": "watchify ./public/js/p5/sketch.js -o ./public/js/p5/bundle.js"
   },
   "repository": {
     "type": "git",
