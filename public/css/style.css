@@ -40,6 +40,6 @@
     cursor: pointer;
 }
 
-.checkbox-label {
-    margin-left: 10px;
+#delete-container {
+    margin: 10px;
 }

@@ -50,6 +50,7 @@ var currentSketch = new p5(function(sketch) {
     
     let userWaypointSizeSlider;
     let deletePointsCheckbox;
+    let deleteAllPointsButton;
 
     let userPoints = [];
     let mouseState = MouseState.DEFAULT;
@@ -64,6 +65,8 @@ var currentSketch = new p5(function(sketch) {
     
         userWaypointSizeSlider = sketch.select('#user-waypoint-size-slider');
         deletePointsCheckbox = sketch.select('#delete-points-checkbox');
+        deleteAllPointsButton = sketch.select('#delete-all-points-button');
+        deleteAllPointsButton.mousePressed(deleteAllPoints);
     }
     
     sketch.draw = function() {
@@ -181,6 +184,10 @@ var currentSketch = new p5(function(sketch) {
         if(sketch.keyCode == sketch.SHIFT) {
             deletePointsCheckbox.elt.checked = false;
         }
+    }
+
+    deleteAllPoints = function() {
+        userPoints = [];
     }
 })
 
