@@ -47,6 +47,8 @@ var currentSketch = new p5(function(sketch) {
 
     let keys = [];
     let keyCodes = [];
+
+    let lastOrientation;
     
     let userWaypointSizeSlider;
     let deletePointsCheckbox;
@@ -67,6 +69,8 @@ var currentSketch = new p5(function(sketch) {
         deletePointsCheckbox = sketch.select('#delete-points-checkbox');
         deleteAllPointsButton = sketch.select('#delete-all-points-button');
         deleteAllPointsButton.mousePressed(deleteAllPoints);
+
+        lastOrientation = sketch.deviceOrientation;
     }
 
     deleteAllPoints = function() {
@@ -94,7 +98,8 @@ var currentSketch = new p5(function(sketch) {
             else mouseState = MouseStates.DEFAULT;
         }
 
-        console.log(mouseState);
+        if(sketch.deviceOrientation != lastOrientation) styleCanvas();
+        lastOrientation = sketch.deviceOrientation; 
     }
 
     calculateActivePoint = function() {
@@ -175,6 +180,10 @@ var currentSketch = new p5(function(sketch) {
         }
     }
 
+    sketch.mouseDragged = function() {
+        
+    }
+
     mouseOut = function() {
         
     }
@@ -185,7 +194,10 @@ var currentSketch = new p5(function(sketch) {
     }
 
     sketch.touchMoved = function() {
-        if(mouseInSketch()) return false;
+        if(mouseInSketch()) {
+            return false;
+        }
+        sketch.mouseDragged();
     }
 
     sketch.touchEnded = function() {
