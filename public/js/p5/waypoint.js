@@ -2,20 +2,18 @@ const Vector = require("./vector");
 const conv = require('./conversions.js');
 
 let Waypoint = class {
-    #position;
-    #targetVelocity;
-
+    
     constructor(other) {
         if(other instanceof Waypoint) { 
-            this.#position = other.getPosition().copy();
+            this.position = other.getPosition().copy();
         }
         else if(other instanceof Vector) {
-            this.#position = other.copy();
+            this.position = other.copy();
         }
         else {
             throw (other + " passed into Waypoint constructor");
         }
-        this.#targetVelocity = -1.0;
+        this.targetVelocity = -1.0;
     }
 
     getDistanceTo(other) {
@@ -30,7 +28,7 @@ let Waypoint = class {
             throw (other + " passed into Waypoint getDistanceTo()");
         }
 
-        return this.#position.getDistanceTo(otherVector);
+        return this.position.getDistanceTo(otherVector);
     }
 
     getDistanceToSq(other) {
@@ -45,35 +43,35 @@ let Waypoint = class {
             throw (other + " passed into Waypoint getDistanceTo()");
         }
 
-        return this.#position.getDistanceToSq(otherVector);
+        return this.position.getDistanceToSq(otherVector);
     }
 
     getX() {
-        return this.#position.getX();
+        return this.position.getX();
     }
 
     getY() {
-        return this.#position.getY();
+        return this.position.getY();
     }
 
     setX(x) {
-        this.#position.setX(x);
+        this.position.setX(x);
     }
 
     setY(y) {
-        this.#position.setY(y);
+        this.position.setY(y);
     }
 
     getPosition() {
-        return this.#position;
+        return this.position;
     }
 
     getTargetVelocity() {
-        return this.#targetVelocity;
+        return this.targetVelocity;
     }
 
     setTargetVelocity(targetVelocity) {
-        this.#targetVelocity = targetVelocity;
+        this.targetVelocity = targetVelocity;
     }
 
     draw(sketch, radius, active) {

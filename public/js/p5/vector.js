@@ -1,15 +1,11 @@
 let Vector = class {
-    #x;
-    #y;
-    #mag;
-    #magSq;
-
-    constructor(x, y) {
-        this.#x = x;
-        this.#y = y;
     
-        this.#mag = -1;
-        this.#magSq = -1;
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+    
+        this.mag = -1;
+        this.magSq = -1;
     }
 
     copy() {
@@ -17,37 +13,37 @@ let Vector = class {
     }
 
     getX() {
-        return this.#x;
+        return this.x;
     }
 
     getY() {
-        return this.#y;
+        return this.y;
     }
 
     setX(x) {
-        this.#x = x;
-        this.#mag = -1;
-        this.#magSq = -1;
+        this.x = x;
+        this.mag = -1;
+        this.magSq = -1;
     }
 
     setY(y) {
-        this.#y = y;
-        this.#mag = -1;
-        this.#magSq = -1;
+        this.y = y;
+        this.mag = -1;
+        this.magSq = -1;
     }
 
     getMagSq() {
-        if(this.#magSq == -1) {
-            this.#magSq = this.getX() * this.getX() + this.getY() * this.getY();
+        if(this.magSq == -1) {
+            this.magSq = this.getX() * this.getX() + this.getY() * this.getY();
         }
-        return this.#magSq;
+        return this.magSq;
     }
 
     getMag() {
-        if(this.#mag == -1) {
-            this.#mag = sqrt(this.getMagSq());
+        if(this.mag == -1) {
+            this.mag = sqrt(this.getMagSq());
         }
-        return this.#mag;
+        return this.mag;
     }
 
     normalize() {

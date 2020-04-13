@@ -193,17 +193,13 @@ var currentSketch = new p5(function(sketch) {
 
 },{"./conversions.js":1,"./p5.min":2,"./vector":4,"./waypoint":5}],4:[function(require,module,exports){
 let Vector = class {
-    #x;
-    #y;
-    #mag;
-    #magSq;
-
-    constructor(x, y) {
-        this.#x = x;
-        this.#y = y;
     
-        this.#mag = -1;
-        this.#magSq = -1;
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+    
+        this.mag = -1;
+        this.magSq = -1;
     }
 
     copy() {
@@ -211,37 +207,37 @@ let Vector = class {
     }
 
     getX() {
-        return this.#x;
+        return this.x;
     }
 
     getY() {
-        return this.#y;
+        return this.y;
     }
 
     setX(x) {
-        this.#x = x;
-        this.#mag = -1;
-        this.#magSq = -1;
+        this.x = x;
+        this.mag = -1;
+        this.magSq = -1;
     }
 
     setY(y) {
-        this.#y = y;
-        this.#mag = -1;
-        this.#magSq = -1;
+        this.y = y;
+        this.mag = -1;
+        this.magSq = -1;
     }
 
     getMagSq() {
-        if(this.#magSq == -1) {
-            this.#magSq = this.getX() * this.getX() + this.getY() * this.getY();
+        if(this.magSq == -1) {
+            this.magSq = this.getX() * this.getX() + this.getY() * this.getY();
         }
-        return this.#magSq;
+        return this.magSq;
     }
 
     getMag() {
-        if(this.#mag == -1) {
-            this.#mag = sqrt(this.getMagSq());
+        if(this.mag == -1) {
+            this.mag = sqrt(this.getMagSq());
         }
-        return this.#mag;
+        return this.mag;
     }
 
     normalize() {
@@ -292,20 +288,18 @@ const Vector = require("./vector");
 const conv = require('./conversions.js');
 
 let Waypoint = class {
-    #position;
-    #targetVelocity;
-
+    
     constructor(other) {
         if(other instanceof Waypoint) { 
-            this.#position = other.getPosition().copy();
+            this.position = other.getPosition().copy();
         }
         else if(other instanceof Vector) {
-            this.#position = other.copy();
+            this.position = other.copy();
         }
         else {
             throw (other + " passed into Waypoint constructor");
         }
-        this.#targetVelocity = -1.0;
+        this.targetVelocity = -1.0;
     }
 
     getDistanceTo(other) {
@@ -320,7 +314,7 @@ let Waypoint = class {
             throw (other + " passed into Waypoint getDistanceTo()");
         }
 
-        return this.#position.getDistanceTo(otherVector);
+        return this.position.getDistanceTo(otherVector);
     }
 
     getDistanceToSq(other) {
@@ -335,35 +329,35 @@ let Waypoint = class {
             throw (other + " passed into Waypoint getDistanceTo()");
         }
 
-        return this.#position.getDistanceToSq(otherVector);
+        return this.position.getDistanceToSq(otherVector);
     }
 
     getX() {
-        return this.#position.getX();
+        return this.position.getX();
     }
 
     getY() {
-        return this.#position.getY();
+        return this.position.getY();
     }
 
     setX(x) {
-        this.#position.setX(x);
+        this.position.setX(x);
     }
 
     setY(y) {
-        this.#position.setY(y);
+        this.position.setY(y);
     }
 
     getPosition() {
-        return this.#position;
+        return this.position;
     }
 
     getTargetVelocity() {
-        return this.#targetVelocity;
+        return this.targetVelocity;
     }
 
     setTargetVelocity(targetVelocity) {
-        this.#targetVelocity = targetVelocity;
+        this.targetVelocity = targetVelocity;
     }
 
     draw(sketch, radius, active) {
