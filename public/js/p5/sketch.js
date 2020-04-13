@@ -28,7 +28,10 @@ var currentSketch = new p5(function(sketch) {
     let mouseState = MouseState.DEFAULT;
     let mouseClickVector = null;
     let activePoint = -1;
+    
+    // mobile
     let lingeringMouse = false;
+    let lenientDragging = false;
     
     sketch.setup = function() {
         canvas = sketch.createCanvas(sketch.windowWidth * widthScaling, sketch.windowHeight * heightScaling);
@@ -68,6 +71,13 @@ var currentSketch = new p5(function(sketch) {
             else mouseState = MouseStates.DEFAULT;
         }
 
+        if(activePoint != -1) {
+            sketch.cursor('grab');
+        }
+        else {
+            sketch.cursor('default');
+        }
+
         if(sketch.deviceOrientation != lastOrientation) styleCanvas();
         lastOrientation = sketch.deviceOrientation; 
     }
@@ -75,6 +85,7 @@ var currentSketch = new p5(function(sketch) {
     calculateActivePoint = function() {
         if(mouseState != MouseState.DRAGGING) {
             let closestDist = userWaypointSizeSlider.value() * userWaypointSizeSlider.value();
+            if(lenientDragging) closestDist *= 3;
             activePoint = -1;
             mouseVector = new Vector(conv.cx(sketch.mouseX, sketch.width), conv.cx(sketch.mouseY, sketch.height));
             for(pointIndex in userPoints) {
@@ -151,7 +162,7 @@ var currentSketch = new p5(function(sketch) {
     }
 
     sketch.mouseDragged = function() {
-        
+
     }
 
     mouseOut = function() {
@@ -160,6 +171,7 @@ var currentSketch = new p5(function(sketch) {
 
     sketch.touchStarted = function() {
         lingeringMouse = false;
+        lenientDragging = true;
         sketch.mousePressed();
     }
 
@@ -172,6 +184,7 @@ var currentSketch = new p5(function(sketch) {
 
     sketch.touchEnded = function() {
         lingeringMouse = true;
+        lenientDragging = false;
         sketch.mouseReleased();
     }
 
