@@ -7,13 +7,52 @@
     <body>
         <h1>Pure Pursuit Visualizer</h1>
 
-        <div class="slider-container">
-            <input type="range" min="0.5" max="3" value="1.5" step = "0.1" class="slider" id="user-waypoint-size-slider">
-        </div>
-        <div id="delete-container">
-            <input type="checkbox" name="delete-points" id="delete-points-checkbox">
-            <label for="delete-points-checkbox">Delete Points</label>
-            <button type="button" id="delete-all-points-button">Delete All Points</button>
+        <div id="settings-container">
+            <div id="configuration-container">
+                <div id="top-config-container">
+                    <div class="slider-container">
+                        <input type="range" min="0.5" max="3" value="1.5" step = "0.1" class="slider" id="user-waypoint-size-slider">
+                    </div>
+                    <div class="button-check-container">
+                        <button type="button" id="delete-all-points-button">Delete All Points</button>
+                        <input type="checkbox" name="delete-points" id="delete-points-checkbox">
+                        <label for="delete-points-checkbox">Delete Points</label>
+                    </div>
+                </div>
+                <div id="path-container">
+                    <div class="slider-container">
+                        <input type="range" min="1.5" max="10" value="3" step = "0.1" class="slider" id="inject-spacing-slider">
+                    </div>
+                    <ul class="no-bullets">
+                        <li class="button-check-container">
+                            <button type="button" id="inject-points-button">Inject Points</button>
+                            <input type="checkbox" name="auto-inject-checkbox" id="auto-inject-checkbox">
+                            <label for="auto-inject-checkbox">Auto Inject Points</label>
+                        </li>
+                        <li class="button-check-container">
+                            <button type="button" id="smooth-points-button">Smooth Points</button>
+                            <input type="checkbox" name="auto-smooth-checkbox" id="auto-smooth-checkbox">
+                            <label for="auto-smooth-checkbox">Auto Smooth Points</label>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div id="visibility-container">
+                <ul class="no-bullets">
+                    <li>
+                        <input type="checkbox" name="show-user-checkbox" id="show-user-checkbox" checked>
+                        <label for="show-user-checkbox">Show User Points</label>
+                    </li>
+                    <li>
+                        <input type="checkbox" name="show-injected-checkbox" id="show-injected-checkbox" checked>
+                        <label for="show-injected-checkbox">Show Injected Points</label>
+                    </li>
+                    <li>
+                        <input type="checkbox" name="show-smoothed-checkbox" id="show-smoothed-checkbox" checked>
+                        <label for="show-smoothed-checkbox">Show Smoothed Points</label>
+                    </li>
+                </ul>
+            </div>
         </div>
         
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>

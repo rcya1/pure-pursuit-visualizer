@@ -1,6 +1,6 @@
 .slider-container {
     width: 50%;
-    margin-left: 10px;
+    margin: 10px;
 }
 
 .slider {
@@ -40,6 +40,30 @@
     cursor: pointer;
 }
 
-#delete-container {
-    margin: 10px;
+.no-bullets {
+    list-style-type: none;
+    padding: 0;
+}
+
+.button-check-container {
+    width: 50%;
+    margin: 10px 10px 10px;
+}
+
+#top-config-container {
+    margin: 10px 10px 10px;
+}
+
+#path-container {
+    margin: 10px 10px 10px;
+}
+
+#configuration-container {
+    width: 60%;
+    display: inline-block;
+}
+
+#visibility-container {
+    width: 35%;
+    float: right;
 }

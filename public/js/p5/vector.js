@@ -41,7 +41,7 @@ let Vector = class {
 
     getMag() {
         if(this.mag == -1) {
-            this.mag = sqrt(this.getMagSq());
+            this.mag = Math.sqrt(this.getMagSq());
         }
         return this.mag;
     }
@@ -50,11 +50,11 @@ let Vector = class {
         let newX = this.getX() / this.getMag();
         let newY = this.getY() / this.getMag();
 
-        return Vector(newX, newY);
+        return new Vector(newX, newY);
     }
 
     add(vector) {
-        return Vector(this.getX() + vector.getX(), this.getY() + vector.getY());
+        return new Vector(this.getX() + vector.getX(), this.getY() + vector.getY());
     }
 
     sub(vector) {

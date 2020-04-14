@@ -3,7 +3,7 @@ cx = function(px, width) {
 }
 
 cy = function(py, height) {
-    return py * 100 / height;
+    return (height - py) * 100 / height;
 }
 
 px = function(cx, width) {
@@ -11,7 +11,7 @@ px = function(cx, width) {
 }
 
 py = function(cy, height) {
-    return cy / 100 * height;
+    return height - (cy / 100 * height);
 }
 
 module.exports = {

@@ -1,5 +1,6 @@
 const p5 = require('./p5.min');
 const conv = require('./conversions.js');
+const path_gen = require("./path_gen");
 const Vector = require("./vector");
 const Waypoint = require("./waypoint");
 
@@ -8,6 +9,9 @@ const MouseState = {
     DRAGGING: 'dragging'
 }
 
+// TODO Add slider for WEIGHT_DATA
+// TODO Implement auto buttons
+// TODO Make it so that if the auto buttons are pressed, the buttons disappear
 var currentSketch = new p5(function(sketch) {
     
     const widthScaling = 0.9;
@@ -20,11 +24,23 @@ var currentSketch = new p5(function(sketch) {
 
     let lastOrientation;
     
+    // DOM elements
     let userWaypointSizeSlider;
     let deletePointsCheckbox;
     let deleteAllPointsButton;
+    let injectSpacingSlider;
+    let injectPointsButton;
+    let smoothPointsButton;
+    let autoInjectCheckbox;
+    let autoSmoothCheckbox;
+
+    let showUserCheckbox;
+    let showInjectedCheckbox;
+    let showSmoothedCheckbox;
 
     let userPoints = [];
+    let injectedPoints = [];
+    let smoothedPoints = [];
     let mouseState = MouseState.DEFAULT;
     let mouseClickVector = null;
     let activePoint = -1;
@@ -39,15 +55,40 @@ var currentSketch = new p5(function(sketch) {
         styleCanvas();
     
         userWaypointSizeSlider = sketch.select('#user-waypoint-size-slider');
+
         deletePointsCheckbox = sketch.select('#delete-points-checkbox');
         deleteAllPointsButton = sketch.select('#delete-all-points-button');
         deleteAllPointsButton.mousePressed(deleteAllPoints);
+
+        injectSpacingSlider = sketch.select('#inject-spacing-slider');
+        injectPointsButton = sketch.select('#inject-points-button');
+        injectPointsButton.mousePressed(injectPoints);
+
+        smoothPointsButton = sketch.select('#smooth-points-button');
+        smoothPointsButton.mousePressed(smoothPoints);
+
+        autoInjectCheckbox = sketch.select('#auto-inject-checkbox');
+        autoSmoothCheckbox = sketch.select('#auto-smooth-checkbox');
+
+        showUserCheckbox = sketch.select('#show-user-checkbox');
+        showInjectedCheckbox = sketch.select('#show-injected-checkbox');
+        showSmoothedCheckbox = sketch.select('#show-smoothed-checkbox');
 
         lastOrientation = sketch.deviceOrientation;
     }
 
     deleteAllPoints = function() {
         userPoints = [];
+        injectedPoints = [];
+        smoothedPoints = [];
+    }
+
+    injectPoints = function() {
+        path_gen.injectPoints(userPoints, injectedPoints, injectSpacingSlider.value());
+    }
+
+    smoothPoints = function() {
+        path_gen.smoothPoints(injectedPoints, smoothedPoints);
     }
     
     sketch.draw = function() {
@@ -72,7 +113,12 @@ var currentSketch = new p5(function(sketch) {
         }
 
         if(activePoint != -1) {
-            sketch.cursor('grab');
+            if(deletePointsCheckbox.elt.checked) {
+                sketch.cursor('not-allowed');
+            }
+            else {
+                sketch.cursor('grab');
+            }
         }
         else {
             sketch.cursor('default');
@@ -82,12 +128,13 @@ var currentSketch = new p5(function(sketch) {
         lastOrientation = sketch.deviceOrientation; 
     }
 
+    // calculate the closest point to the cursor to determine which one to grab
     calculateActivePoint = function() {
         if(mouseState != MouseState.DRAGGING) {
             let closestDist = userWaypointSizeSlider.value() * userWaypointSizeSlider.value();
             if(lenientDragging) closestDist *= 3;
             activePoint = -1;
-            mouseVector = new Vector(conv.cx(sketch.mouseX, sketch.width), conv.cx(sketch.mouseY, sketch.height));
+            mouseVector = new Vector(conv.cx(sketch.mouseX, sketch.width), conv.cy(sketch.mouseY, sketch.height));
             for(pointIndex in userPoints) {
                 dist = userPoints[pointIndex].getDistanceToSq(mouseVector);
                 if(dist < closestDist) {
@@ -102,9 +149,24 @@ var currentSketch = new p5(function(sketch) {
         sketch.background(200);
         sketch.rectMode(sketch.CENTER);
         
-        // draw all of the points
-        for(pointIndex in userPoints) {
-            userPoints[pointIndex].draw(sketch, userWaypointSizeSlider.value(), pointIndex == activePoint);
+        // draw all injected points
+        if(showInjectedCheckbox.elt.checked) {
+            for(point of injectedPoints) {
+                console.log("HELLO!");
+                point.draw(sketch, userWaypointSizeSlider.value() / 3.0, false, 150);
+            }
+        }
+        // draw all smoothed points
+        if(showSmoothedCheckbox.elt.checked) {
+            for(point of smoothedPoints) {
+                point.draw(sketch, userWaypointSizeSlider.value() / 2.0, false, 100);
+            }
+        }
+        // draw all of the user points
+        if(showUserCheckbox.elt.checked) {
+            for(pointIndex in userPoints) {
+                userPoints[pointIndex].draw(sketch, userWaypointSizeSlider.value(), pointIndex == activePoint, 0);
+            }
         }
     }
     
@@ -169,6 +231,11 @@ var currentSketch = new p5(function(sketch) {
         
     }
 
+    mouseInSketch = function() {
+        return sketch.mouseX >= 0 && sketch.mouseX <= sketch.width && 
+            sketch.mouseY >= 0 && sketch.mouseY <= sketch.height;
+    }
+
     sketch.touchStarted = function() {
         lingeringMouse = false;
         lenientDragging = true;
@@ -204,10 +271,5 @@ var currentSketch = new p5(function(sketch) {
         if(sketch.keyCode == sketch.SHIFT) {
             deletePointsCheckbox.elt.checked = false;
         }
-    }
-
-    mouseInSketch = function() {
-        return sketch.mouseX >= 0 && sketch.mouseX <= sketch.width && 
-            sketch.mouseY >= 0 && sketch.mouseY <= sketch.height;
     }
 })
