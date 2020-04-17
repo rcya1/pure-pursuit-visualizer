@@ -101,9 +101,6 @@ const MouseState = {
     DRAGGING: 'dragging'
 }
 
-// TODO Add slider for WEIGHT_DATA
-// TODO Implement auto buttons
-// TODO Make it so that if the auto buttons are pressed, the buttons disappear
 // TODO Add keyboard shortcuts
 
 var currentSketch = new p5(function(sketch) {
@@ -139,6 +136,9 @@ var currentSketch = new p5(function(sketch) {
     let mouseState = MouseState.DEFAULT;
     let mouseClickVector = null;
     let activePoint = -1;
+
+    let needAutoInject = true;
+    let needAutoSmooth = true;
     
     // mobile
     let lingeringMouse = false;
@@ -156,10 +156,17 @@ var currentSketch = new p5(function(sketch) {
         deleteAllPointsButton.mousePressed(deleteAllPoints);
 
         injectSpacingSlider = sketch.select('#inject-spacing-slider');
+        injectSpacingSlider.input(function() {
+            needAutoInject = true;
+            needAutoSmooth = true;
+        });
         injectPointsButton = sketch.select('#inject-points-button');
         injectPointsButton.mousePressed(injectPoints);
 
         smoothWeightDataSlider = sketch.select('#smooth-weight-data-slider');
+        smoothWeightDataSlider.input(function() {
+            needAutoSmooth = true;
+        });
         smoothPointsButton = sketch.select('#smooth-points-button');
         smoothPointsButton.mousePressed(smoothPoints);
 
@@ -181,10 +188,12 @@ var currentSketch = new p5(function(sketch) {
 
     injectPoints = function() {
         path_gen.injectPoints(userPoints, injectedPoints, injectSpacingSlider.value());
+        needAutoInject = false;
     }
 
     smoothPoints = function() {
         path_gen.smoothPoints(injectedPoints, smoothedPoints, smoothWeightDataSlider.value());
+        needAutoSmooth = false;
     }
     
     sketch.draw = function() {
@@ -205,7 +214,7 @@ var currentSketch = new p5(function(sketch) {
                     conv.cy(sketch.mouseY, sketch.height) - mouseClickVector.getY());
                 mouseClickVector = new Vector(conv.cx(sketch.mouseX, sketch.width), conv.cy(sketch.mouseY, sketch.height));
             }
-            else mouseState = MouseStates.DEFAULT;
+            else mouseState = MouseState.DEFAULT;
         }
 
         if(activePoint != -1) {
@@ -218,6 +227,24 @@ var currentSketch = new p5(function(sketch) {
         }
         else {
             sketch.cursor('default');
+        }
+
+        if(mouseState == MouseState.DRAGGING) {
+            needAutoInject = true;
+            needAutoSmooth = true;
+        }
+
+        if(autoInjectCheckbox.elt.checked) {
+            if(needAutoInject) {
+                injectPoints();
+            }
+            injectPointsButton.elt.disabled = true;
+        }
+        if(needAutoSmooth && autoSmoothCheckbox.elt.checked) {
+            if(needAutoSmooth) {
+                smoothPoints();
+            }
+            smoothPointsButton.elt.disabled = true;
         }
 
         if(sketch.deviceOrientation != lastOrientation) styleCanvas();
@@ -248,7 +275,6 @@ var currentSketch = new p5(function(sketch) {
         // draw all injected points
         if(showInjectedCheckbox.elt.checked) {
             for(point of injectedPoints) {
-                console.log("HELLO!");
                 point.draw(sketch, userWaypointSizeSlider.value() / 3.0, false, 150);
             }
         }
