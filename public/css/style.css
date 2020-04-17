@@ -1,12 +1,20 @@
 .slider-container {
-    width: 50%;
+    width: 70%;
     margin: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.slider-container label {
+    margin-right: 10px;
+    margin-bottom: 0px;
 }
 
 .slider {
     -webkit-appearance: none;
     appearance: none;
-    width: 100%;
+    width: 60%;
     height: 15px;
     border-radius: 5px;
     background: #d3d3d3;
@@ -14,6 +22,8 @@
     opacity: 0.7;
     -webkit-transition: .2s;
     transition: opacity .2s;
+    margin-right: 0;
+    margin-left: auto;
 }
 
 .slider:hover {
@@ -46,8 +56,16 @@
 }
 
 .button-check-container {
-    width: 50%;
+    width: 70%;
     margin: 10px 10px 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#settings-container {
+    display: flex;
+    justify-content: space-between;
 }
 
 #top-config-container {
@@ -61,9 +79,14 @@
 #configuration-container {
     width: 60%;
     display: inline-block;
+    margin-left: 5%;
+}
+
+#configuration-container button {
+    float: right;
+    margin-bottom: 10px;
 }
 
 #visibility-container {
-    width: 35%;
-    float: right;
+    margin-right: 5%;
 }

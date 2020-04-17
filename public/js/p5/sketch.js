@@ -9,14 +9,16 @@ const MouseState = {
     DRAGGING: 'dragging'
 }
 
+// TODO Add a textbox next to the slider that can be edited with exact values and will also show the exact value
 // TODO Add keyboard shortcuts
 
 var currentSketch = new p5(function(sketch) {
     
     const widthScaling = 0.9;
-    const heightScaling = 0.6;
+    const heightScaling = 0.8;
 
     let canvas; // purely for stylizing purposes
+    let canvasHolder;
 
     let keys = [];
     let keyCodes = [];
@@ -55,6 +57,7 @@ var currentSketch = new p5(function(sketch) {
     sketch.setup = function() {
         canvas = sketch.createCanvas(sketch.windowWidth * widthScaling, sketch.windowHeight * heightScaling);
         canvas.mouseOut(mouseOut);
+        canvasHolder = sketch.select('#canvas-visualizer');
         styleCanvas();
     
         userWaypointSizeSlider = sketch.select('#user-waypoint-size-slider');
@@ -189,7 +192,7 @@ var currentSketch = new p5(function(sketch) {
         // draw all smoothed points
         if(showSmoothedCheckbox.elt.checked) {
             for(point of smoothedPoints) {
-                point.draw(sketch, userWaypointSizeSlider.value() / 2.0, false, 100);
+                point.draw(sketch, userWaypointSizeSlider.value() / 1.5, false, 100);
             }
         }
         // draw all of the user points
@@ -201,16 +204,22 @@ var currentSketch = new p5(function(sketch) {
     }
     
     sketch.windowResized = function() {
-        sketch.resizeCanvas(sketch.windowWidth * widthScaling, sketch.windowHeight * heightScaling);
         styleCanvas();
     }
 
-    // center the canvas on the screen horizontally
+    // center the canvas on the screen horizontally and scale it
     function styleCanvas() {
-        canvas.style('display', 'block');
-        canvas.style('margin', '10px');
+        sketch.resizeCanvas(sketch.windowWidth * widthScaling, sketch.windowHeight * heightScaling);
         let x = (sketch.windowWidth - sketch.width) / 2;
+        let y = 0;
         canvas.position(x);
+
+        canvasHolder.style('width', sketch.windowWidth * widthScaling + 'px');
+        canvasHolder.style('height', sketch.windowHeight * heightScaling + 'px');
+        canvasHolder.style('display', 'block');
+        canvasHolder.style('margin', '10px');
+        
+        canvas.parent('canvas-visualizer');
     }
 
     sketch.mousePressed = function() {
@@ -224,6 +233,8 @@ var currentSketch = new p5(function(sketch) {
                 if(activePoint != -1) {
                     userPoints.splice(activePoint, 1);
                 }
+                needAutoInject = true;
+                needAutoSmooth = true;
             }
             else {
                 // add a point or drag the currently selected point
