@@ -23,18 +23,19 @@
                     <div class="slider-container">
                         <input type="range" min="1.5" max="10" value="3" step = "0.1" class="slider" id="inject-spacing-slider">
                     </div>
-                    <ul class="no-bullets">
-                        <li class="button-check-container">
-                            <button type="button" id="inject-points-button">Inject Points</button>
-                            <input type="checkbox" name="auto-inject-checkbox" id="auto-inject-checkbox">
-                            <label for="auto-inject-checkbox">Auto Inject Points</label>
-                        </li>
-                        <li class="button-check-container">
-                            <button type="button" id="smooth-points-button">Smooth Points</button>
-                            <input type="checkbox" name="auto-smooth-checkbox" id="auto-smooth-checkbox">
-                            <label for="auto-smooth-checkbox">Auto Smooth Points</label>
-                        </li>
-                    </ul>
+                    <div class="button-check-container">
+                        <button type="button" id="inject-points-button">Inject Points</button>
+                        <input type="checkbox" name="auto-inject-checkbox" id="auto-inject-checkbox">
+                        <label for="auto-inject-checkbox">Auto Inject Points</label>
+                    </div>
+                    <div class="slider-container">
+                        <input type="range" min="0.01" max="1.0" value="0.25" step = "0.01" class="slider" id="smooth-weight-data-slider">
+                    </div>
+                    <div class="button-check-container">
+                        <button type="button" id="smooth-points-button">Smooth Points</button>
+                        <input type="checkbox" name="auto-smooth-checkbox" id="auto-smooth-checkbox">
+                        <label for="auto-smooth-checkbox">Auto Smooth Points</label>
+                    </div>
                 </div>
             </div>
             <div id="visibility-container">

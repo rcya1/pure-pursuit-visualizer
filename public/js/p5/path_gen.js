@@ -17,15 +17,15 @@ injectPoints = function (userPoints, injectedPoints, spacing) {
     }
 }
 
-smoothPoints = function (injectedPoints, smoothedPoints) {
+smoothPoints = function (injectedPoints, smoothedPoints, weightData) {
     smoothedPoints.splice(0, smoothedPoints.length);
 
     for (waypoint of injectedPoints) {
         smoothedPoints.push(new Waypoint(waypoint.getPosition()));
     }
 
-    let WEIGHT_SMOOTH = 0.75;
-    let WEIGHT_DATA = 1 - WEIGHT_SMOOTH;
+    let WEIGHT_SMOOTH = 1 - weightData;
+    let WEIGHT_DATA = weightData;
     let change = 0.001;
     while(change >= 0.001) {
         change = 0.0;

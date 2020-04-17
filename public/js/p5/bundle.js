@@ -48,15 +48,15 @@ injectPoints = function (userPoints, injectedPoints, spacing) {
     }
 }
 
-smoothPoints = function (injectedPoints, smoothedPoints) {
+smoothPoints = function (injectedPoints, smoothedPoints, weightData) {
     smoothedPoints.splice(0, smoothedPoints.length);
 
     for (waypoint of injectedPoints) {
         smoothedPoints.push(new Waypoint(waypoint.getPosition()));
     }
 
-    let WEIGHT_SMOOTH = 0.75;
-    let WEIGHT_DATA = 1 - WEIGHT_SMOOTH;
+    let WEIGHT_SMOOTH = 1 - weightData;
+    let WEIGHT_DATA = weightData;
     let change = 0.001;
     while(change >= 0.001) {
         change = 0.0;
@@ -104,6 +104,8 @@ const MouseState = {
 // TODO Add slider for WEIGHT_DATA
 // TODO Implement auto buttons
 // TODO Make it so that if the auto buttons are pressed, the buttons disappear
+// TODO Add keyboard shortcuts
+
 var currentSketch = new p5(function(sketch) {
     
     const widthScaling = 0.9;
@@ -122,6 +124,7 @@ var currentSketch = new p5(function(sketch) {
     let deleteAllPointsButton;
     let injectSpacingSlider;
     let injectPointsButton;
+    let smoothWeightDataSlider;
     let smoothPointsButton;
     let autoInjectCheckbox;
     let autoSmoothCheckbox;
@@ -156,6 +159,7 @@ var currentSketch = new p5(function(sketch) {
         injectPointsButton = sketch.select('#inject-points-button');
         injectPointsButton.mousePressed(injectPoints);
 
+        smoothWeightDataSlider = sketch.select('#smooth-weight-data-slider');
         smoothPointsButton = sketch.select('#smooth-points-button');
         smoothPointsButton.mousePressed(smoothPoints);
 
@@ -180,7 +184,7 @@ var currentSketch = new p5(function(sketch) {
     }
 
     smoothPoints = function() {
-        path_gen.smoothPoints(injectedPoints, smoothedPoints);
+        path_gen.smoothPoints(injectedPoints, smoothedPoints, smoothWeightDataSlider.value());
     }
     
     sketch.draw = function() {
