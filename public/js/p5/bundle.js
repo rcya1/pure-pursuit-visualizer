@@ -48,15 +48,16 @@ injectPoints = function (userPoints, injectedPoints, spacing) {
     }
 }
 
-smoothPoints = function (injectedPoints, smoothedPoints, weightData) {
+smoothPoints = function (injectedPoints, smoothedPoints, weight) {
     smoothedPoints.splice(0, smoothedPoints.length);
 
     for (waypoint of injectedPoints) {
         smoothedPoints.push(new Waypoint(waypoint.getPosition()));
     }
 
-    let WEIGHT_SMOOTH = 1 - weightData;
-    let WEIGHT_DATA = weightData;
+    if(weight >= 1.0) weight = 0.999;
+    let WEIGHT_SMOOTH = weight;
+    let WEIGHT_DATA = 1 - weight;
     let change = 0.001;
     while(change >= 0.001) {
         change = 0.0;
@@ -101,7 +102,6 @@ const MouseState = {
     DRAGGING: 'dragging'
 }
 
-// TODO Add a textbox next to the slider that can be edited with exact values and will also show the exact value
 // TODO Add keyboard shortcuts
 
 var currentSketch = new p5(function(sketch) {
@@ -118,13 +118,20 @@ var currentSketch = new p5(function(sketch) {
     let lastOrientation;
     
     // DOM elements
+    let userWaypointSizeInput;
     let userWaypointSizeSlider;
+
     let deletePointsCheckbox;
     let deleteAllPointsButton;
+    
+    let injectSpacingInput;
     let injectSpacingSlider;
     let injectPointsButton;
-    let smoothWeightDataSlider;
+    
+    let smoothWeightInput;
+    let smoothWeightSlider;
     let smoothPointsButton;
+    
     let autoInjectCheckbox;
     let autoSmoothCheckbox;
 
@@ -152,23 +159,40 @@ var currentSketch = new p5(function(sketch) {
         canvasHolder = sketch.select('#canvas-visualizer');
         styleCanvas();
     
+        userWaypointSizeInput = sketch.select('#user-waypoint-size-input');
+        userWaypointSizeInput.input(function() {
+            userWaypointSizeSlider.value(userWaypointSizeInput.value());
+        });
         userWaypointSizeSlider = sketch.select('#user-waypoint-size-slider');
+        userWaypointSizeSlider.input(function() {
+            userWaypointSizeInput.value(userWaypointSizeSlider.value());
+        });
 
         deletePointsCheckbox = sketch.select('#delete-points-checkbox');
         deleteAllPointsButton = sketch.select('#delete-all-points-button');
         deleteAllPointsButton.mousePressed(deleteAllPoints);
 
+        injectSpacingInput = sketch.select('#inject-spacing-input');
+        injectSpacingInput.input(function() {
+            injectSpacingSlider.value(injectSpacingInput.value());
+        });
         injectSpacingSlider = sketch.select('#inject-spacing-slider');
         injectSpacingSlider.input(function() {
             needAutoInject = true;
             needAutoSmooth = true;
+            injectSpacingInput.value(injectSpacingSlider.value());
         });
         injectPointsButton = sketch.select('#inject-points-button');
         injectPointsButton.mousePressed(injectPoints);
 
-        smoothWeightDataSlider = sketch.select('#smooth-weight-data-slider');
-        smoothWeightDataSlider.input(function() {
+        smoothWeightInput = sketch.select('#smooth-weight-input');
+        smoothWeightInput.input(function() {
+            smoothWeightSlider.value(smoothWeightInput.value());
+        });
+        smoothWeightSlider = sketch.select('#smooth-weight-slider');
+        smoothWeightSlider.input(function() {
             needAutoSmooth = true;
+            smoothWeightInput.value(smoothWeightSlider.value());
         });
         smoothPointsButton = sketch.select('#smooth-points-button');
         smoothPointsButton.mousePressed(smoothPoints);
@@ -192,10 +216,10 @@ var currentSketch = new p5(function(sketch) {
     injectPoints = function() {
         path_gen.injectPoints(userPoints, injectedPoints, injectSpacingSlider.value());
         needAutoInject = false;
-    }
+    }   
 
     smoothPoints = function() {
-        path_gen.smoothPoints(injectedPoints, smoothedPoints, smoothWeightDataSlider.value());
+        path_gen.smoothPoints(injectedPoints, smoothedPoints, smoothWeightSlider.value());
         needAutoSmooth = false;
     }
     
@@ -258,7 +282,7 @@ var currentSketch = new p5(function(sketch) {
     calculateActivePoint = function() {
         if(mouseState != MouseState.DRAGGING) {
             let closestDist = userWaypointSizeSlider.value() * userWaypointSizeSlider.value();
-            if(lenientDragging) closestDist *= 3;
+            if(lenientDragging) closestDist *= 4;
             activePoint = -1;
             mouseVector = new Vector(conv.cx(sketch.mouseX, sketch.width), conv.cy(sketch.mouseY, sketch.height));
             for(pointIndex in userPoints) {
