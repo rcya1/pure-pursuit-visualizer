@@ -15,11 +15,14 @@ py = function(cy, height) {
     return height - (cy / 100 * height);
 }
 
+const PI = 3.14159265359;
+
 module.exports = {
     cx,
     cy,
     px,
-    py
+    py,
+    PI
 }
 
 },{}],2:[function(require,module,exports){
@@ -90,12 +93,79 @@ module.exports = {
     smoothPoints
 }
 
-},{"./waypoint":6}],4:[function(require,module,exports){
+},{"./waypoint":7}],4:[function(require,module,exports){
+const Vector = require('./vector');
+const conv = require('./conversions.js');
+
+let Robot = class {
+
+    constructor() {
+        this.pos = new Vector(50, 50);
+        this.velocity = 0.0;
+        this.angle = conv.PI / 2;
+        this.angularVelocity = 0.0;
+
+        this.leftSpeed = 0.0;
+        this.rightSpeed = 0.0;
+    }
+
+    setLeft = function(leftSpeed) {
+        this.leftSpeed = leftSpeed;
+    }
+
+    setRight = function(rightSpeed) {
+        this.rightSpeed = rightSpeed;
+    }
+
+    update = function(frameRate, driveWidth) {
+        this.velocity = (this.leftSpeed + this.rightSpeed) / 2;
+        this.angularVelocity = -(this.leftSpeed - this.rightSpeed) / driveWidth;
+
+        if(isNaN(frameRate) || frameRate == 0) frameRate = 60;
+        this.angle += this.angularVelocity / frameRate;
+        this.pos = this.pos.add(new Vector(this.velocity * Math.cos(this.angle), 
+            this.velocity * Math.sin(this.angle)).mult(1 / frameRate));
+
+        this.leftSpeed = 0;
+        this.rightSpeed = 0;
+    }
+
+    draw = function(sketch, driveWidth) {
+        sketch.rectMode(sketch.CENTER);
+        sketch.fill(120);
+        sketch.stroke(0);
+        sketch.push();
+            sketch.translate(conv.px(this.pos.getX(), sketch.width), conv.py(this.pos.getY(), sketch.height));
+            sketch.rotate(-this.angle + conv.PI / 2);
+            sketch.rect(0, 0, driveWidth, driveWidth * 2.0);
+        sketch.pop();
+    }
+
+    getX = function() {
+        return this.pos.getX();
+    }
+
+    getY = function() {
+        return this.pos.getY();
+    }
+
+    getPos = function() {
+        return this.pos;
+    }
+
+    getAngle = function() {
+        return this.angle;
+    }
+}
+
+module.exports = Robot;
+},{"./conversions.js":1,"./vector":6}],5:[function(require,module,exports){
 const p5 = require('./p5.min');
 const conv = require('./conversions.js');
 const path_gen = require("./path_gen");
 const Vector = require("./vector");
 const Waypoint = require("./waypoint");
+const Robot = require("./robot");
 
 const MouseState = {
     DEFAULT: 'default',
@@ -111,6 +181,8 @@ var currentSketch = new p5(function(sketch) {
 
     let canvas; // purely for stylizing purposes
     let canvasHolder;
+
+    let robot;
 
     let keys = [];
     let keyCodes = [];
@@ -158,7 +230,9 @@ var currentSketch = new p5(function(sketch) {
         canvas.mouseOut(mouseOut);
         canvasHolder = sketch.select('#canvas-visualizer');
         styleCanvas();
-    
+
+        robot = new Robot();
+        
         userWaypointSizeInput = sketch.select('#user-waypoint-size-input');
         userWaypointSizeInput.input(function() {
             userWaypointSizeSlider.value(userWaypointSizeInput.value());
@@ -229,6 +303,8 @@ var currentSketch = new p5(function(sketch) {
     }
 
     update = function() {
+        robot.update(sketch.frameRate(), 30);
+
         if(!lingeringMouse) calculateActivePoint();
 
         if(mouseState == MouseState.DRAGGING) {
@@ -317,6 +393,8 @@ var currentSketch = new p5(function(sketch) {
                 userPoints[pointIndex].draw(sketch, userWaypointSizeSlider.value(), pointIndex == activePoint, 0);
             }
         }
+
+        robot.draw(sketch, 30);
     }
     
     sketch.windowResized = function() {
@@ -376,6 +454,9 @@ var currentSketch = new p5(function(sketch) {
             userPoints[activePoint].setY(Math.min(100, userPoints[activePoint].getY()));
             userPoints[activePoint].setY(Math.max(0, userPoints[activePoint].getY()));
 
+            needAutoInject = true;
+            needAutoSmooth = true;
+
             activePoint = -1;
         }
     }
@@ -431,7 +512,7 @@ var currentSketch = new p5(function(sketch) {
     }
 })
 
-},{"./conversions.js":1,"./p5.min":2,"./path_gen":3,"./vector":5,"./waypoint":6}],5:[function(require,module,exports){
+},{"./conversions.js":1,"./p5.min":2,"./path_gen":3,"./robot":4,"./vector":6,"./waypoint":7}],6:[function(require,module,exports){
 let Vector = class {
     
     constructor(x, y) {
@@ -524,7 +605,7 @@ let Vector = class {
 
 module.exports = Vector;
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 const Vector = require("./vector");
 const conv = require('./conversions.js');
 
@@ -611,4 +692,4 @@ let Waypoint = class {
 }
 
 module.exports = Waypoint;
-},{"./conversions.js":1,"./vector":5}]},{},[4]);
+},{"./conversions.js":1,"./vector":6}]},{},[5]);

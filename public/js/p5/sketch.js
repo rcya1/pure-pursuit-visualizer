@@ -3,6 +3,7 @@ const conv = require('./conversions.js');
 const path_gen = require("./path_gen");
 const Vector = require("./vector");
 const Waypoint = require("./waypoint");
+const Robot = require("./robot");
 
 const MouseState = {
     DEFAULT: 'default',
@@ -18,6 +19,8 @@ var currentSketch = new p5(function(sketch) {
 
     let canvas; // purely for stylizing purposes
     let canvasHolder;
+
+    let robot;
 
     let keys = [];
     let keyCodes = [];
@@ -65,7 +68,9 @@ var currentSketch = new p5(function(sketch) {
         canvas.mouseOut(mouseOut);
         canvasHolder = sketch.select('#canvas-visualizer');
         styleCanvas();
-    
+
+        robot = new Robot();
+        
         userWaypointSizeInput = sketch.select('#user-waypoint-size-input');
         userWaypointSizeInput.input(function() {
             userWaypointSizeSlider.value(userWaypointSizeInput.value());
@@ -136,6 +141,8 @@ var currentSketch = new p5(function(sketch) {
     }
 
     update = function() {
+        robot.update(sketch.frameRate(), 30);
+
         if(!lingeringMouse) calculateActivePoint();
 
         if(mouseState == MouseState.DRAGGING) {
@@ -224,6 +231,8 @@ var currentSketch = new p5(function(sketch) {
                 userPoints[pointIndex].draw(sketch, userWaypointSizeSlider.value(), pointIndex == activePoint, 0);
             }
         }
+
+        robot.draw(sketch, 30);
     }
     
     sketch.windowResized = function() {
@@ -282,6 +291,9 @@ var currentSketch = new p5(function(sketch) {
             userPoints[activePoint].setX(Math.max(0, userPoints[activePoint].getX()));
             userPoints[activePoint].setY(Math.min(100, userPoints[activePoint].getY()));
             userPoints[activePoint].setY(Math.max(0, userPoints[activePoint].getY()));
+
+            needAutoInject = true;
+            needAutoSmooth = true;
 
             activePoint = -1;
         }

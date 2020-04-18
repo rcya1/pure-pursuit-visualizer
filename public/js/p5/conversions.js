@@ -14,9 +14,12 @@ py = function(cy, height) {
     return height - (cy / 100 * height);
 }
 
+const PI = 3.14159265359;
+
 module.exports = {
     cx,
     cy,
     px,
-    py
+    py,
+    PI
 }
