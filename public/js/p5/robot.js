@@ -4,7 +4,7 @@ const conv = require('./conversions.js');
 let Robot = class {
 
     constructor() {
-        this.pos = new Vector(50, 50);
+        this.pos = new Vector(100, 50);
         this.velocity = 0.0;
         this.angle = conv.PI / 2;
         this.angularVelocity = 0.0;

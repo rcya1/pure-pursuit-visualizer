@@ -1,6 +1,7 @@
 const p5 = require('./p5.min');
 const conv = require('./conversions.js');
 const path_gen = require("./path_gen");
+const dom_util = require('./dom_util');
 const Vector = require("./vector");
 const Waypoint = require("./waypoint");
 const Robot = require("./robot");
@@ -11,7 +12,7 @@ const MouseState = {
 }
 
 // TODO Add keyboard shortcuts
-// TODO Create a class to group the input and the slider automatically
+// TODO Fix smooth slider starting at 0
 
 var currentSketch = new p5(function(sketch) {
     
@@ -28,20 +29,15 @@ var currentSketch = new p5(function(sketch) {
     let lastOrientation;
     
     // DOM elements
-    let robotSizeInput;
     let robotSizeSlider;
-
-    let userWaypointSizeInput;
     let userWaypointSizeSlider;
 
     let deletePointsCheckbox;
     let deleteAllPointsButton;
-    
-    let injectSpacingInput;
+
     let injectSpacingSlider;
     let injectPointsButton;
-    
-    let smoothWeightInput;
+
     let smoothWeightSlider;
     let smoothPointsButton;
     
@@ -74,56 +70,35 @@ var currentSketch = new p5(function(sketch) {
 
         robot = new Robot();
 
-        robotSizeInput = sketch.select('#robot-size-input');
-        robotSizeInput.input(function() {
-            robotSizeSlider.value(robotSizeInput.value());
-        });
-        robotSizeSlider = sketch.select('#robot-size-slider');
-        robotSizeSlider.input(function() {
-            robotSizeInput.value(robotSizeSlider.value());
-        });
-        
-        userWaypointSizeInput = sketch.select('#user-waypoint-size-input');
-        userWaypointSizeInput.input(function() {
-            userWaypointSizeSlider.value(userWaypointSizeInput.value());
-        });
-        userWaypointSizeSlider = sketch.select('#user-waypoint-size-slider');
-        userWaypointSizeSlider.input(function() {
-            userWaypointSizeInput.value(userWaypointSizeSlider.value());
-        });
+        // Top Configuration Box
+        robotSizeSlider = new dom_util.Slider('#robot-size-slider', 20, 70, 40, 1, sketch);
+        userWaypointSizeSlider = new dom_util.Slider('#user-waypoint-size-slider', 1, 3, 1.7, 0.1, sketch);
 
+        // Path Configuration
         deletePointsCheckbox = sketch.select('#delete-points-checkbox');
         deleteAllPointsButton = sketch.select('#delete-all-points-button');
         deleteAllPointsButton.mousePressed(deleteAllPoints);
 
-        injectSpacingInput = sketch.select('#inject-spacing-input');
-        injectSpacingInput.input(function() {
-            injectSpacingSlider.value(injectSpacingInput.value());
-        });
-        injectSpacingSlider = sketch.select('#inject-spacing-slider');
-        injectSpacingSlider.input(function() {
+        // Inject Points
+        injectSpacingSlider = new dom_util.Slider('#inject-spacing-slider', 1.5, 10, 5, 0.1, sketch);
+        injectSpacingSlider.setCallback(function() {
             needAutoInject = true;
             needAutoSmooth = true;
-            injectSpacingInput.value(injectSpacingSlider.value());
         });
         injectPointsButton = sketch.select('#inject-points-button');
         injectPointsButton.mousePressed(injectPoints);
+        autoInjectCheckbox = sketch.select('#auto-inject-checkbox');
 
-        smoothWeightInput = sketch.select('#smooth-weight-input');
-        smoothWeightInput.input(function() {
-            smoothWeightSlider.value(smoothWeightInput.value());
-        });
-        smoothWeightSlider = sketch.select('#smooth-weight-slider');
-        smoothWeightSlider.input(function() {
+        // Smooth Points
+        smoothWeightSlider = new dom_util.Slider('#smooth-weight-slider', 0.00, 0.99, 0.75, 0.01, sketch);
+        smoothWeightSlider.setCallback(function() {
             needAutoSmooth = true;
-            smoothWeightInput.value(smoothWeightSlider.value());
         });
         smoothPointsButton = sketch.select('#smooth-points-button');
         smoothPointsButton.mousePressed(smoothPoints);
-
-        autoInjectCheckbox = sketch.select('#auto-inject-checkbox');
         autoSmoothCheckbox = sketch.select('#auto-smooth-checkbox');
 
+        // Visibility
         showUserCheckbox = sketch.select('#show-user-checkbox');
         showInjectedCheckbox = sketch.select('#show-injected-checkbox');
         showSmoothedCheckbox = sketch.select('#show-smoothed-checkbox');
@@ -138,12 +113,12 @@ var currentSketch = new p5(function(sketch) {
     }
 
     injectPoints = function() {
-        path_gen.injectPoints(userPoints, injectedPoints, injectSpacingSlider.value());
+        path_gen.injectPoints(userPoints, injectedPoints, injectSpacingSlider.getValue());
         needAutoInject = false;
     }   
 
     smoothPoints = function() {
-        path_gen.smoothPoints(injectedPoints, smoothedPoints, smoothWeightSlider.value());
+        path_gen.smoothPoints(injectedPoints, smoothedPoints, smoothWeightSlider.getValue());
         needAutoSmooth = false;
     }
     
@@ -153,7 +128,7 @@ var currentSketch = new p5(function(sketch) {
     }
 
     update = function() {
-        robot.update(sketch.frameRate(), robotSizeSlider.value());
+        robot.update(sketch.frameRate(), robotSizeSlider.getValue());
 
         if(!lingeringMouse) calculateActivePoint();
 
@@ -170,13 +145,11 @@ var currentSketch = new p5(function(sketch) {
             else mouseState = MouseState.DEFAULT;
         }
 
-        if(activePoint != -1) {
-            if(deletePointsCheckbox.elt.checked) {
-                sketch.cursor('not-allowed');
-            }
-            else {
-                sketch.cursor('grab');
-            }
+        if(deletePointsCheckbox.elt.checked) {
+            sketch.cursor('not-allowed');
+        }
+        else if(activePoint != -1) {
+            sketch.cursor('grab');
         }
         else {
             sketch.cursor('default');
@@ -207,7 +180,7 @@ var currentSketch = new p5(function(sketch) {
     // calculate the closest point to the cursor to determine which one to grab
     calculateActivePoint = function() {
         if(mouseState != MouseState.DRAGGING) {
-            let closestDist = userWaypointSizeSlider.value() * userWaypointSizeSlider.value();
+            let closestDist = userWaypointSizeSlider.getValue() * userWaypointSizeSlider.getValue();
             if(lenientDragging) closestDist *= 4;
             activePoint = -1;
             mouseVector = new Vector(conv.cx(sketch.mouseX, sketch.width), conv.cy(sketch.mouseY, sketch.height));
@@ -228,23 +201,23 @@ var currentSketch = new p5(function(sketch) {
         // draw all injected points
         if(showInjectedCheckbox.elt.checked) {
             for(point of injectedPoints) {
-                point.draw(sketch, userWaypointSizeSlider.value() / 3.0, false, 150);
+                point.draw(sketch, userWaypointSizeSlider.getValue() / 3.0, false, 150);
             }
         }
         // draw all smoothed points
         if(showSmoothedCheckbox.elt.checked) {
             for(point of smoothedPoints) {
-                point.draw(sketch, userWaypointSizeSlider.value() / 1.5, false, 100);
+                point.draw(sketch, userWaypointSizeSlider.getValue() / 1.5, false, 100);
             }
         }
         // draw all of the user points
         if(showUserCheckbox.elt.checked) {
             for(pointIndex in userPoints) {
-                userPoints[pointIndex].draw(sketch, userWaypointSizeSlider.value(), pointIndex == activePoint, 0);
+                userPoints[pointIndex].draw(sketch, userWaypointSizeSlider.getValue(), pointIndex == activePoint, 0);
             }
         }
 
-        robot.draw(sketch, robotSizeSlider.value());
+        robot.draw(sketch, robotSizeSlider.getValue());
     }
     
     sketch.windowResized = function() {
