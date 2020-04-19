@@ -12,12 +12,10 @@ const MouseState = {
 
 // TODO Add keyboard shortcuts
 // TODO Create a class to group the input and the slider automatically
-// TODO Fix scaling because it is currently not the same in both y and x
 
 var currentSketch = new p5(function(sketch) {
     
-    const widthScaling = 0.9;
-    const heightScaling = 0.8;
+    const widthScaling = 0.75;
 
     let canvas; // purely for stylizing purposes
     let canvasHolder;
@@ -69,7 +67,7 @@ var currentSketch = new p5(function(sketch) {
     let lenientDragging = false;
     
     sketch.setup = function() {
-        canvas = sketch.createCanvas(sketch.windowWidth * widthScaling, sketch.windowHeight * heightScaling);
+        canvas = sketch.createCanvas(sketch.windowWidth * widthScaling, sketch.windowWidth * widthScaling / 2);
         canvas.mouseOut(mouseOut);
         canvasHolder = sketch.select('#canvas-visualizer');
         styleCanvas();
@@ -255,13 +253,13 @@ var currentSketch = new p5(function(sketch) {
 
     // center the canvas on the screen horizontally and scale it
     function styleCanvas() {
-        sketch.resizeCanvas(sketch.windowWidth * widthScaling, sketch.windowHeight * heightScaling);
+        sketch.resizeCanvas(sketch.windowWidth * widthScaling, sketch.windowWidth * widthScaling / 2.0);
         let x = (sketch.windowWidth - sketch.width) / 2;
         let y = 0;
         canvas.position(x);
 
-        canvasHolder.style('width', sketch.windowWidth * widthScaling + 'px');
-        canvasHolder.style('height', sketch.windowHeight * heightScaling + 'px');
+        canvasHolder.style('width', sketch.width + 'px');
+        canvasHolder.style('height', sketch.height + 'px');
         canvasHolder.style('display', 'block');
         canvasHolder.style('margin', '10px');
         
@@ -317,7 +315,7 @@ var currentSketch = new p5(function(sketch) {
 
         if(activePoint != -1) {
             // clamp the dropped position to inside the sketch
-            userPoints[activePoint].setX(Math.min(100, userPoints[activePoint].getX()));
+            userPoints[activePoint].setX(Math.min(200, userPoints[activePoint].getX()));
             userPoints[activePoint].setX(Math.max(0, userPoints[activePoint].getX()));
             userPoints[activePoint].setY(Math.min(100, userPoints[activePoint].getY()));
             userPoints[activePoint].setY(Math.max(0, userPoints[activePoint].getY()));
@@ -333,6 +331,9 @@ var currentSketch = new p5(function(sketch) {
         // move the robot to the first point
         if(activePoint == 0) {
             moveRobotToStart();
+            if(userPoints.length > 1) {
+                angleRobot();
+            }
         }
         // angle the robot to the second point
         if(activePoint == 1) {

@@ -1,5 +1,7 @@
+let scaling = -1;
+
 cx = function(px, width) {
-    return px * 100 / width;
+    return px * 200 / width;
 }
 
 cy = function(py, height) {
@@ -7,7 +9,7 @@ cy = function(py, height) {
 }
 
 px = function(cx, width) {
-    return cx / 100 * width;
+    return cx / 200 * width;
 }
 
 py = function(cy, height) {
