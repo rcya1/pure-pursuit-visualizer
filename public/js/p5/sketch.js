@@ -11,6 +11,8 @@ const MouseState = {
 }
 
 // TODO Add keyboard shortcuts
+// TODO Create a class to group the input and the slider automatically
+// TODO Fix scaling because it is currently not the same in both y and x
 
 var currentSketch = new p5(function(sketch) {
     
@@ -28,6 +30,9 @@ var currentSketch = new p5(function(sketch) {
     let lastOrientation;
     
     // DOM elements
+    let robotSizeInput;
+    let robotSizeSlider;
+
     let userWaypointSizeInput;
     let userWaypointSizeSlider;
 
@@ -70,6 +75,15 @@ var currentSketch = new p5(function(sketch) {
         styleCanvas();
 
         robot = new Robot();
+
+        robotSizeInput = sketch.select('#robot-size-input');
+        robotSizeInput.input(function() {
+            robotSizeSlider.value(robotSizeInput.value());
+        });
+        robotSizeSlider = sketch.select('#robot-size-slider');
+        robotSizeSlider.input(function() {
+            robotSizeInput.value(robotSizeSlider.value());
+        });
         
         userWaypointSizeInput = sketch.select('#user-waypoint-size-input');
         userWaypointSizeInput.input(function() {
@@ -141,7 +155,7 @@ var currentSketch = new p5(function(sketch) {
     }
 
     update = function() {
-        robot.update(sketch.frameRate(), 30);
+        robot.update(sketch.frameRate(), robotSizeSlider.value());
 
         if(!lingeringMouse) calculateActivePoint();
 
@@ -232,7 +246,7 @@ var currentSketch = new p5(function(sketch) {
             }
         }
 
-        robot.draw(sketch, 30);
+        robot.draw(sketch, robotSizeSlider.value());
     }
     
     sketch.windowResized = function() {
@@ -267,6 +281,13 @@ var currentSketch = new p5(function(sketch) {
                 }
                 needAutoInject = true;
                 needAutoSmooth = true;
+
+                if(userPoints.length > 0) {
+                    moveRobotToStart();
+                    if(userPoints.length > 1) {
+                        angleRobot();
+                    }
+                }
             }
             else {
                 // add a point or drag the currently selected point
@@ -278,6 +299,15 @@ var currentSketch = new p5(function(sketch) {
                 }
 
                 mouseState = MouseState.DRAGGING;
+
+                // move the robot to the first point
+                if(activePoint == 0) {
+                    moveRobotToStart();
+                }
+                // angle the robot to the second point
+                if(activePoint == 1) {
+                    angleRobot();
+                }
             }
         }
     }
@@ -300,7 +330,23 @@ var currentSketch = new p5(function(sketch) {
     }
 
     sketch.mouseDragged = function() {
+        // move the robot to the first point
+        if(activePoint == 0) {
+            moveRobotToStart();
+        }
+        // angle the robot to the second point
+        if(activePoint == 1) {
+            angleRobot();
+        }
+    }
 
+    moveRobotToStart = function() {
+        robot.setPos(userPoints[0].getPosition());
+    }
+
+    angleRobot = function() {
+        robot.setAngle(Math.atan2(userPoints[1].getPosition().getY() - userPoints[0].getPosition().getY(),
+            userPoints[1].getPosition().getX() - userPoints[0].getPosition().getX()));
     }
 
     mouseOut = function() {
