@@ -166,11 +166,17 @@ var currentSketch = new p5(function(sketch) {
             }
             injectPointsButton.elt.disabled = true;
         }
-        if(needAutoSmooth && autoSmoothCheckbox.elt.checked) {
+        else {
+            injectPointsButton.elt.disabled = false;
+        }
+        if(autoSmoothCheckbox.elt.checked) {
             if(needAutoSmooth) {
                 smoothPoints();
             }
             smoothPointsButton.elt.disabled = true;
+        }
+        else {
+            smoothPointsButton.elt.disabled = false;
         }
 
         if(sketch.deviceOrientation != lastOrientation) styleCanvas();

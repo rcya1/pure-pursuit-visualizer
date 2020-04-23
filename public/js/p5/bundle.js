@@ -60,7 +60,11 @@ Slider = class {
     }
 
     setCallback = function(callback) {
-        console.log(this.container.id() + " : " + this.slider.attribute('value'));
+        // double-check to make sure these were set correctly (weird bug with slider)
+        if(this.slider.value() == 0) this.slider.value(this.input.value());
+        if(this.input.value() == 0) this.input.value(this.slider.value());
+
+        // add the custom callback to the elements
         this.input.input((function() {
             this.slider.value(this.input.value());
             callback();
@@ -387,11 +391,17 @@ var currentSketch = new p5(function(sketch) {
             }
             injectPointsButton.elt.disabled = true;
         }
-        if(needAutoSmooth && autoSmoothCheckbox.elt.checked) {
+        else {
+            injectPointsButton.elt.disabled = false;
+        }
+        if(autoSmoothCheckbox.elt.checked) {
             if(needAutoSmooth) {
                 smoothPoints();
             }
             smoothPointsButton.elt.disabled = true;
+        }
+        else {
+            smoothPointsButton.elt.disabled = false;
         }
 
         if(sketch.deviceOrientation != lastOrientation) styleCanvas();
