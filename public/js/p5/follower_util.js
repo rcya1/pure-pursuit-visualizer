@@ -1,3 +1,6 @@
+const conv = require("./conversions")
+const Vector = require("./vector");
+
 // returns the index of the closest point to the given vector
 // uses the last found point to optimize the search
 getClosestPointIndex = function(points, pos, lastPointIndex = 0) {
@@ -6,7 +9,7 @@ getClosestPointIndex = function(points, pos, lastPointIndex = 0) {
 
     for(let i = lastPointIndex; i < points.length; i++) {
         waypoint = points[i];
-        let checkDist = waypoint.getDistanceToSq(pos.getX(), pos.getY());
+        let checkDist = waypoint.getDistanceToSq(pos);
 
         if(index == -1 || checkDist <= closestDist) {
             index = i;
@@ -44,7 +47,7 @@ getLookAheadPoint = function(points, pos, lookAheadDist, lastT = 0, lastIndex = 
 
 generateLookAheadResult = function(a, b, t, i) {
     let d = b.getPosition().sub(a.getPosition());
-    return new LookAheadResult(t, i, a.getPosition().add(d.mult(lastT)));
+    return new LookAheadResult(t, i, a.getPosition().add(d.mult(t)));
 }
 
 getLookAheadPointT = function(pos, start, end, lookAheadDist) {
@@ -71,7 +74,7 @@ getLookAheadPointT = function(pos, start, end, lookAheadDist) {
     return -1;
 }
 
-getCurvatureToPoint = function(pos, angle, lookAhead) {
+getCurvatureToPoint = function(pos, angle, lookAhead, follower) {
     let a = -Math.tan(angle);
     let b = 1.0;
     let c = Math.tan(angle) * pos.getX() - pos.getY();
@@ -81,8 +84,12 @@ getCurvatureToPoint = function(pos, angle, lookAhead) {
     let curvature = 2 * x / l;
 
     let otherPoint = pos.add(new Vector(Math.cos(angle), Math.sin(angle)));
-    let side = Math.sign((otherPoints.getY() - pos.getY()) * (lookAhead.getX() - pos.getX()) - 
-        (otherPoints.getX() - pos.getX()) * (lookAhead.getY() - robot.getY()));
+    let side = Math.sign((otherPoint.getY() - pos.getY()) * (lookAhead.getX() - pos.getX()) - 
+        (otherPoint.getX() - pos.getX()) * (lookAhead.getY() - pos.getY()));
+
+    follower.debug_a = a;
+    follower.debug_b = b;
+    follower.debug_c = c;
 
     return curvature * side;
 }
@@ -94,6 +101,15 @@ PurePursuitFollower = class {
     leftSpeed = 0;
     rightSpeed = 0;
     lastTime = -1;
+
+    // robot line
+    debug_a = 0;
+    debug_b = 0;
+    debug_c = 0;
+
+    // look ahead point
+    debug_la_x = 0;
+    debug_la_y = 0;
 
     constructor(lookAheadDist, driveWidth, maxAcceleration) {
         this.lookAheadDist = lookAheadDist;
@@ -111,15 +127,18 @@ followPath = function(robot, follower, points, currentTime) {
     follower.lastLookAheadIndex = lookAheadResult.i;
     let lookAheadPoint = lookAheadResult.lookAheadPoint;
 
-    let curvature = getCurvatureToPoint(robot.getPosition(), robot.getAngle(), lookAheadPoint);
+    follower.debug_la_x = lookAheadPoint.getX();
+    follower.debug_la_y = lookAheadPoint.getY();
+
+    let curvature = getCurvatureToPoint(robot.getPosition(), robot.getAngle(), lookAheadPoint, follower);
     follower.lastClosestIndex = getClosestPointIndex(points, robot.getPosition(), follower.lastClosestIndex);
     let targetVelocity = points[follower.lastClosestIndex].getTargetVelocity();
 
     let tempLeft = targetVelocity * (2.0 + curvature * follower.driveWidth) / 2.0;
-    let tempRight = targetVelocity * (2.0 - curvature * DRIVE_WIDTH) / 2.0;
+    let tempRight = targetVelocity * (2.0 - curvature * follower.driveWidth) / 2.0;
 
-    if(follower.lastCall == -1) lastCall = currentTime;
-    let maxChange = (currentTime - lastCall) / 1000.0 * follower.maxAcceleration;
+    if(follower.lastCall == -1) follower.lastCall = currentTime;
+    let maxChange = (currentTime - follower.lastCall) / 1000.0 * follower.maxAcceleration;
     follower.leftSpeed += constrain(tempLeft - follower.leftSpeed, maxChange, -maxChange);
     follower.rightSpeed += constrain(tempRight - follower.rightSpeed, maxChange, -maxChange);
 
@@ -136,5 +155,6 @@ constrain = function(value, max, min) {
 }
 
 module.exports = {
-    followPath
+    followPath,
+    PurePursuitFollower
 };

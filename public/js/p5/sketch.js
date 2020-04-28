@@ -1,7 +1,9 @@
 const p5 = require('./p5.min');
 const conv = require('./conversions.js');
-const path_gen = require("./path_gen");
+const path_gen = require('./path_gen');
 const dom_util = require('./dom_util');
+const follower_util = require('./follower_util');
+const debug = require('./debug');
 const Vector = require("./vector");
 const Waypoint = require("./waypoint");
 const Robot = require("./robot");
@@ -57,6 +59,12 @@ var currentSketch = new p5(function(sketch) {
 
     let needAutoInject = true;
     let needAutoSmooth = true;
+
+    let maxVelocity = 50;
+    let maxAcceleration = 50;
+    let turningConstant = 2.0;
+    let lookAhead = 20;
+    let follower;
     
     // mobile
     let lingeringMouse = false;
@@ -71,7 +79,7 @@ var currentSketch = new p5(function(sketch) {
         robot = new Robot();
 
         // Top Configuration Box
-        robotSizeSlider = new dom_util.Slider('#robot-size-slider', 20, 70, 40, 1, sketch);
+        robotSizeSlider = new dom_util.Slider('#robot-size-slider', 1, 20, 5, 0.1, sketch);
         userWaypointSizeSlider = new dom_util.Slider('#user-waypoint-size-slider', 1, 3, 1.7, 0.1, sketch);
 
         // Path Configuration
@@ -104,6 +112,8 @@ var currentSketch = new p5(function(sketch) {
         showSmoothedCheckbox = sketch.select('#show-smoothed-checkbox');
 
         lastOrientation = sketch.deviceOrientation;
+
+        follower = new follower_util.PurePursuitFollower(lookAhead, robotSizeSlider.getValue(), maxAcceleration);
     }
 
     deleteAllPoints = function() {
@@ -119,6 +129,7 @@ var currentSketch = new p5(function(sketch) {
 
     smoothPoints = function() {
         path_gen.smoothPoints(injectedPoints, smoothedPoints, smoothWeightSlider.getValue());
+        path_gen.calculateTargetVelocities(smoothedPoints, maxVelocity, maxAcceleration, turningConstant);
         needAutoSmooth = false;
     }
     
@@ -128,6 +139,10 @@ var currentSketch = new p5(function(sketch) {
     }
 
     update = function() {
+        if(keys.includes('f')) {
+            follower_util.followPath(robot, follower, smoothedPoints, sketch.millis(), sketch);
+        }
+
         robot.update(sketch.frameRate(), robotSizeSlider.getValue());
 
         if(!lingeringMouse) calculateActivePoint();
@@ -224,6 +239,10 @@ var currentSketch = new p5(function(sketch) {
         }
 
         robot.draw(sketch, robotSizeSlider.getValue());
+
+        debug.drawDebugLine(follower.debug_a, follower.debug_b, follower.debug_c, sketch);
+        debug.drawDebugPoint(follower.debug_la_x, follower.debug_la_y, sketch);
+        debug.drawDebugCircle(robot.getX(), robot.getY(), lookAhead, sketch);
     }
     
     sketch.windowResized = function() {
@@ -321,7 +340,7 @@ var currentSketch = new p5(function(sketch) {
     }
 
     moveRobotToStart = function() {
-        robot.setPos(userPoints[0].getPosition());
+        robot.setPosition(userPoints[0].getPosition());
     }
 
     angleRobot = function() {

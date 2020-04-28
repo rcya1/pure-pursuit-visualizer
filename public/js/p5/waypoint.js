@@ -75,7 +75,7 @@ let Waypoint = class {
     }
 
     draw(sketch, radius, active, color) {
-        sketch.fill(color);
+        sketch.fill(color * this.targetVelocity / 50);
         sketch.noStroke();
         let drawRadius = active ? radius * 1.25 : radius;
         sketch.ellipse(conv.px(this.getX(), sketch.width), conv.py(this.getY(), sketch.height),

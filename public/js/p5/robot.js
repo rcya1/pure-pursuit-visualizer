@@ -41,7 +41,7 @@ let Robot = class {
         sketch.push();
             sketch.translate(conv.px(this.pos.getX(), sketch.width), conv.py(this.pos.getY(), sketch.height));
             sketch.rotate(-this.angle + conv.PI / 2);
-            sketch.rect(0, 0, driveWidth, driveWidth * 1.5);
+            sketch.rect(0, 0, conv.px(driveWidth, sketch.width), conv.px(driveWidth * 1.5, sketch.width));
         sketch.pop();
     }
 
@@ -53,11 +53,11 @@ let Robot = class {
         return this.pos.getY();
     }
 
-    getPos = function() {
+    getPosition = function() {
         return this.pos;
     }
 
-    setPos = function(pos) {
+    setPosition = function(pos) {
         this.pos = pos;
     }
 

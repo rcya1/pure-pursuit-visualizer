@@ -63,7 +63,7 @@ calculateDistances = function(points, distanceBetween) {
             let prev = points[i - 1];
             let curr = points[i];
 
-            distanceBetween.push(curr.getDistanceTO(prev));
+            distanceBetween.push(curr.getDistanceTo(prev));
         }
     }
 }
@@ -95,11 +95,11 @@ calculateCurvatures = function(points, curvatures) {
         let b = 0.5 * (x2 * x2 - 2 * x2 * k1 + y2 * y2 - x3 * x3 + 2 * x3 * k1 - y3 * y3) / 
             (x3 * k2 - y3 + y2 - x2 * k2);
         let a = k1 - k2 * b;
-        let r = Math.sqrt((x1 - a) * (x1 - a) + (y1 - b) + (y1 - b));
+        let r = Math.sqrt((x1 - a) * (x1 - a) + (y1 - b) * (y1 - b));
 
         let curvature;
         if(r == 0) {
-            curvature = 0.0;
+            curvature = 1e18; // arbitrary value for infinity
         }
         else {
             curvature = 1.0 / r;
@@ -113,7 +113,7 @@ calculateTargetVelocities = function(points, maxVelocity, maxAcceleration, turni
     let distanceBetween = []; // distance between a point and its previous one
     let curvatures = [];
 
-    calculateDistances(points, distancePath, distanceBetween);
+    calculateDistances(points, distanceBetween);
     calculateCurvatures(points, curvatures);
 
     for(let i = 0; i < points.length; i++) {
