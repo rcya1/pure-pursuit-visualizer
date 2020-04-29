@@ -29,6 +29,8 @@ let LookAheadResult = class {
 }
 
 getLookAheadPoint = function(points, pos, lookAheadDist, lastT = 0, lastIndex = 0) {
+    console.log(lastT, lastIndex);
+
     for(let i = lastIndex; i < points.length - 1; i++) {
         let a = points[i];
         let b = points[i + 1];
@@ -36,7 +38,7 @@ getLookAheadPoint = function(points, pos, lookAheadDist, lastT = 0, lastIndex = 
         let t = getLookAheadPointT(pos, a.getPosition(), b.getPosition(), lookAheadDist);
 
         // if the segment is further along or the fractional index is greater, then this is the correct point
-        if(t != -1 && i > lastIndex || t > lastT) {
+        if(t != -1 && (i > lastIndex || t > lastT)) {
             return generateLookAheadResult(a, b, t, i);
         }
     }
@@ -122,7 +124,7 @@ followPath = function(robot, follower, points, currentTime) {
     if(points.length == 0) return;
 
     let lookAheadResult = getLookAheadPoint(points, robot.getPosition(), follower.lookAheadDist, 
-        follower.lastT, follower.lastIndex);
+        follower.lastT, follower.lastLookAheadIndex);
     follower.lastT = lookAheadResult.t;
     follower.lastLookAheadIndex = lookAheadResult.i;
     let lookAheadPoint = lookAheadResult.lookAheadPoint;
