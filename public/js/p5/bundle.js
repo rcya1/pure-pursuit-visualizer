@@ -30,7 +30,7 @@ module.exports = {
 },{}],2:[function(require,module,exports){
 const conv = require("./conversions");
 
-drawDebugLine = function(a, b, c, sketch) {
+let drawDebugLine = function(a, b, c, sketch) {
     for(let x = 0; x <= 200; x += 5) {
         let y = (-c - a * x) / b;
         sketch.fill(255, 0, 0);
@@ -41,14 +41,14 @@ drawDebugLine = function(a, b, c, sketch) {
     }
 }
 
-drawDebugPoint = function(x, y, sketch) {
+let drawDebugPoint = function(x, y, sketch) {
     sketch.fill(0, 255, 0);
     sketch.noStroke();
     sketch.ellipse(conv.px(x, sketch.width), conv.py(y, sketch.height),
         conv.px(2, sketch.width), conv.px(2, sketch.width));
 }
 
-drawDebugCircle = function(x, y, r, sketch) {
+let drawDebugCircle = function(x, y, r, sketch) {
     sketch.noFill();
     sketch.stroke(0);
     sketch.ellipse(conv.px(x, sketch.width), conv.py(y, sketch.height), conv.px(r * 2, sketch.width), conv.px(r * 2, sketch.width));
@@ -60,7 +60,7 @@ module.exports = {
     drawDebugCircle
 };
 },{"./conversions":1}],3:[function(require,module,exports){
-Slider = class {
+let Slider = class {
     constructor(divId, min, max, value, step, sketch) {
         this.container = sketch.select(divId);
         this.container.class('input-slider-container');
@@ -121,7 +121,7 @@ const Vector = require("./vector");
 
 // returns the index of the closest point to the given vector
 // uses the last found point to optimize the search
-getClosestPointIndex = function(points, pos, lastPointIndex = 0) {
+let getClosestPointIndex = function(points, pos, lastPointIndex = 0) {
     let index = -1;
     let closestDist = -1;
 
@@ -146,7 +146,7 @@ let LookAheadResult = class {
     }
 }
 
-getLookAheadPoint = function(points, pos, lookAheadDist, lastT = 0, lastIndex = 0) {
+let getLookAheadPoint = function(points, pos, lookAheadDist, lastT = 0, lastIndex = 0) {
     for(let i = lastIndex; i < points.length - 1; i++) {
         let a = points[i];
         let b = points[i + 1];
@@ -163,12 +163,12 @@ getLookAheadPoint = function(points, pos, lookAheadDist, lastT = 0, lastIndex = 
     return generateLookAheadResult(points[lastIndex], points[lastIndex + 1], lastT, lastIndex);
 }
 
-generateLookAheadResult = function(a, b, t, i) {
+let generateLookAheadResult = function(a, b, t, i) {
     let d = b.getPosition().sub(a.getPosition());
     return new LookAheadResult(t, i, a.getPosition().add(d.mult(t)));
 }
 
-getLookAheadPointT = function(pos, start, end, lookAheadDist) {
+let getLookAheadPointT = function(pos, start, end, lookAheadDist) {
     let d = end.sub(start);
     let f = start.sub(pos);
 
@@ -192,7 +192,7 @@ getLookAheadPointT = function(pos, start, end, lookAheadDist) {
     return -1;
 }
 
-getCurvatureToPoint = function(pos, angle, lookAhead, follower) {
+let getCurvatureToPoint = function(pos, angle, lookAhead, follower) {
     let a = -Math.tan(angle);
     let b = 1.0;
     let c = Math.tan(angle) * pos.getX() - pos.getY();
@@ -212,7 +212,7 @@ getCurvatureToPoint = function(pos, angle, lookAhead, follower) {
     return curvature * side;
 }
 
-PurePursuitFollower = class {
+let PurePursuitFollower = class {
     constructor(lookAheadDist, driveWidth, maxAcceleration) {
         this.lastT = 0.0;
         this.lastLookAheadIndex = 0;
@@ -236,7 +236,7 @@ PurePursuitFollower = class {
     }
 }
 
-followPath = function(robot, follower, points, currentTime) {
+let followPath = function(robot, follower, points, currentTime) {
     if(points.length == 0) return;
 
     let lookAheadResult = getLookAheadPoint(points, robot.getPosition(), follower.lookAheadDist, 
@@ -266,7 +266,7 @@ followPath = function(robot, follower, points, currentTime) {
     follower.lastCall = currentTime;
 }
 
-constrain = function(value, max, min) {
+let constrain = function(value, max, min) {
     if(value < min) return min;
     if(value > max) return max;
     return value;
@@ -286,7 +286,7 @@ module.exports = {
 },{}],6:[function(require,module,exports){
 const Waypoint = require("./waypoint");
 
-injectPoints = function(userPoints, injectedPoints, spacing) {
+let injectPoints = function(userPoints, injectedPoints, spacing) {
     injectedPoints.splice(0, injectedPoints.length);
 
     for (let i = 0; i < userPoints.length - 1; i++) {
@@ -303,7 +303,7 @@ injectPoints = function(userPoints, injectedPoints, spacing) {
     }
 }
 
-smoothPoints = function(injectedPoints, smoothedPoints, weight) {
+let smoothPoints = function(injectedPoints, smoothedPoints, weight) {
     smoothedPoints.splice(0, smoothedPoints.length);
 
     for (waypoint of injectedPoints) {
@@ -327,7 +327,7 @@ smoothPoints = function(injectedPoints, smoothedPoints, weight) {
             let compX = current.getX();
             let newX = current.getX() + WEIGHT_DATA * (original.getX() - current.getX()) + 
                 WEIGHT_SMOOTH * (prev.getX() + next.getX() - (2 * current.getX()));
-            current.setX(newX);
+            current.setX(newX);u
             change += Math.abs(compX - newX);
 
             // y smoothing
@@ -340,7 +340,7 @@ smoothPoints = function(injectedPoints, smoothedPoints, weight) {
     }
 }
 
-calculateDistances = function(points, distanceBetween) {
+let calculateDistances = function(points, distanceBetween) {
     for(let i = 0; i < points.length; i++) {
         if(i == 0) {
             distanceBetween.push(0.0);
@@ -354,7 +354,7 @@ calculateDistances = function(points, distanceBetween) {
     }
 }
 
-calculateCurvatures = function(points, curvatures) {
+let calculateCurvatures = function(points, curvatures) {
     for(let i = 0; i < points.length; i++) {
         if(i == 0 || i == points.length - 1) {
             curvatures.push(0);
@@ -395,7 +395,7 @@ calculateCurvatures = function(points, curvatures) {
     }
 }
 
-calculateTargetVelocities = function(points, maxVelocity, maxAcceleration, turningConstant) {
+let calculateTargetVelocities = function(points, maxVelocity, maxAcceleration, turningConstant) {
     let distanceBetween = []; // distance between a point and its previous one
     let curvatures = [];
 

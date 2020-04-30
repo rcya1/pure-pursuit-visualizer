@@ -1,4 +1,4 @@
-Slider = class {
+let Slider = class {
     constructor(divId, min, max, value, step, sketch) {
         this.container = sketch.select(divId);
         this.container.class('input-slider-container');

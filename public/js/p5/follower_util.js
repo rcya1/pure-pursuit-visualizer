@@ -6,7 +6,7 @@ const Vector = require("./vector");
 
 // returns the index of the closest point to the given vector
 // uses the last found point to optimize the search
-getClosestPointIndex = function(points, pos, lastPointIndex = 0) {
+let getClosestPointIndex = function(points, pos, lastPointIndex = 0) {
     let index = -1;
     let closestDist = -1;
 
@@ -31,7 +31,7 @@ let LookAheadResult = class {
     }
 }
 
-getLookAheadPoint = function(points, pos, lookAheadDist, lastT = 0, lastIndex = 0) {
+let getLookAheadPoint = function(points, pos, lookAheadDist, lastT = 0, lastIndex = 0) {
     for(let i = lastIndex; i < points.length - 1; i++) {
         let a = points[i];
         let b = points[i + 1];
@@ -48,12 +48,12 @@ getLookAheadPoint = function(points, pos, lookAheadDist, lastT = 0, lastIndex = 
     return generateLookAheadResult(points[lastIndex], points[lastIndex + 1], lastT, lastIndex);
 }
 
-generateLookAheadResult = function(a, b, t, i) {
+let generateLookAheadResult = function(a, b, t, i) {
     let d = b.getPosition().sub(a.getPosition());
     return new LookAheadResult(t, i, a.getPosition().add(d.mult(t)));
 }
 
-getLookAheadPointT = function(pos, start, end, lookAheadDist) {
+let getLookAheadPointT = function(pos, start, end, lookAheadDist) {
     let d = end.sub(start);
     let f = start.sub(pos);
 
@@ -77,7 +77,7 @@ getLookAheadPointT = function(pos, start, end, lookAheadDist) {
     return -1;
 }
 
-getCurvatureToPoint = function(pos, angle, lookAhead, follower) {
+let getCurvatureToPoint = function(pos, angle, lookAhead, follower) {
     let a = -Math.tan(angle);
     let b = 1.0;
     let c = Math.tan(angle) * pos.getX() - pos.getY();
@@ -97,7 +97,7 @@ getCurvatureToPoint = function(pos, angle, lookAhead, follower) {
     return curvature * side;
 }
 
-PurePursuitFollower = class {
+let PurePursuitFollower = class {
     constructor(lookAheadDist, driveWidth, maxAcceleration) {
         this.lastT = 0.0;
         this.lastLookAheadIndex = 0;
@@ -121,7 +121,7 @@ PurePursuitFollower = class {
     }
 }
 
-followPath = function(robot, follower, points, currentTime) {
+let followPath = function(robot, follower, points, currentTime) {
     if(points.length == 0) return;
 
     let lookAheadResult = getLookAheadPoint(points, robot.getPosition(), follower.lookAheadDist, 
@@ -151,7 +151,7 @@ followPath = function(robot, follower, points, currentTime) {
     follower.lastCall = currentTime;
 }
 
-constrain = function(value, max, min) {
+let constrain = function(value, max, min) {
     if(value < min) return min;
     if(value > max) return max;
     return value;

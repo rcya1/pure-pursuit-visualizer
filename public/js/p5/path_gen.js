@@ -1,6 +1,6 @@
 const Waypoint = require("./waypoint");
 
-injectPoints = function(userPoints, injectedPoints, spacing) {
+let injectPoints = function(userPoints, injectedPoints, spacing) {
     injectedPoints.splice(0, injectedPoints.length);
 
     for (let i = 0; i < userPoints.length - 1; i++) {
@@ -17,7 +17,7 @@ injectPoints = function(userPoints, injectedPoints, spacing) {
     }
 }
 
-smoothPoints = function(injectedPoints, smoothedPoints, weight) {
+let smoothPoints = function(injectedPoints, smoothedPoints, weight) {
     smoothedPoints.splice(0, smoothedPoints.length);
 
     for (waypoint of injectedPoints) {
@@ -41,7 +41,7 @@ smoothPoints = function(injectedPoints, smoothedPoints, weight) {
             let compX = current.getX();
             let newX = current.getX() + WEIGHT_DATA * (original.getX() - current.getX()) + 
                 WEIGHT_SMOOTH * (prev.getX() + next.getX() - (2 * current.getX()));
-            current.setX(newX);
+            current.setX(newX);u
             change += Math.abs(compX - newX);
 
             // y smoothing
@@ -54,7 +54,7 @@ smoothPoints = function(injectedPoints, smoothedPoints, weight) {
     }
 }
 
-calculateDistances = function(points, distanceBetween) {
+let calculateDistances = function(points, distanceBetween) {
     for(let i = 0; i < points.length; i++) {
         if(i == 0) {
             distanceBetween.push(0.0);
@@ -68,7 +68,7 @@ calculateDistances = function(points, distanceBetween) {
     }
 }
 
-calculateCurvatures = function(points, curvatures) {
+let calculateCurvatures = function(points, curvatures) {
     for(let i = 0; i < points.length; i++) {
         if(i == 0 || i == points.length - 1) {
             curvatures.push(0);
@@ -109,7 +109,7 @@ calculateCurvatures = function(points, curvatures) {
     }
 }
 
-calculateTargetVelocities = function(points, maxVelocity, maxAcceleration, turningConstant) {
+let calculateTargetVelocities = function(points, maxVelocity, maxAcceleration, turningConstant) {
     let distanceBetween = []; // distance between a point and its previous one
     let curvatures = [];
 
