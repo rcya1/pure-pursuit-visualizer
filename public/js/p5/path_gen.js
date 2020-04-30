@@ -41,7 +41,7 @@ let smoothPoints = function(injectedPoints, smoothedPoints, weight) {
             let compX = current.getX();
             let newX = current.getX() + WEIGHT_DATA * (original.getX() - current.getX()) + 
                 WEIGHT_SMOOTH * (prev.getX() + next.getX() - (2 * current.getX()));
-            current.setX(newX);u
+            current.setX(newX);
             change += Math.abs(compX - newX);
 
             // y smoothing
