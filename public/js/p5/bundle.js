@@ -116,6 +116,9 @@ module.exports = {
 const conv = require("./conversions")
 const Vector = require("./vector");
 
+// TODO Make it so that the last point is the closest point to the path
+// TODO Implement a feature where if the point is in a threshold just way too far, the robot will just do a turn towards the lookahead
+
 // returns the index of the closest point to the given vector
 // uses the last found point to optimize the search
 getClosestPointIndex = function(points, pos, lastPointIndex = 0) {
@@ -144,8 +147,6 @@ let LookAheadResult = class {
 }
 
 getLookAheadPoint = function(points, pos, lookAheadDist, lastT = 0, lastIndex = 0) {
-    console.log(lastT, lastIndex);
-
     for(let i = lastIndex; i < points.length - 1; i++) {
         let a = points[i];
         let b = points[i + 1];
@@ -225,8 +226,8 @@ PurePursuitFollower = class {
     debug_c = 0;
 
     // look ahead point
-    debug_la_x = 0;
-    debug_la_y = 0;
+    debug_la_x = -1257;
+    debug_la_y = -1257;
 
     constructor(lookAheadDist, driveWidth, maxAcceleration) {
         this.lookAheadDist = lookAheadDist;
@@ -548,9 +549,16 @@ var currentSketch = new p5(function(sketch) {
     let autoInjectCheckbox;
     let autoSmoothCheckbox;
 
+    let maxVelocitySlider;
+    let maxAccelerationSlider;
+    let lookAheadSlider;
+    let turningConstantSlider;
+
     let showUserCheckbox;
     let showInjectedCheckbox;
     let showSmoothedCheckbox;
+    let showLACircleCheckbox;
+    let showLAPointCheckbox;
 
     let userPoints = [];
     let injectedPoints = [];
@@ -562,10 +570,6 @@ var currentSketch = new p5(function(sketch) {
     let needAutoInject = true;
     let needAutoSmooth = true;
 
-    let maxVelocity = 50;
-    let maxAcceleration = 50;
-    let turningConstant = 2.0;
-    let lookAhead = 20;
     let follower;
     
     // mobile
@@ -608,33 +612,61 @@ var currentSketch = new p5(function(sketch) {
         smoothPointsButton.mousePressed(smoothPoints);
         autoSmoothCheckbox = sketch.select('#auto-smooth-checkbox');
 
+        // Follower
+        maxVelocitySlider = new dom_util.Slider('#max-velocity-slider', 10, 100, 50, 1, sketch);
+        maxVelocitySlider.setCallback(function() {
+            smoothPoints();
+        });
+        maxAccelerationSlider = new dom_util.Slider('#max-acceleration-slider', 10, 100, 50, 1, sketch);
+        maxAccelerationSlider.setCallback(function() {
+            follower.maxAcceleration = maxAccelerationSlider.getValue();
+        });
+        lookAheadSlider = new dom_util.Slider('#look-ahead-slider', 5, 40, 15, 1, sketch);
+        lookAheadSlider.setCallback(function() {
+            follower.lookAheadDist = lookAheadSlider.getValue();
+        });
+        turningConstantSlider = new dom_util.Slider('#turning-constant-slider', 0.5, 2.0, 1.5, 0.1, sketch);
+        turningConstantSlider.setCallback(function() {
+            smoothPoints();
+        });
+        resetFollower();
+
         // Visibility
         showUserCheckbox = sketch.select('#show-user-checkbox');
         showInjectedCheckbox = sketch.select('#show-injected-checkbox');
         showSmoothedCheckbox = sketch.select('#show-smoothed-checkbox');
+        showLACircleCheckbox = sketch.select('#show-look-ahead-circle-checkbox');
+        showLAPointCheckbox = sketch.select('#show-look-ahead-point-checkbox');
 
         lastOrientation = sketch.deviceOrientation;
+    }
 
-        follower = new follower_util.PurePursuitFollower(lookAhead, robotSizeSlider.getValue(), maxAcceleration);
+    resetFollower = function() {
+        follower = new follower_util.PurePursuitFollower(lookAheadSlider.getValue(), robotSizeSlider.getValue(), 
+            maxAccelerationSlider.getValue());
     }
 
     deleteAllPoints = function() {
         userPoints = [];
         injectedPoints = [];
         smoothedPoints = [];
+        resetFollower();
     }
 
     injectPoints = function() {
         path_gen.injectPoints(userPoints, injectedPoints, injectSpacingSlider.getValue());
         needAutoInject = false;
+        resetFollower();
     }   
 
     smoothPoints = function() {
         path_gen.smoothPoints(injectedPoints, smoothedPoints, smoothWeightSlider.getValue());
-        path_gen.calculateTargetVelocities(smoothedPoints, maxVelocity, maxAcceleration, turningConstant);
+        path_gen.calculateTargetVelocities(smoothedPoints, maxVelocitySlider.getValue(), maxAccelerationSlider.getValue(), 
+            turningConstantSlider.getValue());
         needAutoSmooth = false;
+        resetFollower();
     }
-    
+
     sketch.draw = function() {
         update();
         display();
@@ -662,6 +694,7 @@ var currentSketch = new p5(function(sketch) {
             else mouseState = MouseState.DEFAULT;
         }
 
+        // handle updating the cursor sprite
         if(deletePointsCheckbox.elt.checked) {
             sketch.cursor('not-allowed');
         }
@@ -677,6 +710,7 @@ var currentSketch = new p5(function(sketch) {
             needAutoSmooth = true;
         }
 
+        // handle auto injecting points
         if(autoInjectCheckbox.elt.checked) {
             if(needAutoInject) {
                 injectPoints();
@@ -686,6 +720,8 @@ var currentSketch = new p5(function(sketch) {
         else {
             injectPointsButton.elt.disabled = false;
         }
+
+        // handle auto smoothing points
         if(autoSmoothCheckbox.elt.checked) {
             if(needAutoSmooth) {
                 smoothPoints();
@@ -696,6 +732,7 @@ var currentSketch = new p5(function(sketch) {
             smoothPointsButton.elt.disabled = false;
         }
 
+        // handle device orientation switches
         if(sketch.deviceOrientation != lastOrientation) styleCanvas();
         lastOrientation = sketch.deviceOrientation; 
     }
@@ -704,7 +741,7 @@ var currentSketch = new p5(function(sketch) {
     calculateActivePoint = function() {
         if(mouseState != MouseState.DRAGGING) {
             let closestDist = userWaypointSizeSlider.getValue() * userWaypointSizeSlider.getValue();
-            if(lenientDragging) closestDist *= 4;
+            if(lenientDragging) closestDist *= 4; // make the radius twice as large if on mobile
             activePoint = -1;
             mouseVector = new Vector(conv.cx(sketch.mouseX, sketch.width), conv.cy(sketch.mouseY, sketch.height));
             for(pointIndex in userPoints) {
@@ -742,9 +779,9 @@ var currentSketch = new p5(function(sketch) {
 
         robot.draw(sketch, robotSizeSlider.getValue());
 
-        debug.drawDebugLine(follower.debug_a, follower.debug_b, follower.debug_c, sketch);
+        // debug.drawDebugLine(follower.debug_a, follower.debug_b, follower.debug_c, sketch);
         debug.drawDebugPoint(follower.debug_la_x, follower.debug_la_y, sketch);
-        debug.drawDebugCircle(robot.getX(), robot.getY(), lookAhead, sketch);
+        debug.drawDebugCircle(robot.getX(), robot.getY(), lookAheadSlider.getValue(), sketch);
     }
     
     sketch.windowResized = function() {

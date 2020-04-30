@@ -82,6 +82,17 @@
     justify-content: space-between;
 }
 
+#configuration-container {
+    display: inline-block;
+    margin-left: 5%;
+    flex-grow: 2;
+}
+
+#configuration-container button {
+    float: right;
+    margin-bottom: 10px;
+}
+
 #top-config-container {
     margin: 10px 10px 10px;
 }
@@ -90,17 +101,11 @@
     margin: 10px 10px 10px;
 }
 
-#configuration-container {
-    width: 60%;
-    display: inline-block;
-    margin-left: 5%;
-}
-
-#configuration-container button {
-    float: right;
-    margin-bottom: 10px;
+#follower-container {
+    flex-grow: 2;
 }
 
 #visibility-container {
     margin-right: 5%;
+    flex-grow: 1;
 }

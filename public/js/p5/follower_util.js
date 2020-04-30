@@ -1,6 +1,9 @@
 const conv = require("./conversions")
 const Vector = require("./vector");
 
+// TODO Make it so that the last point is the closest point to the path
+// TODO Implement a feature where if the point is in a threshold just way too far, the robot will just do a turn towards the lookahead
+
 // returns the index of the closest point to the given vector
 // uses the last found point to optimize the search
 getClosestPointIndex = function(points, pos, lastPointIndex = 0) {
@@ -29,8 +32,6 @@ let LookAheadResult = class {
 }
 
 getLookAheadPoint = function(points, pos, lookAheadDist, lastT = 0, lastIndex = 0) {
-    console.log(lastT, lastIndex);
-
     for(let i = lastIndex; i < points.length - 1; i++) {
         let a = points[i];
         let b = points[i + 1];
@@ -110,8 +111,8 @@ PurePursuitFollower = class {
     debug_c = 0;
 
     // look ahead point
-    debug_la_x = 0;
-    debug_la_y = 0;
+    debug_la_x = -1257;
+    debug_la_y = -1257;
 
     constructor(lookAheadDist, driveWidth, maxAcceleration) {
         this.lookAheadDist = lookAheadDist;
