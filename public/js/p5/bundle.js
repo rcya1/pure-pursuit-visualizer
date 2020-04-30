@@ -116,7 +116,7 @@ module.exports = {
 const conv = require("./conversions")
 const Vector = require("./vector");
 
-// TODO Make it so that the last point is the closest point to the path
+// TODO Make it so that the last point is the closest point to the path if it is undefined
 // TODO Implement a feature where if the point is in a threshold just way too far, the robot will just do a turn towards the lookahead
 
 // returns the index of the closest point to the given vector
@@ -213,23 +213,23 @@ getCurvatureToPoint = function(pos, angle, lookAhead, follower) {
 }
 
 PurePursuitFollower = class {
-    lastT = 0.0;
-    lastLookAheadIndex = 0;
-    lastClosestIndex = 0;
-    leftSpeed = 0;
-    rightSpeed = 0;
-    lastTime = -1;
-
-    // robot line
-    debug_a = 0;
-    debug_b = 0;
-    debug_c = 0;
-
-    // look ahead point
-    debug_la_x = -1257;
-    debug_la_y = -1257;
-
     constructor(lookAheadDist, driveWidth, maxAcceleration) {
+        this.lastT = 0.0;
+        this.lastLookAheadIndex = 0;
+        this.lastClosestIndex = 0;
+        this.leftSpeed = 0;
+        this.rightSpeed = 0;
+        this.lastTime = -1;
+
+        // robot line
+        this.debug_a = 0;
+        this.debug_b = 0;
+        this.debug_c = 0;
+
+        // look ahead point
+        this.debug_la_x = -1257;
+        this.debug_la_y = -1257;
+
         this.lookAheadDist = lookAheadDist;
         this.driveWidth = driveWidth;
         this.maxAcceleration = maxAcceleration;
@@ -517,7 +517,6 @@ const MouseState = {
 }
 
 // TODO Add keyboard shortcuts
-// TODO Fix smooth slider starting at 0
 
 var currentSketch = new p5(function(sketch) {
     
@@ -617,7 +616,7 @@ var currentSketch = new p5(function(sketch) {
         maxVelocitySlider.setCallback(function() {
             smoothPoints();
         });
-        maxAccelerationSlider = new dom_util.Slider('#max-acceleration-slider', 10, 100, 50, 1, sketch);
+        maxAccelerationSlider = new dom_util.Slider('#max-acceleration-slider', 10, 100, 75, 1, sketch);
         maxAccelerationSlider.setCallback(function() {
             follower.maxAcceleration = maxAccelerationSlider.getValue();
         });

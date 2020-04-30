@@ -14,7 +14,6 @@ const MouseState = {
 }
 
 // TODO Add keyboard shortcuts
-// TODO Fix smooth slider starting at 0
 
 var currentSketch = new p5(function(sketch) {
     
@@ -114,7 +113,7 @@ var currentSketch = new p5(function(sketch) {
         maxVelocitySlider.setCallback(function() {
             smoothPoints();
         });
-        maxAccelerationSlider = new dom_util.Slider('#max-acceleration-slider', 10, 100, 50, 1, sketch);
+        maxAccelerationSlider = new dom_util.Slider('#max-acceleration-slider', 10, 100, 75, 1, sketch);
         maxAccelerationSlider.setCallback(function() {
             follower.maxAcceleration = maxAccelerationSlider.getValue();
         });
