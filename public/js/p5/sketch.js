@@ -14,6 +14,9 @@ const MouseState = {
 }
 
 // TODO Add keyboard shortcuts
+// TODO Fix bug on firefox version 68.7.0esr
+// TODO Add debug ability to export all points
+// TODO When point is deleted, don't reset the robot, make that a button instead
 
 var currentSketch = new p5(function(sketch) {
     

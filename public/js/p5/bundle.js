@@ -517,6 +517,7 @@ const MouseState = {
 }
 
 // TODO Add keyboard shortcuts
+// TODO Fix bug on firefox version 68.7.0esr
 
 var currentSketch = new p5(function(sketch) {
     
