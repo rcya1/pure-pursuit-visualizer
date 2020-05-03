@@ -28,7 +28,9 @@ module.exports = {
 }
 
 },{}],2:[function(require,module,exports){
-const conv = require("./conversions");
+const conv = require('./conversions');
+const Vector = require('./vector');
+const Waypoint = require('./waypoint');
 
 let drawDebugLine = function(a, b, c, sketch) {
     for(let x = 0; x <= 200; x += 5) {
@@ -54,12 +56,29 @@ let drawDebugCircle = function(x, y, r, sketch) {
     sketch.ellipse(conv.px(x, sketch.width), conv.py(y, sketch.height), conv.px(r * 2, sketch.width), conv.px(r * 2, sketch.width));
 }
 
+let getString = function(_injectSpacing, _smoothWeight, _maxVel, _maxAcc, _laDist, _turnConst, _userPoints, _robotPos) {
+	let obj = {
+		injectSpacing: _injectSpacing,
+		smoothWeight: _smoothWeight,
+		maxVel: _maxVel,
+		maxAcc: _maxAcc,
+		laDist: _laDist,
+		turnConst: _turnConst,
+		userPoints: _userPoints,
+		robotPos: _robotPos
+	};
+
+	return JSON.stringify(obj);
+}
+
 module.exports = {
     drawDebugLine,
     drawDebugPoint,
-    drawDebugCircle
+    drawDebugCircle,
+	getString,
 };
-},{"./conversions":1}],3:[function(require,module,exports){
+
+},{"./conversions":1,"./vector":9,"./waypoint":10}],3:[function(require,module,exports){
 let Slider = class {
     constructor(divId, min, max, value, step, sketch) {
         this.container = sketch.select(divId);
@@ -91,6 +110,11 @@ let Slider = class {
         return this.slider.value();
     }
 
+	setValue = function(newValue) {
+		this.slider.value(newValue);
+		this.input.value(newValue);
+	}
+
     setCallback = function(callback) {
         // double-check to make sure these were set correctly (weird bug with slider)
         if(this.slider.value() == 0) this.slider.value(this.input.value());
@@ -117,6 +141,7 @@ const conv = require("./conversions")
 const Vector = require("./vector");
 
 // TODO Make it so that the last point is the closest point to the path if it is undefined
+// TODO Make it so that the point cannot jump to segments too far away and facing the opposite direction (90 degree turns should be ok)
 // TODO Implement a feature where if the point is in a threshold just way too far, the robot will just do a turn towards the lookahead
 
 // returns the index of the closest point to the given vector
@@ -518,6 +543,7 @@ const MouseState = {
 
 // TODO Add keyboard shortcuts
 // TODO Fix bug on firefox version 68.7.0esr
+// TODO When point is deleted, don't reset the robot, make that a button instead
 
 var currentSketch = new p5(function(sketch) {
     
@@ -559,6 +585,10 @@ var currentSketch = new p5(function(sketch) {
     let showSmoothedCheckbox;
     let showLACircleCheckbox;
     let showLAPointCheckbox;
+
+	// debug
+	let exportPointsButton;
+	let importPointsButton;
 
     let userPoints = [];
     let injectedPoints = [];
@@ -637,6 +667,44 @@ var currentSketch = new p5(function(sketch) {
         showSmoothedCheckbox = sketch.select('#show-smoothed-checkbox');
         showLACircleCheckbox = sketch.select('#show-look-ahead-circle-checkbox');
         showLAPointCheckbox = sketch.select('#show-look-ahead-point-checkbox');
+
+		// Debug
+		exportDataButton = sketch.select('#export-data-button');
+		exportDataButton.mousePressed(function() {
+			console.log(debug.getString(
+				injectSpacingSlider.getValue(),
+				smoothWeightSlider.getValue(),
+				maxVelocitySlider.getValue(),
+				maxAccelerationSlider.getValue(),
+				lookAheadSlider.getValue(),
+				turningConstantSlider.getValue(),
+				userPoints,
+				robot.getPosition())
+			);
+		});
+
+		importDataButton = sketch.select('#import-data-button');
+		importDataButton.mousePressed(function() {
+			let dataString = prompt("Enter JSON Data", "");
+			let obj = JSON.parse(dataString);
+
+			injectSpacingSlider.setValue(obj.injectSpacing);
+			smoothWeightSlider.setValue(obj.smoothWeight);
+			maxVelocitySlider.setValue(obj.maxVel);
+			maxAccelerationSlider.setValue(obj.maxAcc);
+			lookAheadSlider.setValue(obj.laDist);
+			turningConstantSlider.setValue(obj.turnConst);
+		
+			deleteAllPoints();
+			for(pointIndex in obj.userPoints) {
+				let point = new Waypoint(new Vector(obj.userPoints[pointIndex].position.x, obj.userPoints[pointIndex].position.y));
+				userPoints.push(point);
+			}
+			needAutoInject = true;
+			needAutoSmooth = true;
+			
+			robot.setPosition(new Vector(obj.robotPos.x, obj.robotPos.y));
+		});
 
         lastOrientation = sketch.deviceOrientation;
     }

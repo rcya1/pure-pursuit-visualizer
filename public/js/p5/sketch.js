@@ -15,7 +15,6 @@ const MouseState = {
 
 // TODO Add keyboard shortcuts
 // TODO Fix bug on firefox version 68.7.0esr
-// TODO Add debug ability to export all points
 // TODO When point is deleted, don't reset the robot, make that a button instead
 
 var currentSketch = new p5(function(sketch) {
@@ -58,6 +57,10 @@ var currentSketch = new p5(function(sketch) {
     let showSmoothedCheckbox;
     let showLACircleCheckbox;
     let showLAPointCheckbox;
+
+	// debug
+	let exportPointsButton;
+	let importPointsButton;
 
     let userPoints = [];
     let injectedPoints = [];
@@ -136,6 +139,44 @@ var currentSketch = new p5(function(sketch) {
         showSmoothedCheckbox = sketch.select('#show-smoothed-checkbox');
         showLACircleCheckbox = sketch.select('#show-look-ahead-circle-checkbox');
         showLAPointCheckbox = sketch.select('#show-look-ahead-point-checkbox');
+
+		// Debug
+		exportDataButton = sketch.select('#export-data-button');
+		exportDataButton.mousePressed(function() {
+			console.log(debug.getString(
+				injectSpacingSlider.getValue(),
+				smoothWeightSlider.getValue(),
+				maxVelocitySlider.getValue(),
+				maxAccelerationSlider.getValue(),
+				lookAheadSlider.getValue(),
+				turningConstantSlider.getValue(),
+				userPoints,
+				robot.getPosition())
+			);
+		});
+
+		importDataButton = sketch.select('#import-data-button');
+		importDataButton.mousePressed(function() {
+			let dataString = prompt("Enter JSON Data", "");
+			let obj = JSON.parse(dataString);
+
+			injectSpacingSlider.setValue(obj.injectSpacing);
+			smoothWeightSlider.setValue(obj.smoothWeight);
+			maxVelocitySlider.setValue(obj.maxVel);
+			maxAccelerationSlider.setValue(obj.maxAcc);
+			lookAheadSlider.setValue(obj.laDist);
+			turningConstantSlider.setValue(obj.turnConst);
+		
+			deleteAllPoints();
+			for(pointIndex in obj.userPoints) {
+				let point = new Waypoint(new Vector(obj.userPoints[pointIndex].position.x, obj.userPoints[pointIndex].position.y));
+				userPoints.push(point);
+			}
+			needAutoInject = true;
+			needAutoSmooth = true;
+			
+			robot.setPosition(new Vector(obj.robotPos.x, obj.robotPos.y));
+		});
 
         lastOrientation = sketch.deviceOrientation;
     }
