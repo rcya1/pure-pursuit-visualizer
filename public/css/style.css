@@ -80,11 +80,12 @@
 #settings-container {
     display: flex;
     justify-content: space-between;
+	margin-left: 5%;
+	margin-right: 5%;
 }
 
 #configuration-container {
     display: inline-block;
-    margin-left: 5%;
     flex-grow: 2;
 }
 
@@ -106,6 +107,9 @@
 }
 
 #visibility-container {
-    margin-right: 5%;
     flex-grow: 1;
+}
+
+.debug {
+	display: none;
 }

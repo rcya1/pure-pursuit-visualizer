@@ -25,16 +25,16 @@ let Slider = class {
         this.setCallback(function() {});
     }
 
-    getValue = function() {
+    getValue() {
         return this.slider.value();
     }
 
-	setValue = function(newValue) {
+	setValue(newValue) {
 		this.slider.value(newValue);
 		this.input.value(newValue);
 	}
 
-    setCallback = function(callback) {
+    setCallback(callback) {
         // double-check to make sure these were set correctly (weird bug with slider)
         if(this.slider.value() == 0) this.slider.value(this.input.value());
         if(this.input.value() == 0) this.input.value(this.slider.value());

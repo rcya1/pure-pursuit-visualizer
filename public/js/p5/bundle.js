@@ -106,16 +106,16 @@ let Slider = class {
         this.setCallback(function() {});
     }
 
-    getValue = function() {
+    getValue() {
         return this.slider.value();
     }
 
-	setValue = function(newValue) {
+	setValue(newValue) {
 		this.slider.value(newValue);
 		this.input.value(newValue);
 	}
 
-    setCallback = function(callback) {
+    setCallback(callback) {
         // double-check to make sure these were set correctly (weird bug with slider)
         if(this.slider.value() == 0) this.slider.value(this.input.value());
         if(this.input.value() == 0) this.input.value(this.slider.value());
@@ -467,15 +467,15 @@ let Robot = class {
         this.rightSpeed = 0.0;
     }
 
-    setLeft = function(leftSpeed) {
+    setLeft(leftSpeed) {
         this.leftSpeed = leftSpeed;
     }
 
-    setRight = function(rightSpeed) {
+    setRight(rightSpeed) {
         this.rightSpeed = rightSpeed;
     }
 
-    update = function(frameRate, driveWidth) {
+    update(frameRate, driveWidth) {
         this.velocity = (this.leftSpeed + this.rightSpeed) / 2;
         this.angularVelocity = -(this.leftSpeed - this.rightSpeed) / driveWidth;
 
@@ -488,7 +488,7 @@ let Robot = class {
         this.rightSpeed = 0;
     }
 
-    draw = function(sketch, driveWidth) {
+    draw(sketch, driveWidth) {
         sketch.rectMode(sketch.CENTER);
         sketch.fill(120);
         sketch.stroke(0);
@@ -499,32 +499,33 @@ let Robot = class {
         sketch.pop();
     }
 
-    getX = function() {
+    getX() {
         return this.pos.getX();
     }
 
-    getY = function() {
+    getY() {
         return this.pos.getY();
     }
 
-    getPosition = function() {
+    getPosition() {
         return this.pos;
     }
 
-    setPosition = function(pos) {
+    setPosition(pos) {
         this.pos = pos;
     }
 
-    getAngle = function() {
+    getAngle() {
         return this.angle;
     }
 
-    setAngle = function(angle) {
+    setAngle(angle) {
         this.angle = angle;
     }
 }
 
 module.exports = Robot;
+
 },{"./conversions.js":1,"./vector":9}],8:[function(require,module,exports){
 const p5 = require('./p5.min');
 const conv = require('./conversions.js');
@@ -542,7 +543,6 @@ const MouseState = {
 }
 
 // TODO Add keyboard shortcuts
-// TODO Fix bug on firefox version 68.7.0esr
 // TODO When point is deleted, don't reset the robot, make that a button instead
 
 var currentSketch = new p5(function(sketch) {

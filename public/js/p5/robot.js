@@ -13,15 +13,15 @@ let Robot = class {
         this.rightSpeed = 0.0;
     }
 
-    setLeft = function(leftSpeed) {
+    setLeft(leftSpeed) {
         this.leftSpeed = leftSpeed;
     }
 
-    setRight = function(rightSpeed) {
+    setRight(rightSpeed) {
         this.rightSpeed = rightSpeed;
     }
 
-    update = function(frameRate, driveWidth) {
+    update(frameRate, driveWidth) {
         this.velocity = (this.leftSpeed + this.rightSpeed) / 2;
         this.angularVelocity = -(this.leftSpeed - this.rightSpeed) / driveWidth;
 
@@ -34,7 +34,7 @@ let Robot = class {
         this.rightSpeed = 0;
     }
 
-    draw = function(sketch, driveWidth) {
+    draw(sketch, driveWidth) {
         sketch.rectMode(sketch.CENTER);
         sketch.fill(120);
         sketch.stroke(0);
@@ -45,27 +45,27 @@ let Robot = class {
         sketch.pop();
     }
 
-    getX = function() {
+    getX() {
         return this.pos.getX();
     }
 
-    getY = function() {
+    getY() {
         return this.pos.getY();
     }
 
-    getPosition = function() {
+    getPosition() {
         return this.pos;
     }
 
-    setPosition = function(pos) {
+    setPosition(pos) {
         this.pos = pos;
     }
 
-    getAngle = function() {
+    getAngle() {
         return this.angle;
     }
 
-    setAngle = function(angle) {
+    setAngle(angle) {
         this.angle = angle;
     }
 }
