@@ -14,7 +14,7 @@ const MouseState = {
 }
 
 // TODO Add keyboard shortcuts
-// TODO When point is deleted, don't reset the robot, make that a button instead
+// TODO Add a button for making the robot follow the path (and make sure a good alternative for mobile exists)
 
 var currentSketch = new p5(function(sketch) {
     
@@ -355,21 +355,17 @@ var currentSketch = new p5(function(sketch) {
                 }
                 needAutoInject = true;
                 needAutoSmooth = true;
-
-                if(userPoints.length > 0) {
-                    moveRobotToStart();
-                    if(userPoints.length > 1) {
-                        angleRobot();
-                    }
-                }
             }
             else {
                 // add a point or drag the currently selected point
                 mouseClickVector = new Vector(conv.cx(sketch.mouseX, sketch.width), conv.cy(sketch.mouseY, sketch.height));
+
+				let addedPoint = false;
                 if(activePoint == -1) {
                     let wp = new Waypoint(mouseClickVector.copy());
                     userPoints.push(wp);
                     activePoint = userPoints.length - 1;
+					addedPoint = true;
                 }
 
                 mouseState = MouseState.DRAGGING;
@@ -379,7 +375,7 @@ var currentSketch = new p5(function(sketch) {
                     moveRobotToStart();
                 }
                 // angle the robot to the second point
-                if(activePoint == 1) {
+                if(activePoint == 1 && !addedPoint) {
                     angleRobot();
                 }
             }

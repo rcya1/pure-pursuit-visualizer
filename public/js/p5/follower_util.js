@@ -1,7 +1,6 @@
 const conv = require("./conversions")
 const Vector = require("./vector");
 
-// TODO Make it so that the last point is the closest point to the path if it is undefined
 // TODO Make it so that the point cannot jump to segments too far away and facing the opposite direction (90 degree turns should be ok)
 // TODO Implement a feature where if the point is in a threshold just way too far, the robot will just do a turn towards the lookahead
 
@@ -125,6 +124,11 @@ let PurePursuitFollower = class {
 let followPath = function(robot, follower, points, currentTime) {
     if(points.length == 0) return;
 
+    follower.lastClosestIndex = getClosestPointIndex(points, robot.getPosition(), follower.lastClosestIndex);
+	if(follower.lastLookAheadIndex == -0) {
+		follower.lastLookAheadIndex = follower.lastClosestIndex;
+	}
+
     let lookAheadResult = getLookAheadPoint(points, robot.getPosition(), follower.lookAheadDist, 
         follower.lastT, follower.lastLookAheadIndex);
     follower.lastT = lookAheadResult.t;
@@ -135,7 +139,6 @@ let followPath = function(robot, follower, points, currentTime) {
     follower.debug_la_y = lookAheadPoint.getY();
 
     let curvature = getCurvatureToPoint(robot.getPosition(), robot.getAngle(), lookAheadPoint, follower);
-    follower.lastClosestIndex = getClosestPointIndex(points, robot.getPosition(), follower.lastClosestIndex);
     let targetVelocity = points[follower.lastClosestIndex].getTargetVelocity();
 
     let tempLeft = targetVelocity * (2.0 + curvature * follower.driveWidth) / 2.0;
