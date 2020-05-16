@@ -1,20 +1,25 @@
+#main-container {
+    margin-top: 10px;
+}
+
 .slider-container {
-    width: 70%;
-    margin: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    margin-bottom: 10px;
 }
 
 .slider-container label {
-    margin-right: 10px;
     margin-bottom: 0px;
+    text-align: center;
+}
+
+.slider-input {
+    padding: 0 5%;
+    width: 100%;
 }
 
 .slider {
     -webkit-appearance: none;
     appearance: none;
-    width: 60%;
+    width: 100%;
     height: 15px;
     border-radius: 5px;
     background: #d3d3d3;
@@ -22,7 +27,7 @@
     opacity: 0.7;
     -webkit-transition: .2s;
     transition: opacity .2s;
-    margin-left: 10px;
+    margin: 0 5%;
 }
 
 .slider:hover {

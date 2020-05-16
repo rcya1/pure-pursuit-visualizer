@@ -18,7 +18,7 @@ const MouseState = {
 
 var currentSketch = new p5(function(sketch) {
     
-    const widthScaling = 0.75;
+    const widthScaling = 0.9;
 
     let canvas; // purely for stylizing purposes
     let canvasHolder;
@@ -151,8 +151,8 @@ var currentSketch = new p5(function(sketch) {
 				turningConstantSlider.getValue(),
 				userPoints,
 				robot.getPosition())
-			);
-		});
+            );
+        });
 
 		importDataButton = sketch.select('#import-data-button');
 		importDataButton.mousePressed(function() {
@@ -329,15 +329,17 @@ var currentSketch = new p5(function(sketch) {
 
     // center the canvas on the screen horizontally and scale it
     function styleCanvas() {
-        sketch.resizeCanvas(sketch.windowWidth * widthScaling, sketch.windowWidth * widthScaling / 2.0);
-        let x = (sketch.windowWidth - sketch.width) / 2;
-        let y = 0;
-        canvas.position(x);
+        let holderWidthString = canvasHolder.style('width');
+        let holderWidth = parseInt(holderWidthString.substring(0, holderWidthString.length - 2));
+        sketch.resizeCanvas(holderWidth * widthScaling, holderWidth * widthScaling / 2.0);
+        // let x = (sketch.windowWidth - sketch.width) / 2;
+        // let y = 0;
+        // canvas.position(x);
 
-        canvasHolder.style('width', sketch.width + 'px');
-        canvasHolder.style('height', sketch.height + 'px');
-        canvasHolder.style('display', 'block');
-        canvasHolder.style('margin', '10px');
+        // canvasHolder.style('width', sketch.width + 'px');
+        // canvasHolder.style('height', sketch.height + 'px');
+        canvasHolder.style('display', 'flex');
+        canvasHolder.style('justify-content', 'center');
         
         canvas.parent('canvas-visualizer');
     }
@@ -403,9 +405,6 @@ var currentSketch = new p5(function(sketch) {
         // move the robot to the first point
         if(activePoint == 0) {
             moveRobotToStart();
-            if(userPoints.length > 1) {
-                angleRobot();
-            }
         }
         // angle the robot to the second point
         if(activePoint == 1) {
@@ -415,6 +414,9 @@ var currentSketch = new p5(function(sketch) {
 
     moveRobotToStart = function() {
         robot.setPosition(userPoints[0].getPosition());
+        if(userPoints.length > 1) {
+            angleRobot();
+        }
     }
 
     angleRobot = function() {

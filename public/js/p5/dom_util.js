@@ -1,19 +1,37 @@
 let Slider = class {
     constructor(divId, min, max, value, step, sketch) {
         this.container = sketch.select(divId);
-        this.container.class('input-slider-container');
+        this.container.class('slider-container row');
 
+        let labelDiv = sketch.createDiv();
+        let inputDiv = sketch.createDiv();
+        let sliderDiv = sketch.createDiv();
+
+        labelDiv.class('col-lg-3 col-6 align-self-center');
+        inputDiv.class('col-lg-3 col-6 align-self-center');
+        sliderDiv.class('col-lg-6 col-12 align-self-center');
+
+        labelDiv.parent(this.container);
+        inputDiv.parent(this.container);
+        sliderDiv.parent(this.container);
+
+        let label = sketch.createElement('label');
         this.input = sketch.createElement('input');
         this.slider = sketch.createElement('input');
 
-        this.input.parent(this.container);
-        this.slider.parent(this.container);
+        label.parent(labelDiv);
+        this.input.parent(inputDiv);
+        this.slider.parent(sliderDiv);
+
+        label.attribute('for', divId);
+        label.html(this.container.attribute('label-text'));
 
         this.input.attribute('type', 'number');
         this.input.attribute('min', min);
         this.input.attribute('max', max);
         this.input.attribute('value', value);
         this.input.attribute('step', step);
+        this.input.class('slider-input');
 
         this.slider.attribute('type', 'range');
         this.slider.attribute('min', min);
