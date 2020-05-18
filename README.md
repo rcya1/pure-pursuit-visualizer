@@ -6,7 +6,6 @@ Most of the original code is based off of [this paper](https://www.chiefdelphi.c
 
 However, the following augmentations to the algorithm were made:
 
-[] The algorithm will only look for look ahead points farther than the last found point
-[] When starting the algorithm, the robot will start on the point that is closest on it and look forward from there
-[] The robot will not go to points that are farther ahead on the path and require 180 degree turns
-[] The robot will make 180 degree turns if the lookahead point is within a certain angle threshold
+- The algorithm will only look for look ahead points farther than the last found point
+- When starting the algorithm, the robot will start on the point that is closest on it and look forward from there
+- The robot will make 180 degree turns if the lookahead point is within a certain angle threshold (TODO)
