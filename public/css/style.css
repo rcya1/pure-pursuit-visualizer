@@ -8,6 +8,7 @@
 
 .slider-container label {
     margin-bottom: 0px;
+    width: 100%;
     text-align: center;
 }
 
@@ -52,6 +53,13 @@
     border-radius: 50%;
     background: #007bff;
     cursor: pointer;
+}
+
+
+@media (max-width: 1199.98px) {
+    .slider {
+        margin-top: 10px;
+    }
 }
 
 /* Checkbox code adapted from w3schools.com */
@@ -128,8 +136,13 @@
     transform: rotate(45deg);
 }
 
+/* Override some of Bootstrap classes */
 .nav {
     margin-bottom: 10px;
+}
+
+.card-body {
+    padding-bottom: 1rem;
 }
 
 .no-bullets {
