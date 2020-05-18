@@ -869,8 +869,8 @@ var currentSketch = new p5(function(sketch) {
         robot.draw(sketch, robotSizeSlider.getValue());
 
         // debug.drawDebugLine(follower.debug_a, follower.debug_b, follower.debug_c, sketch);
-        debug.drawDebugPoint(follower.debug_la_x, follower.debug_la_y, sketch);
-        debug.drawDebugCircle(robot.getX(), robot.getY(), lookAheadSlider.getValue(), sketch);
+        if(showLAPointCheckbox.elt.checked) debug.drawDebugPoint(follower.debug_la_x, follower.debug_la_y, sketch);
+        if(showLACircleCheckbox.elt.checked) debug.drawDebugCircle(robot.getX(), robot.getY(), lookAheadSlider.getValue(), sketch);
     }
     
     sketch.windowResized = function() {
