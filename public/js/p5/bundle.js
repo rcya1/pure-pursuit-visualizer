@@ -89,8 +89,8 @@ let Slider = class {
         let sliderDiv = sketch.createDiv();
 
         labelDiv.class('col-xl-4 col-6 align-self-center');
-        inputDiv.class('col-xl-3 col-6 align-self-center');
-        sliderDiv.class('col-xl-5 col-12 align-self-center');
+        inputDiv.class('col-xl-4 col-6 align-self-center');
+        sliderDiv.class('col-xl-4 col-12 align-self-center');
 
         labelDiv.parent(this.container);
         inputDiv.parent(this.container);
