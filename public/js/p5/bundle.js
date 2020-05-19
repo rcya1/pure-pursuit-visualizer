@@ -909,12 +909,10 @@ var currentSketch = new p5(function(sketch) {
                 // add a point or drag the currently selected point
                 mouseClickVector = new Vector(conv.cx(sketch.mouseX, sketch.width), conv.cy(sketch.mouseY, sketch.height));
 
-				let addedPoint = false;
                 if(activePoint == -1) {
                     let wp = new Waypoint(mouseClickVector.copy());
                     userPoints.push(wp);
                     activePoint = userPoints.length - 1;
-					addedPoint = true;
                 }
 
                 mouseState = MouseState.DRAGGING;
@@ -924,7 +922,7 @@ var currentSketch = new p5(function(sketch) {
                     moveRobotToStart();
                 }
                 // angle the robot to the second point
-                if(activePoint == 1 && !addedPoint) {
+                if(activePoint == 1) {
                     angleRobot();
                 }
             }

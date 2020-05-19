@@ -51,8 +51,59 @@
                     
                     <div class="tab-content">
                         <div class="tab-pane container active" id="path-gen">
-                            <div id="inject-spacing-slider" label-text="Inject Spacing"></div>
-                            <div id="smooth-weight-slider" label-text="Smooth Weight"></div>
+                            <div class="row" id="path-gen-buttons">
+                                <div class="col-6">
+                                    <button type="button" id="inject-points-button" class="btn btn-primary btn-block">Inject Points</button>
+                                </div>
+                                <div class="col-6">
+                                    <button type="button" id="smooth-points-button" class="btn btn-primary btn-block">Smooth Points</button>
+                                </div>
+                            </div>
+
+                            <hr>
+
+                            <div class="accordion" id="path-accordion">
+                                <div class="card">
+                                    <div class="card-header" id="parameter-heading">
+                                        <h2 class="mb-0">
+                                            <button class="btn btn-link" type="button" data-toggle="collapse" 
+                                                data-target="#parameter-card" aria-expanded="true" aria-controls="parameter-card">
+                                                Path Generation Parameters
+                                            </button>
+                                        </h2>
+                                    </div>
+
+                                    <div id="parameter-card" class="collapse show" aria-labelledby="parameter-heading">
+                                        <div class="card-body">
+                                            <div id="inject-spacing-slider" label-text="Inject Spacing"></div>
+                                            <div id="smooth-weight-slider" label-text="Smooth Weight"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card">
+                                    <div class="card-header" id="auto-heading">
+                                        <h2 class="mb-0">
+                                            <button class="btn btn-link" type="button" data-toggle="collapse" 
+                                                data-target="#auto-card" aria-expanded="true" aria-controls="auto-card">
+                                                Automatic Generation
+                                            </button>
+                                        </h2>
+                                    </div>
+
+                                    <div id="auto-card" class="collapse show" aria-labelledby="auto-heading">
+                                        <div class="card-body">
+                                            <label class="checkbox-container"> Auto Inject Points
+                                                <input type="checkbox" name="auto-inject-checkbox" id="auto-inject-checkbox" checked>
+                                                <span class="checkmark"></span>
+                                            </label>
+                                            <label class="checkbox-container"> Auto Smooth Points
+                                                <input type="checkbox" name="auto-smooth-checkbox" id="auto-smooth-checkbox" checked>
+                                                <span class="checkmark"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="tab-pane container fade" id="visuals">
@@ -171,18 +222,8 @@
                 </div>
                 <div id="path-container">
                     <div class="button-check-container">
-                        <label class="checkbox-container"> Auto Inject Points
-                            <input type="checkbox" name="auto-inject-checkbox" id="auto-inject-checkbox" checked>
-                            <span class="checkmark"></span>
-                        </label>
-                        <button type="button" id="inject-points-button" class="btn btn-primary">Inject Points</button>
                     </div>
                     <div class="button-check-container">
-                        <label class="checkbox-container"> Auto Smooth Points
-                            <input type="checkbox" name="auto-smooth-checkbox" id="auto-smooth-checkbox" checked>
-                            <span class="checkmark"></span>
-                        </label>
-                        <button type="button" id="smooth-points-button" class="btn btn-primary">Smooth Points</button>
                     </div>
                 </div>
             </div>
