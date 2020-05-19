@@ -88,9 +88,9 @@ let Slider = class {
         let inputDiv = sketch.createDiv();
         let sliderDiv = sketch.createDiv();
 
-        labelDiv.class('col-xl-4 col-6 align-self-center');
-        inputDiv.class('col-xl-4 col-6 align-self-center');
-        sliderDiv.class('col-xl-4 col-12 align-self-center');
+        labelDiv.class('col-lg-4 col-6 align-self-center label-container');
+        inputDiv.class('col-lg-4 col-6 align-self-center');
+        sliderDiv.class('col-lg-4 col-12 align-self-center d-flex');
 
         labelDiv.parent(this.container);
         inputDiv.parent(this.container);
@@ -192,6 +192,8 @@ let getLookAheadPoint = function(points, pos, lookAheadDist, lastT = 0, lastInde
     for(let i = lastIndex; i < points.length - 1; i++) {
         let a = points[i];
         let b = points[i + 1];
+
+        if(a == null || b == null) continue;
 
         let t = getLookAheadPointT(pos, a.getPosition(), b.getPosition(), lookAheadDist);
 
@@ -882,12 +884,7 @@ var currentSketch = new p5(function(sketch) {
         let holderWidthString = canvasHolder.style('width');
         let holderWidth = parseInt(holderWidthString.substring(0, holderWidthString.length - 2));
         sketch.resizeCanvas(holderWidth * widthScaling, holderWidth * widthScaling / 2.0);
-        // let x = (sketch.windowWidth - sketch.width) / 2;
-        // let y = 0;
-        // canvas.position(x);
-
-        // canvasHolder.style('width', sketch.width + 'px');
-        // canvasHolder.style('height', sketch.height + 'px');
+        
         canvasHolder.style('display', 'flex');
         canvasHolder.style('justify-content', 'center');
         

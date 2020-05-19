@@ -36,6 +36,8 @@ let getLookAheadPoint = function(points, pos, lookAheadDist, lastT = 0, lastInde
         let a = points[i];
         let b = points[i + 1];
 
+        if(a == null || b == null) continue;
+
         let t = getLookAheadPointT(pos, a.getPosition(), b.getPosition(), lookAheadDist);
 
         // if the segment is further along or the fractional index is greater, then this is the correct point

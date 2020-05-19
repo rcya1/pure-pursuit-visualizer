@@ -332,12 +332,7 @@ var currentSketch = new p5(function(sketch) {
         let holderWidthString = canvasHolder.style('width');
         let holderWidth = parseInt(holderWidthString.substring(0, holderWidthString.length - 2));
         sketch.resizeCanvas(holderWidth * widthScaling, holderWidth * widthScaling / 2.0);
-        // let x = (sketch.windowWidth - sketch.width) / 2;
-        // let y = 0;
-        // canvas.position(x);
-
-        // canvasHolder.style('width', sketch.width + 'px');
-        // canvasHolder.style('height', sketch.height + 'px');
+        
         canvasHolder.style('display', 'flex');
         canvasHolder.style('justify-content', 'center');
         

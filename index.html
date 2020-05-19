@@ -5,47 +5,57 @@
         <link rel="stylesheet" href="public/css/style.css">
     </head>
     <body>
-        <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+        <nav class="navbar navbar-expand-sm navbar-light" style="background-color: #e3f2fd;">
           <a class="navbar-brand" href="#">Pure Pursuit Visualizer</a>
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
             <span class="navbar-toggler-icon"></span>
           </button>
           <div class="collapse navbar-collapse" id="collapsibleNavbar">
             <ul class="navbar-nav">
-              <li class="nav-item">
-                <a class="nav-link" href="#">Source Code</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">Original Paper</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">Reference Paper</a>
-              </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://github.com/Ryan10145/Pure-Pursuit-Visualizer">Source Code</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Reference
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                    <a class="dropdown-item" href="https://www.ri.cmu.edu/pub_files/pub3/coulter_r_craig_1992_1/coulter_r_craig_1992_1.pdf">Original Pure Pursuit Paper</a>
+                    <a class="dropdown-item" href="https://www.chiefdelphi.com/uploads/default/original/3X/b/e/be0e06de00e07db66f97686505c3f4dde2e332dc.pdf">Reference Paper from FRC Team 1712</a>
+                    </div>
+                </li>
             </ul>
           </div>  
         </nav>
         
         <div class="container-fluid" id="main-container">
             <div class="row">
-                <div class="col-md-9">
+                <div class="col-lg-9">
                     <div id="canvas-visualizer"></div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-lg-3">
                     <ul class="nav nav-tabs justify-content-center">
                         <li class="nav-item">
-                            <a class="nav-link active" data-toggle="tab" href="#visuals">Visuals</a>
+                            <a class="nav-link active" data-toggle="tab" href="#path-gen">Path Generation</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" data-toggle="tab" href="#path-gen">Path Generation</a>
+                            <a class="nav-link" data-toggle="tab" href="#visuals">Visuals</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" data-toggle="tab" href="#following">Following</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#debug" style="display: none">Debug</a>
+                        </li>
                     </ul>
                     
                     <div class="tab-content">
-                        <div class="tab-pane container active" id="visuals">
+                        <div class="tab-pane container active" id="path-gen">
+                            <div id="inject-spacing-slider" label-text="Inject Spacing"></div>
+                            <div id="smooth-weight-slider" label-text="Smooth Weight"></div>
+                        </div>
 
+                        <div class="tab-pane container fade" id="visuals">
                             <div class="accordion" id="visuals-accordion">
                                 <div class="card">
                                     <div class="card-header" id="points-size-heading">
@@ -130,22 +140,18 @@
                                     </div>
                                 </div>
                             </div>
-
-                            <ul class="no-bullets">
-
-                                <br>
-                                
-                            </ul>
                         </div>
-                        <div class="tab-pane container fade" id="path-gen">
-                            <div id="inject-spacing-slider" label-text="Inject Spacing"></div>
-                            <div id="smooth-weight-slider" label-text="Smooth Weight"></div>
-                        </div>
+
                         <div class="tab-pane container fade" id="following">
                             <div id="max-velocity-slider" label-text="Max Velocity"></div>
                             <div id="max-acceleration-slider" label-text="Max Acceleration"></div>
                             <div id="look-ahead-slider" label-text="Look Ahead Distance"></div>
                             <div id="turning-constant-slider" label-text="Turning Speed"></div>
+                        </div>
+
+                        <div class="tab-pane container fade" id="debug">
+                            <button type="button" class="debug btn btn-primary btn-block" id="export-data-button">Export Data</button>
+                            <button type="button" class="debug btn btn-primary btn-block" id="import-data-button">Import Data</button>
                         </div>
                     </div>
                 </div>
@@ -165,45 +171,21 @@
                 </div>
                 <div id="path-container">
                     <div class="button-check-container">
-                        <div>
+                        <label class="checkbox-container"> Auto Inject Points
                             <input type="checkbox" name="auto-inject-checkbox" id="auto-inject-checkbox" checked>
-                            <label for="auto-inject-checkbox">Auto Inject Points</label>
-                        </div>
-                        <button type="button" id="inject-points-button">Inject Points</button>
+                            <span class="checkmark"></span>
+                        </label>
+                        <button type="button" id="inject-points-button" class="btn btn-primary">Inject Points</button>
                     </div>
                     <div class="button-check-container">
-                        <div>
+                        <label class="checkbox-container"> Auto Smooth Points
                             <input type="checkbox" name="auto-smooth-checkbox" id="auto-smooth-checkbox" checked>
-                            <label for="auto-smooth-checkbox">Auto Smooth Points</label>
-                        </div>
-                        <button type="button" id="smooth-points-button">Smooth Points</button>
+                            <span class="checkmark"></span>
+                        </label>
+                        <button type="button" id="smooth-points-button" class="btn btn-primary">Smooth Points</button>
                     </div>
                 </div>
             </div>
-            <div id="follower-container">
-                <div class="slider-container">
-                    <label for="max-velocity-slider">Max Velocity</label>
-                    <div id="max-velocity-slider"></div>
-                </div>
-                <div class="slider-container">
-                    <label for="max-acceleration-slider">Max Acceleration</label>
-                    <div id="max-acceleration-slider"></div>
-                </div>
-                <div class="slider-container">
-                    <label for="look-ahead-slider">Look Ahead Distance</label>
-                    <div id="look-ahead-slider"></div>
-                </div>
-                <div class="slider-container">
-                    <label for="turning-constant-slider">Turning Speed Constant</label>
-                    <div id="turning-constant-slider"></div>
-                </div>
-            </div>
-            <div id="visibility-container">
-            </div>
-			<div class="debug">
-				<button type="button" class="debug" id="export-data-button">Export Data</button>
-				<button type="button" class="debug" id="import-data-button">Import Data</button>
-			</div>
         </div>
         
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>

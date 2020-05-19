@@ -6,6 +6,10 @@
     margin-bottom: 10px;
 }
 
+.label-container {
+    padding: 0;
+}
+
 .slider-container label {
     margin-bottom: 0px;
     width: 100%;
@@ -55,10 +59,15 @@
     cursor: pointer;
 }
 
-
-@media (max-width: 1199.98px) {
+/* size = lg */
+@media (max-width: 991.98px) {
     .slider {
-        margin-top: 10px;
+        margin: 20px auto 40px;
+        width: 80%;
+    }
+
+    .slider-container label {
+        text-align: left;
     }
 }
 
@@ -204,8 +213,4 @@
 
 #visibility-container {
     flex-grow: 1;
-}
-
-.debug {
-	display: none;
 }
