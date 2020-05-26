@@ -567,6 +567,7 @@ const MouseState = {
 
 // TODO Add keyboard shortcuts
 // TODO Add a button for making the robot follow the path (and make sure a good alternative for mobile exists)
+// TODO Add an undo button with font-awesome icon
 
 var currentSketch = new p5(function(sketch) {
     
@@ -610,8 +611,8 @@ var currentSketch = new p5(function(sketch) {
     let showLAPointCheckbox;
 
 	// debug
-	let exportPointsButton;
-	let importPointsButton;
+	let exportDataButton;
+	let importDataButton;
 
     let userPoints = [];
     let injectedPoints = [];
@@ -643,8 +644,15 @@ var currentSketch = new p5(function(sketch) {
 
         // Path Configuration
         deletePointsCheckbox = sketch.select('#delete-points-checkbox');
+        deletePointsCheckbox.mousePressed(function() {
+            if(deletePointsCheckbox.hasClass("checked")) deletePointsCheckbox.removeClass("checked");
+            else deletePointsCheckbox.addClass("checked");
+        });
         deleteAllPointsButton = sketch.select('#delete-all-points-button');
-        deleteAllPointsButton.mousePressed(deleteAllPoints);
+        deleteAllPointsButton.mousePressed(function() {
+            if(confirm("Are you sure you would like to remove all points?")) 
+                deleteAllPoints();
+        });
 
         // Inject Points
         injectSpacingSlider = new dom_util.Slider('#inject-spacing-slider', 1.5, 10, 5, 0.1, sketch);
@@ -786,7 +794,7 @@ var currentSketch = new p5(function(sketch) {
         }
 
         // handle updating the cursor sprite
-        if(deletePointsCheckbox.elt.checked) {
+        if(deletePointsCheckbox.hasClass("checked")) {
             sketch.cursor('not-allowed');
         }
         else if(activePoint != -1) {
@@ -897,7 +905,7 @@ var currentSketch = new p5(function(sketch) {
         // ensure the mouse is within the sketch window doing anything
         if(mouseInSketch()) {
 
-            if(deletePointsCheckbox.elt.checked) {
+            if(deletePointsCheckbox.hasClass("checked")) {
                 // delete the current point
                 if(activePoint != -1) {
                     userPoints.splice(activePoint, 1);
@@ -1002,7 +1010,8 @@ var currentSketch = new p5(function(sketch) {
         keys.push(sketch.key);
 
         if(sketch.keyCode == sketch.SHIFT) {
-            deletePointsCheckbox.elt.checked = true;
+            if(!deletePointsCheckbox.hasClass("checked")) 
+                deletePointsCheckbox.addClass("checked");
         }
     }
 
@@ -1011,7 +1020,8 @@ var currentSketch = new p5(function(sketch) {
         keys.splice(keys.indexOf(sketch.key), 1);
 
         if(sketch.keyCode == sketch.SHIFT) {
-            deletePointsCheckbox.elt.checked = false;
+            if(deletePointsCheckbox.hasClass("checked")) 
+                deletePointsCheckbox.removeClass("checked");
         }
     }
 })

@@ -149,6 +149,19 @@ button:disabled {
     cursor: not-allowed;
 }
 
+.button-icon {
+    cursor: pointer;
+    font-size: 48px;
+}
+
+#delete-points-checkbox {
+    color: #a9a9a9;
+}
+
+#delete-points-checkbox.checked {
+    color: #000000;
+}
+
 /* Override some of Bootstrap classes */
 .nav {
     margin-bottom: 10px;
