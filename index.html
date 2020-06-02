@@ -34,7 +34,7 @@
                 <div class="col-lg-9">
                     <div id="canvas-visualizer"></div>
                 </div>
-                <div class="col-lg-3">
+                <div class="col-lg-3" id="settings-container">
                     <ul class="nav nav-tabs justify-content-center">
                         <li class="nav-item">
                             <a class="nav-link active" data-toggle="tab" href="#path-gen">Path Generation</a>
@@ -52,17 +52,6 @@
                     
                     <div class="tab-content">
                         <div class="tab-pane container active" id="path-gen">
-                            <div class="row" id="path-gen-buttons">
-                                <div class="col-6">
-                                    <button type="button" id="inject-points-button" class="btn btn-primary btn-block">Inject Points</button>
-                                </div>
-                                <div class="col-6">
-                                    <button type="button" id="smooth-points-button" class="btn btn-primary btn-block">Smooth Points</button>
-                                </div>
-                            </div>
-
-                            <hr>
-
                             <div class="accordion" id="path-accordion">
                                 <div class="card">
                                     <div class="card-header" id="parameter-heading">
@@ -82,17 +71,26 @@
                                     </div>
                                 </div>
                                 <div class="card">
-                                    <div class="card-header" id="auto-heading">
+                                    <div class="card-header" id="gen-heading">
                                         <h2 class="mb-0">
                                             <button class="btn btn-link" type="button" data-toggle="collapse" 
-                                                data-target="#auto-card" aria-expanded="true" aria-controls="auto-card">
-                                                Automatic Generation
+                                                data-target="#gen-card" aria-expanded="true" aria-controls="gen-card">
+                                                Generation
                                             </button>
                                         </h2>
                                     </div>
 
-                                    <div id="auto-card" class="collapse show" aria-labelledby="auto-heading">
+                                    <div id="gen-card" class="collapse show" aria-labelledby="gen-heading">
                                         <div class="card-body">
+                                            <div class="row" id="path-gen-buttons">
+                                                <div class="col-6 text-center">
+                                                    <button type="button" id="inject-points-button" class="btn btn-primary">Inject Points</button>
+                                                </div>
+                                                <div class="col-6 text-center">
+                                                    <button type="button" id="smooth-points-button" class="btn btn-primary">Smooth Points</button>
+                                                </div>
+                                            </div>
+
                                             <label class="checkbox-container"> Auto Inject Points
                                                 <input type="checkbox" name="auto-inject-checkbox" id="auto-inject-checkbox" checked>
                                                 <span class="checkmark"></span>
@@ -215,7 +213,7 @@
                 <div id="top-config-container">
                     <div class="button-check-container">
                         <i class="fas fa-trash-alt button-icon" id="delete-points-checkbox"></i>
-                        <i class="fas fa-times button-icon" id="delete-all-points-button"></i>
+                        <i class="far fa-file button-icon" id="delete-all-points-button"></i>
                     </div>
                 </div>
                 <div id="path-container">

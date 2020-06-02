@@ -2,6 +2,9 @@
     margin-top: 10px;
 }
 
+/* TODO Add a media query to this so it only does it when you go down 
+   TODO Also we should make it so that the buttons are not full width and are more round b/c rn they look really weird*/
+
 .slider-container {
     margin-bottom: 10px;
 }
@@ -61,6 +64,10 @@
 
 /* size = lg */
 @media (max-width: 991.98px) {
+    #settings-container {
+        margin-top: 20px;
+    }
+
     .slider {
         margin: 20px auto 40px;
         width: 80%;
@@ -172,7 +179,7 @@ button:disabled {
 }
 
 #path-gen-buttons {
-    margin-bottom: 10px;
+    margin-bottom: 20px;
 }
 
 .no-bullets {
