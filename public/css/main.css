@@ -1,0 +1,186 @@
+#main-container {
+  margin-top: 10px;
+}
+
+.slider-container {
+  margin-bottom: 10px;
+}
+
+.label-container {
+  padding: 5px;
+}
+
+.slider-container label {
+  margin-bottom: 0px;
+  width: 100%;
+  text-align: center;
+}
+
+.slider-input {
+  padding: 0 5%;
+  width: 100%;
+}
+
+.slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 15px;
+  border-radius: 5px;
+  background: #d3d3d3;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: 0.2s;
+  transition: opacity 0.2s;
+  margin: 0 5%;
+}
+
+.slider:hover {
+  opacity: 1;
+}
+
+/* Chrome, Opera, Safari, Edge */
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: #007bff;
+  cursor: pointer;
+}
+
+/* Firefox */
+.slider::-moz-range-thumb {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: #007bff;
+  cursor: pointer;
+}
+
+/* size = lg */
+@media (max-width: 991.98px) {
+  #settings-container {
+    margin-top: 20px;
+  }
+
+  .slider {
+    margin: 20px auto 40px;
+    width: 80%;
+  }
+
+  .slider-container label {
+    text-align: left;
+  }
+}
+/* Checkbox code adapted from w3schools.com */
+/* Customize the label (the container) */
+.checkbox-container {
+  display: block;
+  position: relative;
+  padding-left: 35px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  font-size: 16px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Hide the browser's default checkbox */
+.checkbox-container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* Create a custom checkbox */
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 25px;
+  width: 25px;
+  background-color: #ddd;
+}
+
+/* On mouse-over, add a grey background color */
+.checkbox-container:hover input ~ .checkmark {
+  background-color: #bbb;
+}
+
+/* When the checkbox is checked, add a blue background */
+.checkbox-container input:checked ~ .checkmark {
+  background-color: #007bff;
+}
+
+/* On mouse-over, add a grey background color */
+.checkbox-container:hover input:checked ~ .checkmark {
+  background-color: #0060c7;
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the checkmark when checked */
+.checkbox-container input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Style the checkmark/indicator */
+.checkbox-container .checkmark:after {
+  left: 9px;
+  top: 3px;
+  width: 8px;
+  height: 15px;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+.button-icon {
+  cursor: pointer;
+  font-size: 48px;
+}
+
+#delete-points-checkbox {
+  color: #a9a9a9;
+}
+
+#delete-points-checkbox.checked {
+  color: #000000;
+}
+
+/* Override some of Bootstrap classes */
+.nav {
+  margin-bottom: 10px;
+}
+
+.card-body {
+  padding-bottom: 1rem;
+}
+
+#path-gen-buttons {
+  margin-bottom: 20px;
+}
+
+.no-bullets {
+  list-style-type: none;
+  padding: 0;
+}
+
+/*# sourceMappingURL=main.css.map */
