@@ -569,7 +569,7 @@ const MouseState = {
 // TODO Add a button for making the robot follow the path (and make sure a good alternative for mobile exists)
 // TODO Add an undo button with font-awesome icon
 // TODO Fix the inject and smooth point buttons
-// TODO Actually use sass
+// TODO Make the delete icon be actually a toggle between add and trash (even add a little arrow thing to indicate this is a toggle)
 
 var currentSketch = new p5(function(sketch) {
     
