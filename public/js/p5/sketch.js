@@ -13,11 +13,12 @@ const MouseState = {
     DRAGGING: 'dragging'
 }
 
-// TODO Add keyboard shortcuts
+// In order:
 // TODO Add a button for making the robot follow the path (and make sure a good alternative for mobile exists)
 // TODO Add an undo button with font-awesome icon
-// TODO Fix the inject and smooth point buttons
 // TODO Make the delete icon be actually a toggle between add and trash (even add a little arrow thing to indicate this is a toggle)
+// TODO Make the inject and smooth buttons into icon buttons (custom icons)
+// TODO Add keyboard shortcuts
 
 var currentSketch = new p5(function(sketch) {
     
@@ -205,6 +206,7 @@ var currentSketch = new p5(function(sketch) {
     injectPoints = function() {
         path_gen.injectPoints(userPoints, injectedPoints, injectSpacingSlider.getValue());
         needAutoInject = false;
+        needAutoSmooth = true;
         resetFollower();
     }   
 
@@ -345,6 +347,7 @@ var currentSketch = new p5(function(sketch) {
         
         canvasHolder.style('display', 'flex');
         canvasHolder.style('justify-content', 'center');
+        canvasHolder.style('flex-direction', 'row-reverse');
         
         canvas.parent('canvas-visualizer');
     }
