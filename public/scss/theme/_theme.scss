@@ -1,0 +1,35 @@
+#main-container {
+    margin-top: 10px;
+}
+
+button:disabled {
+    cursor: not-allowed;
+}
+
+.button-icon {
+    cursor: pointer;
+    font-size: 48px;
+}
+
+.no-bullets {
+    list-style-type: none;
+    padding: 0;
+}
+
+#delete-points-checkbox {
+    color: #a9a9a9;
+}
+
+#delete-points-checkbox.checked {
+    color: #000000;
+}
+
+#path-gen-buttons {
+    margin-bottom: 20px;
+}
+
+@include media-breakpoint-down(lg) {
+    #settings-container {
+        margin-top: 20px;
+    }
+}

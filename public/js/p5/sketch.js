@@ -16,6 +16,8 @@ const MouseState = {
 // TODO Add keyboard shortcuts
 // TODO Add a button for making the robot follow the path (and make sure a good alternative for mobile exists)
 // TODO Add an undo button with font-awesome icon
+// TODO Fix the inject and smooth point buttons
+// TODO Actually use sass
 
 var currentSketch = new p5(function(sketch) {
     
