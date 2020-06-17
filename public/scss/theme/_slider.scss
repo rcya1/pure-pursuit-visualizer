@@ -54,11 +54,7 @@
     label {
         margin-bottom: 0px;
         width: 100%;
-        text-align: center;
-
-        @include media-breakpoint-down(lg) {
-            text-align: left;
-            padding-left: 30px;
-        }
+        text-align: left;
+        padding-left: 30px;
     }
 }

@@ -9515,6 +9515,11 @@ h3 {
   margin-top: 10px;
 }
 
+#buttons-container {
+  display: flex;
+  flex-direction: column;
+}
+
 button:disabled {
   cursor: not-allowed;
 }
@@ -9522,6 +9527,8 @@ button:disabled {
 .button-icon {
   cursor: pointer;
   font-size: 48px;
+  margin: 10px;
+  text-align: center;
 }
 
 .no-bullets {
@@ -9596,13 +9603,8 @@ button:disabled {
 .slider-container label {
   margin-bottom: 0px;
   width: 100%;
-  text-align: center;
-}
-@media (max-width: 1199.98px) {
-  .slider-container label {
-    text-align: left;
-    padding-left: 30px;
-  }
+  text-align: left;
+  padding-left: 30px;
 }
 
 /* Checkbox code adapted from w3schools.com */

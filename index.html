@@ -30,8 +30,13 @@
         
         <div class="container-fluid" id="main-container">
             <div class="row">
-                <div class="col-xl-9">
-                    <div id="canvas-visualizer"></div>
+                <div class="col-xl-9 visualizer-container">
+                    <div id="canvas-visualizer">
+                        <div id="buttons-container">
+                            <i class="far fa-file button-icon" id="delete-all-points-button"></i>
+                            <i class="fas fa-trash-alt button-icon" id="delete-points-checkbox"></i>
+                        </div>
+                    </div>
                 </div>
                 <div class="col-xl-3" id="settings-container">
                     <ul class="nav nav-tabs justify-content-center">
@@ -211,8 +216,6 @@
             <div id="configuration-container">
                 <div id="top-config-container">
                     <div class="button-check-container">
-                        <i class="fas fa-trash-alt button-icon" id="delete-points-checkbox"></i>
-                        <i class="far fa-file button-icon" id="delete-all-points-button"></i>
                     </div>
                 </div>
                 <div id="path-container">
