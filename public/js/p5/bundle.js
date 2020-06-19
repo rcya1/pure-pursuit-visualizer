@@ -181,21 +181,21 @@ let getClosestPointIndex = function(points, pos, lastPointIndex = 0) {
 }
 
 let LookAheadResult = class {
-    constructor(t, i, lookAheadPoint) {
+    constructor(t, i, lookaheadPoint) {
         this.t = t;
         this.i = i;
-        this.lookAheadPoint = lookAheadPoint;
+        this.lookaheadPoint = lookaheadPoint;
     }
 }
 
-let getLookAheadPoint = function(points, pos, lookAheadDist, lastT = 0, lastIndex = 0) {
+let getLookAheadPoint = function(points, pos, lookaheadDist, lastT = 0, lastIndex = 0) {
     for(let i = lastIndex; i < points.length - 1; i++) {
         let a = points[i];
         let b = points[i + 1];
 
         if(a == null || b == null) continue;
 
-        let t = getLookAheadPointT(pos, a.getPosition(), b.getPosition(), lookAheadDist);
+        let t = getLookAheadPointT(pos, a.getPosition(), b.getPosition(), lookaheadDist);
 
         // if the segment is further along or the fractional index is greater, then this is the correct point
         if(t != -1 && (i > lastIndex || t > lastT)) {
@@ -212,13 +212,13 @@ let generateLookAheadResult = function(a, b, t, i) {
     return new LookAheadResult(t, i, a.getPosition().add(d.mult(t)));
 }
 
-let getLookAheadPointT = function(pos, start, end, lookAheadDist) {
+let getLookAheadPointT = function(pos, start, end, lookaheadDist) {
     let d = end.sub(start);
     let f = start.sub(pos);
 
     let a = d.dot(d);
     let b = 2 * f.dot(d);
-    let c = f.dot(f) - lookAheadDist * lookAheadDist;
+    let c = f.dot(f) - lookaheadDist * lookaheadDist;
 
     let disc = b * b - 4 * a * c;
 
@@ -236,18 +236,18 @@ let getLookAheadPointT = function(pos, start, end, lookAheadDist) {
     return -1;
 }
 
-let getCurvatureToPoint = function(pos, angle, lookAhead, follower) {
+let getCurvatureToPoint = function(pos, angle, lookahead, follower) {
     let a = -Math.tan(angle);
     let b = 1.0;
     let c = Math.tan(angle) * pos.getX() - pos.getY();
 
-    let x = Math.abs(a * lookAhead.getX() + b * lookAhead.getY() + c) / Math.sqrt(a * a + b * b);
-    let l = pos.getDistanceToSq(lookAhead);
+    let x = Math.abs(a * lookahead.getX() + b * lookahead.getY() + c) / Math.sqrt(a * a + b * b);
+    let l = pos.getDistanceToSq(lookahead);
     let curvature = 2 * x / l;
 
     let otherPoint = pos.add(new Vector(Math.cos(angle), Math.sin(angle)));
-    let side = Math.sign((otherPoint.getY() - pos.getY()) * (lookAhead.getX() - pos.getX()) - 
-        (otherPoint.getX() - pos.getX()) * (lookAhead.getY() - pos.getY()));
+    let side = Math.sign((otherPoint.getY() - pos.getY()) * (lookahead.getX() - pos.getX()) - 
+        (otherPoint.getX() - pos.getX()) * (lookahead.getY() - pos.getY()));
 
     follower.debug_a = a;
     follower.debug_b = b;
@@ -257,7 +257,7 @@ let getCurvatureToPoint = function(pos, angle, lookAhead, follower) {
 }
 
 let PurePursuitFollower = class {
-    constructor(lookAheadDist, driveWidth, maxAcceleration) {
+    constructor(lookaheadDist, driveWidth, maxAcceleration) {
         this.lastT = 0.0;
         this.lastLookAheadIndex = 0;
         this.lastClosestIndex = 0;
@@ -274,7 +274,7 @@ let PurePursuitFollower = class {
         this.debug_la_x = -1257;
         this.debug_la_y = -1257;
 
-        this.lookAheadDist = lookAheadDist;
+        this.lookaheadDist = lookaheadDist;
         this.driveWidth = driveWidth;
         this.maxAcceleration = maxAcceleration;
     }
@@ -288,16 +288,16 @@ let followPath = function(robot, follower, points, currentTime) {
 		follower.lastLookAheadIndex = follower.lastClosestIndex;
 	}
 
-    let lookAheadResult = getLookAheadPoint(points, robot.getPosition(), follower.lookAheadDist, 
+    let lookaheadResult = getLookAheadPoint(points, robot.getPosition(), follower.lookaheadDist, 
         follower.lastT, follower.lastLookAheadIndex);
-    follower.lastT = lookAheadResult.t;
-    follower.lastLookAheadIndex = lookAheadResult.i;
-    let lookAheadPoint = lookAheadResult.lookAheadPoint;
+    follower.lastT = lookaheadResult.t;
+    follower.lastLookAheadIndex = lookaheadResult.i;
+    let lookaheadPoint = lookaheadResult.lookaheadPoint;
 
-    follower.debug_la_x = lookAheadPoint.getX();
-    follower.debug_la_y = lookAheadPoint.getY();
+    follower.debug_la_x = lookaheadPoint.getX();
+    follower.debug_la_y = lookaheadPoint.getY();
 
-    let curvature = getCurvatureToPoint(robot.getPosition(), robot.getAngle(), lookAheadPoint, follower);
+    let curvature = getCurvatureToPoint(robot.getPosition(), robot.getAngle(), lookaheadPoint, follower);
     let targetVelocity = points[follower.lastClosestIndex].getTargetVelocity();
 
     let tempLeft = targetVelocity * (2.0 + curvature * follower.driveWidth) / 2.0;
@@ -604,7 +604,7 @@ var currentSketch = new p5(function(sketch) {
 
     let maxVelocitySlider;
     let maxAccelerationSlider;
-    let lookAheadSlider;
+    let lookaheadSlider;
     let turningConstantSlider;
 
     let showUserCheckbox;
@@ -685,9 +685,9 @@ var currentSketch = new p5(function(sketch) {
         maxAccelerationSlider.setCallback(function() {
             follower.maxAcceleration = maxAccelerationSlider.getValue();
         });
-        lookAheadSlider = new dom_util.Slider('#look-ahead-slider', 5, 40, 15, 1, sketch);
-        lookAheadSlider.setCallback(function() {
-            follower.lookAheadDist = lookAheadSlider.getValue();
+        lookaheadSlider = new dom_util.Slider('#lookahead-slider', 5, 40, 15, 1, sketch);
+        lookaheadSlider.setCallback(function() {
+            follower.lookaheadDist = lookaheadSlider.getValue();
         });
         turningConstantSlider = new dom_util.Slider('#turning-constant-slider', 0.5, 2.0, 1.5, 0.1, sketch);
         turningConstantSlider.setCallback(function() {
@@ -699,8 +699,8 @@ var currentSketch = new p5(function(sketch) {
         showUserCheckbox = sketch.select('#show-user-checkbox');
         showInjectedCheckbox = sketch.select('#show-injected-checkbox');
         showSmoothedCheckbox = sketch.select('#show-smoothed-checkbox');
-        showLACircleCheckbox = sketch.select('#show-look-ahead-circle-checkbox');
-        showLAPointCheckbox = sketch.select('#show-look-ahead-point-checkbox');
+        showLACircleCheckbox = sketch.select('#show-lookahead-circle-checkbox');
+        showLAPointCheckbox = sketch.select('#show-lookahead-point-checkbox');
 
 		// Debug
 		exportDataButton = sketch.select('#export-data-button');
@@ -710,7 +710,7 @@ var currentSketch = new p5(function(sketch) {
 				smoothWeightSlider.getValue(),
 				maxVelocitySlider.getValue(),
 				maxAccelerationSlider.getValue(),
-				lookAheadSlider.getValue(),
+				lookaheadSlider.getValue(),
 				turningConstantSlider.getValue(),
 				userPoints,
 				robot.getPosition())
@@ -726,7 +726,7 @@ var currentSketch = new p5(function(sketch) {
 			smoothWeightSlider.setValue(obj.smoothWeight);
 			maxVelocitySlider.setValue(obj.maxVel);
 			maxAccelerationSlider.setValue(obj.maxAcc);
-			lookAheadSlider.setValue(obj.laDist);
+			lookaheadSlider.setValue(obj.laDist);
 			turningConstantSlider.setValue(obj.turnConst);
 		
 			deleteAllPoints();
@@ -744,7 +744,7 @@ var currentSketch = new p5(function(sketch) {
     }
 
     resetFollower = function() {
-        follower = new follower_util.PurePursuitFollower(lookAheadSlider.getValue(), robotSizeSlider.getValue(), 
+        follower = new follower_util.PurePursuitFollower(lookaheadSlider.getValue(), robotSizeSlider.getValue(), 
             maxAccelerationSlider.getValue());
     }
 
@@ -884,7 +884,7 @@ var currentSketch = new p5(function(sketch) {
 
         // debug.drawDebugLine(follower.debug_a, follower.debug_b, follower.debug_c, sketch);
         if(showLAPointCheckbox.elt.checked) debug.drawDebugPoint(follower.debug_la_x, follower.debug_la_y, sketch);
-        if(showLACircleCheckbox.elt.checked) debug.drawDebugCircle(robot.getX(), robot.getY(), lookAheadSlider.getValue(), sketch);
+        if(showLACircleCheckbox.elt.checked) debug.drawDebugCircle(robot.getX(), robot.getY(), lookaheadSlider.getValue(), sketch);
     }
     
     sketch.windowResized = function() {

@@ -52,7 +52,7 @@ var currentSketch = new p5(function(sketch) {
 
     let maxVelocitySlider;
     let maxAccelerationSlider;
-    let lookAheadSlider;
+    let lookaheadSlider;
     let turningConstantSlider;
 
     let showUserCheckbox;
@@ -133,9 +133,9 @@ var currentSketch = new p5(function(sketch) {
         maxAccelerationSlider.setCallback(function() {
             follower.maxAcceleration = maxAccelerationSlider.getValue();
         });
-        lookAheadSlider = new dom_util.Slider('#look-ahead-slider', 5, 40, 15, 1, sketch);
-        lookAheadSlider.setCallback(function() {
-            follower.lookAheadDist = lookAheadSlider.getValue();
+        lookaheadSlider = new dom_util.Slider('#lookahead-slider', 5, 40, 15, 1, sketch);
+        lookaheadSlider.setCallback(function() {
+            follower.lookaheadDist = lookaheadSlider.getValue();
         });
         turningConstantSlider = new dom_util.Slider('#turning-constant-slider', 0.5, 2.0, 1.5, 0.1, sketch);
         turningConstantSlider.setCallback(function() {
@@ -147,8 +147,8 @@ var currentSketch = new p5(function(sketch) {
         showUserCheckbox = sketch.select('#show-user-checkbox');
         showInjectedCheckbox = sketch.select('#show-injected-checkbox');
         showSmoothedCheckbox = sketch.select('#show-smoothed-checkbox');
-        showLACircleCheckbox = sketch.select('#show-look-ahead-circle-checkbox');
-        showLAPointCheckbox = sketch.select('#show-look-ahead-point-checkbox');
+        showLACircleCheckbox = sketch.select('#show-lookahead-circle-checkbox');
+        showLAPointCheckbox = sketch.select('#show-lookahead-point-checkbox');
 
 		// Debug
 		exportDataButton = sketch.select('#export-data-button');
@@ -158,7 +158,7 @@ var currentSketch = new p5(function(sketch) {
 				smoothWeightSlider.getValue(),
 				maxVelocitySlider.getValue(),
 				maxAccelerationSlider.getValue(),
-				lookAheadSlider.getValue(),
+				lookaheadSlider.getValue(),
 				turningConstantSlider.getValue(),
 				userPoints,
 				robot.getPosition())
@@ -174,7 +174,7 @@ var currentSketch = new p5(function(sketch) {
 			smoothWeightSlider.setValue(obj.smoothWeight);
 			maxVelocitySlider.setValue(obj.maxVel);
 			maxAccelerationSlider.setValue(obj.maxAcc);
-			lookAheadSlider.setValue(obj.laDist);
+			lookaheadSlider.setValue(obj.laDist);
 			turningConstantSlider.setValue(obj.turnConst);
 		
 			deleteAllPoints();
@@ -192,7 +192,7 @@ var currentSketch = new p5(function(sketch) {
     }
 
     resetFollower = function() {
-        follower = new follower_util.PurePursuitFollower(lookAheadSlider.getValue(), robotSizeSlider.getValue(), 
+        follower = new follower_util.PurePursuitFollower(lookaheadSlider.getValue(), robotSizeSlider.getValue(), 
             maxAccelerationSlider.getValue());
     }
 
@@ -332,7 +332,7 @@ var currentSketch = new p5(function(sketch) {
 
         // debug.drawDebugLine(follower.debug_a, follower.debug_b, follower.debug_c, sketch);
         if(showLAPointCheckbox.elt.checked) debug.drawDebugPoint(follower.debug_la_x, follower.debug_la_y, sketch);
-        if(showLACircleCheckbox.elt.checked) debug.drawDebugCircle(robot.getX(), robot.getY(), lookAheadSlider.getValue(), sketch);
+        if(showLACircleCheckbox.elt.checked) debug.drawDebugCircle(robot.getX(), robot.getY(), lookaheadSlider.getValue(), sketch);
     }
     
     sketch.windowResized = function() {

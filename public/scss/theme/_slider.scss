@@ -11,7 +11,7 @@
     .slider {
         -webkit-appearance: none;
         appearance: none;
-        width: 100%;
+        width: 90%;
         height: 15px;
         border-radius: 5px;
         background: #d3d3d3;
@@ -19,8 +19,12 @@
         opacity: 0.7;
         -webkit-transition: .2s;
         transition: opacity .2s;
-        margin: 15px auto 15px;
-        width: 80%;
+        margin: 10px auto 0px;
+
+        @include media-breakpoint-down(lg) {
+            margin: 15px auto 10px;
+            width: 95%;
+        }
     }
 
     .slider:hover {

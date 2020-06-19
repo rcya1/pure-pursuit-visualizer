@@ -5,31 +5,33 @@
         <script src="https://kit.fontawesome.com/6ddc023efd.js" crossorigin="anonymous"></script>
     </head>
     <body>
+        <!-- Navbar -->
         <nav class="navbar navbar-expand-sm navbar-light" style="background-color: #e3f2fd;">
-          <a class="navbar-brand" href="#">Pure Pursuit Visualizer</a>
-          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="collapsibleNavbar">
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link" href="https://github.com/Ryan10145/Pure-Pursuit-Visualizer">Source Code</a>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Reference
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                    <a class="dropdown-item" href="https://www.ri.cmu.edu/pub_files/pub3/coulter_r_craig_1992_1/coulter_r_craig_1992_1.pdf">Original Pure Pursuit Paper</a>
-                    <a class="dropdown-item" href="https://www.chiefdelphi.com/uploads/default/original/3X/b/e/be0e06de00e07db66f97686505c3f4dde2e332dc.pdf">Reference Paper from FRC Team 1712</a>
-                    </div>
-                </li>
-            </ul>
-          </div>  
+            <a class="navbar-brand" href="#">Pure Pursuit Visualizer</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="collapsibleNavbar">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://github.com/Ryan10145/Pure-Pursuit-Visualizer">Source Code</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Reference
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" href="https://www.ri.cmu.edu/pub_files/pub3/coulter_r_craig_1992_1/coulter_r_craig_1992_1.pdf">Original Pure Pursuit Paper</a>
+                        <a class="dropdown-item" href="https://www.chiefdelphi.com/uploads/default/original/3X/b/e/be0e06de00e07db66f97686505c3f4dde2e332dc.pdf">Reference Paper from FRC Team 1712</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>  
         </nav>
         
         <div class="container-fluid" id="main-container">
             <div class="row">
+                <!-- Canvas + Sidebar -->
                 <div class="col-xl-9 visualizer-container">
                     <div id="canvas-visualizer">
                         <div id="buttons-container">
@@ -38,7 +40,9 @@
                         </div>
                     </div>
                 </div>
+                <!-- Settings -->
                 <div class="col-xl-3" id="settings-container">
+                    <!-- Settings Tabs -->
                     <ul class="nav nav-tabs justify-content-center">
                         <li class="nav-item">
                             <a class="nav-link active" data-toggle="tab" href="#path-gen">Path Generation</a>
@@ -54,10 +58,14 @@
                         </li>
                     </ul>
                     
+                    <!-- Contents -->
                     <div class="tab-content">
+                        <!-- Path Generation -->
                         <div class="tab-pane container active" id="path-gen">
                             <div class="accordion" id="path-accordion">
+                                <!-- Path Generation Parameters -->
                                 <div class="card">
+                                    <!-- Header -->
                                     <div class="card-header" id="parameter-heading">
                                         <h2 class="mb-0">
                                             <button class="btn btn-link" type="button" data-toggle="collapse" 
@@ -67,14 +75,19 @@
                                         </h2>
                                     </div>
 
-                                    <div id="parameter-card" class="collapse show" aria-labelledby="parameter-heading">
+                                    <!-- Contents -->
+                                    <div id="parameter-card" class="collapse show" aria-labelledby="parameter-heading"
+                                        data-parent="#path-accordion">
                                         <div class="card-body">
                                             <div id="inject-spacing-slider" label-text="Inject Spacing"></div>
                                             <div id="smooth-weight-slider" label-text="Smooth Weight"></div>
                                         </div>
                                     </div>
                                 </div>
+
+                                <!-- Generation -->
                                 <div class="card">
+                                    <!-- Header -->
                                     <div class="card-header" id="gen-heading">
                                         <h2 class="mb-0">
                                             <button class="btn btn-link" type="button" data-toggle="collapse" 
@@ -84,6 +97,7 @@
                                         </h2>
                                     </div>
 
+                                    <!-- Contents -->
                                     <div id="gen-card" class="collapse show" aria-labelledby="gen-heading">
                                         <div class="card-body">
                                             <div class="row" id="path-gen-buttons">
@@ -109,9 +123,12 @@
                             </div>
                         </div>
 
+                        <!-- Visuals -->
                         <div class="tab-pane container fade" id="visuals">
                             <div class="accordion" id="visuals-accordion">
+                                <!-- Points Size -->
                                 <div class="card">
+                                    <!-- Header -->
                                     <div class="card-header" id="points-size-heading">
                                         <h2 class="mb-0">
                                             <button class="btn btn-link" type="button" data-toggle="collapse" 
@@ -121,6 +138,7 @@
                                         </h2>
                                     </div>
 
+                                    <!-- Contents -->
                                     <div id="points-size-card" class="collapse show" aria-labelledby="points-size-heading">
                                         <div class="card-body">
                                             <div id="robot-size-slider" label-text="Robot Size"></div>
@@ -128,7 +146,10 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                <!-- Points Visibility -->
                                 <div class="card">
+                                    <!-- Header -->
                                     <div class="card-header" id="points-visibility-heading">
                                         <h2 class="mb-0">
                                             <button class="btn btn-link" type="button" data-toggle="collapse" 
@@ -138,90 +159,125 @@
                                         </h2>
                                     </div>
 
+                                    <!-- Contents -->
                                     <div id="points-visibility-card" class="collapse show" aria-labelledby="points-visibility-heading">
                                         <div class="card-body">
-                                            <ul class="no-bullets">
-                                                <li>
-                                                    <label class="checkbox-container"> Show User Points
-                                                        <input type="checkbox" name="show-user-checkbox" id="show-user-checkbox" checked>
-                                                        <span class="checkmark"></span>
-                                                    </label>
-                                                </li>
-                                                <li>
-                                                    <label class="checkbox-container"> Show Injected Points
-                                                        <input type="checkbox" name="show-injected-checkbox" id="show-injected-checkbox">
-                                                        <span class="checkmark"></span>
-                                                    </label>
-                                                </li>
-                                                <li>
-                                                    <label class="checkbox-container"> Show Smoothed Points
-                                                        <input type="checkbox" name="show-smoothed-checkbox" id="show-smoothed-checkbox" checked>
-                                                        <span class="checkmark"></span>
-                                                    </label>
-                                                </li>
-                                            </ul>
+                                            <div class="container">
+                                                <div class="row">
+                                                    <div class="col-4 col-xl-12 no-padding">
+                                                        <label class="checkbox-container"> Show User Points
+                                                            <input type="checkbox" name="show-user-checkbox" id="show-user-checkbox" checked>
+                                                            <span class="checkmark"></span>
+                                                        </label>
+                                                    </div>
+                                                    <div class="col-4 col-xl-12 no-padding">
+                                                        <label class="checkbox-container"> Show Injected Points
+                                                            <input type="checkbox" name="show-injected-checkbox" id="show-injected-checkbox">
+                                                            <span class="checkmark"></span>
+                                                        </label>
+                                                    </div>
+                                                    <div class="col-4 col-xl-12 no-padding">
+                                                        <label class="checkbox-container"> Show Smoothed Points
+                                                            <input type="checkbox" name="show-smoothed-checkbox" id="show-smoothed-checkbox" checked>
+                                                            <span class="checkmark"></span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
 
+                                <!-- Lookahead Visibility -->
                                 <div class="card">
-                                    <div class="card-header" id="look-ahead-visibility-heading">
+                                    <!-- Header -->
+                                    <div class="card-header" id="lookahead-visibility-heading">
                                         <h2 class="mb-0">
                                             <button class="btn btn-link" type="button" data-toggle="collapse" 
-                                                data-target="#look-ahead-visibility-card" aria-expanded="true" aria-controls="look-ahead-visibility-card">
-                                                Look Ahead Visibility
+                                                data-target="#lookahead-visibility-card" aria-expanded="true" aria-controls="lookahead-visibility-card">
+                                                Lookahead Visibility
                                             </button>
                                         </h2>
                                     </div>
 
-                                    <div id="look-ahead-visibility-card" class="collapse show" aria-labelledby="look-ahead-visibility-heading">
+                                    <!-- Contents -->
+                                    <div id="lookahead-visibility-card" class="collapse show" aria-labelledby="lookahead-visibility-heading">
                                         <div class="card-body">
-                                            <ul class="no-bullets">
-                                                <li>
-                                                    <label class="checkbox-container"> Show Look Ahead Circle
-                                                        <input type="checkbox" name="show-look-ahead-circle-checkbox" id="show-look-ahead-circle-checkbox" checked>
-                                                        <span class="checkmark"></span>
-                                                    </label>
-                                                </li>
-                                                <li>
-                                                    <label class="checkbox-container"> Show Look Ahead Point
-                                                        <input type="checkbox" name="show-look-ahead-point-checkbox" id="show-look-ahead-point-checkbox" checked>
-                                                        <span class="checkmark"></span>
-                                                    </label>
-                                                </li>
-                                            </ul>
+                                            <div class="container">
+                                                <div class="row">
+                                                    <div class="col-6 no-padding">
+                                                        <label class="checkbox-container">Show Circle
+                                                            <input type="checkbox" name="show-lookahead-circle-checkbox" id="show-lookahead-circle-checkbox" checked>
+                                                            <span class="checkmark"></span>
+                                                        </label>
+                                                    </div>
+                                                    <div class="col-6 no-padding">
+                                                        <label class="checkbox-container">Show Point
+                                                            <input type="checkbox" name="show-lookahead-point-checkbox" id="show-lookahead-point-checkbox" checked>
+                                                            <span class="checkmark"></span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
+                        <!-- Following -->
                         <div class="tab-pane container fade" id="following">
-                            <div id="max-velocity-slider" label-text="Max Velocity"></div>
-                            <div id="max-acceleration-slider" label-text="Max Acceleration"></div>
-                            <div id="look-ahead-slider" label-text="Look Ahead Distance"></div>
-                            <div id="turning-constant-slider" label-text="Turning Speed"></div>
+                            <div class="accordion" id="following-accordion">
+                                <!-- Speed -->
+                                <div class="card">
+                                    <!-- Header -->
+                                    <div class="card-header" id="speed-heading">
+                                        <h2 class="mb-0">
+                                            <button class="btn btn-link" type="button" data-toggle="collapse" 
+                                                data-target="#speed-card" aria-expanded="true" aria-controls="speed-card">
+                                                Speed Parameters
+                                            </button>
+                                        </h2>
+                                    </div>
+
+                                    <!-- Contents -->
+                                    <div id="speed-card" class="collapse show" aria-labelledby="speed-heading"
+                                        data-parent="#speed-accordion">
+                                        <div class="card-body">
+                                            <div id="max-velocity-slider" label-text="Max Velocity"></div>
+                                            <div id="max-acceleration-slider" label-text="Max Acceleration"></div>
+                                            <div id="turning-constant-slider" label-text="Turning Speed"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Lookahead -->
+                                <div class="card">
+                                    <!-- Header -->
+                                    <div class="card-header" id="lookahead-heading">
+                                        <h2 class="mb-0">
+                                            <button class="btn btn-link" type="button" data-toggle="collapse" 
+                                                data-target="#lookahead-card" aria-expanded="true" aria-controls="lookahead-card">
+                                                Lookahead
+                                            </button>
+                                        </h2>
+                                    </div>
+
+                                    <!-- Contents -->
+                                    <div id="lookahead-card" class="collapse show" aria-labelledby="lookahead-heading">
+                                        <div class="card-body">
+                                            <div id="lookahead-slider" label-text="Lookahead Distance"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
+                        <!-- Debugging -->
                         <div class="tab-pane container fade" id="debug">
                             <button type="button" class="debug btn btn-primary btn-block" id="export-data-button">Export Data</button>
                             <button type="button" class="debug btn btn-primary btn-block" id="import-data-button">Import Data</button>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="settings-container">
-            <div id="configuration-container">
-                <div id="top-config-container">
-                    <div class="button-check-container">
-                    </div>
-                </div>
-                <div id="path-container">
-                    <div class="button-check-container">
-                    </div>
-                    <div class="button-check-container">
                     </div>
                 </div>
             </div>

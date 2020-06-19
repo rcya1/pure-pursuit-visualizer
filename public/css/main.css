@@ -9531,8 +9531,7 @@ button:disabled {
   text-align: center;
 }
 
-.no-bullets {
-  list-style-type: none;
+.no-padding {
   padding: 0;
 }
 
@@ -9567,7 +9566,7 @@ button:disabled {
 .slider-container .slider {
   -webkit-appearance: none;
   appearance: none;
-  width: 100%;
+  width: 90%;
   height: 15px;
   border-radius: 5px;
   background: #d3d3d3;
@@ -9575,8 +9574,13 @@ button:disabled {
   opacity: 0.7;
   -webkit-transition: 0.2s;
   transition: opacity 0.2s;
-  margin: 15px auto 15px;
-  width: 80%;
+  margin: 10px auto 0px;
+}
+@media (max-width: 1199.98px) {
+  .slider-container .slider {
+    margin: 15px auto 10px;
+    width: 95%;
+  }
 }
 .slider-container .slider:hover {
   opacity: 1;
