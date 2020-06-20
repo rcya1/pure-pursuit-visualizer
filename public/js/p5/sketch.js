@@ -16,7 +16,8 @@ const MouseState = {
 // In order:
 // TODO Add a button for making the robot follow the path (and make sure a good alternative for mobile exists)
 // TODO Add an undo button with font-awesome icon
-// TODO Make the delete icon be actually a toggle between add and trash (even add a little arrow thing to indicate this is a toggle)
+// TODO Add button to reset the robot position
+// TODO Add a background to the sidebar with things that actually look like buttons
 // TODO Make the inject and smooth buttons into icon buttons (custom icons)
 // TODO Add keyboard shortcuts
 
@@ -35,6 +36,8 @@ var currentSketch = new p5(function(sketch) {
     let lastOrientation;
     
     // DOM elements
+    let followPathButton;
+
     let robotSizeSlider;
     let userWaypointSizeSlider;
 
@@ -88,6 +91,8 @@ var currentSketch = new p5(function(sketch) {
         styleCanvas();
 
         robot = new Robot();
+
+        followPathButton = sketch.select('#follow-path-button');
 
         // Top Configuration Box
         robotSizeSlider = new dom_util.Slider('#robot-size-slider', 1, 20, 5, 0.1, sketch);
@@ -224,7 +229,7 @@ var currentSketch = new p5(function(sketch) {
     }
 
     update = function() {
-        if(keys.includes('f')) {
+        if(followPathButton.hasClass('active')) {
             follower_util.followPath(robot, follower, smoothedPoints, sketch.millis(), sketch);
         }
 

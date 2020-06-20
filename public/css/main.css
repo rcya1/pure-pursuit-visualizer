@@ -9690,4 +9690,9 @@ button:disabled {
   padding-bottom: 1rem;
 }
 
+.btn:focus, .btn:active {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
 /*# sourceMappingURL=main.css.map */
