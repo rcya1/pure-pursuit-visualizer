@@ -22,12 +22,14 @@ button:disabled {
     padding: 0;
 }
 
-#delete-points-checkbox {
-    color: #a9a9a9;
+.nested-icon-br {
+    font-size: 8px;
+    top: 12.5px;
+    left: 22.5px !important;
 }
 
-#delete-points-checkbox.checked {
-    color: #000000;
+#delete-container {
+    left: 3px;
 }
 
 #path-gen-buttons {

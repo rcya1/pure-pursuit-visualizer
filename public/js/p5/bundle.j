@@ -797,20 +797,6 @@ var currentSketch = new p5(function(sketch) {
             else mouseState = MouseState.DEFAULT;
         }
 
-        // handle updating the icon
-        if(deletePointsCheckbox.hasClass("checked")) {
-            if(deletePointsCheckbox.hasClass("fa-plus")) {
-                deletePointsCheckbox.removeClass("fa-plus");
-                deletePointsCheckbox.addClass("fa-trash-alt");
-            }
-        }
-        else {
-            if(deletePointsCheckbox.hasClass("fa-trash-alt")) {
-                deletePointsCheckbox.removeClass("fa-trash-alt");
-                deletePointsCheckbox.addClass("fa-plus");
-            }
-        }
-
         // handle updating the cursor sprite
         if(deletePointsCheckbox.hasClass("checked")) {
             sketch.cursor('not-allowed');

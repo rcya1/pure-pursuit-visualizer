@@ -35,8 +35,11 @@
                 <div class="col-xl-9 visualizer-container">
                     <div id="canvas-visualizer">
                         <div id="buttons-container">
-                            <i class="far fa-file button-icon" id="delete-all-points-button" title="Delete All Points"></i>
-                            <i class="fas fa-trash-alt button-icon" id="delete-points-checkbox" title="Toggle Deleting Points"></i>
+                            <i class="far fa-file button-icon fa-fw" id="delete-all-points-button" title="Delete All Points"></i>
+                            <span class="fa-stack fa-lg fa-fw" id="delete-container">
+                                <i class="fa button-icon fa-refresh fa-stack-1x nested-icon-br"></i>
+                                <i class="fa button-icon fa-plus fa-stack-2x" id="delete-points-checkbox" title="Toggle Deleting Points"></i>
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -102,10 +105,10 @@
                                         <div class="card-body">
                                             <div class="row" id="path-gen-buttons">
                                                 <div class="col-6 text-center">
-                                                    <button type="button" id="inject-points-button" class="btn btn-primary">Inject Points</button>
+                                                    <button type="button" id="inject-points-button" class="btn btn-primary text-nowrap">Inject Points</button>
                                                 </div>
                                                 <div class="col-6 text-center">
-                                                    <button type="button" id="smooth-points-button" class="btn btn-primary">Smooth Points</button>
+                                                    <button type="button" id="smooth-points-button" class="btn btn-primary text-nowrap">Smooth Points</button>
                                                 </div>
                                             </div>
 
