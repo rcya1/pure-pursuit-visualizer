@@ -15,9 +15,9 @@ const MouseState = {
 
 // In order:
 // TODO Add an undo button with font-awesome icon
-// TODO Add button to reset the robot position
+// TODO Add button to reset the robot position (fa-refresh)
 // TODO Add a background to the sidebar with things that actually look like buttons
-// TODO Make the inject and smooth buttons into icon buttons (custom icons)
+// TODO Make the inject and smooth buttons into icon buttons (custom icons) 
 // TODO Add keyboard shortcuts
 
 var currentSketch = new p5(function(sketch) {

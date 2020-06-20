@@ -566,9 +566,8 @@ const MouseState = {
 }
 
 // In order:
-// TODO Add a button for making the robot follow the path (and make sure a good alternative for mobile exists)
 // TODO Add an undo button with font-awesome icon
-// TODO Add button to reset the robot position
+// TODO Add button to reset the robot position (fa-refresh)
 // TODO Add a background to the sidebar with things that actually look like buttons
 // TODO Make the inject and smooth buttons into icon buttons (custom icons)
 // TODO Add keyboard shortcuts

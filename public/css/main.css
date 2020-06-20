@@ -9529,6 +9529,10 @@ button:disabled {
   font-size: 48px;
   margin: 10px;
   text-align: center;
+  color: #696969;
+}
+.button-icon:hover {
+  color: #000000;
 }
 
 .no-padding {
@@ -9556,8 +9560,6 @@ button:disabled {
 }
 .slider-container {
   margin-bottom: 10px;
-  /* Chrome, Opera, Safari, Edge */
-  /* Firefox */
 }
 .slider-container .slider-input {
   padding: 0 auto;
@@ -9577,6 +9579,7 @@ button:disabled {
   -webkit-transition: 0.2s;
   transition: opacity 0.2s;
   margin: 10px auto 0px;
+  /* Chrome, Opera, Safari, Edge */
 }
 @media (max-width: 1199.98px) {
   .slider-container .slider {
@@ -9628,10 +9631,6 @@ button:disabled {
   user-select: none;
   /* Hide the browser's default checkbox */
   /* Create a custom checkbox */
-  /* When the checkbox is checked, add a blue background */
-  /* Create the checkmark/indicator (hidden when not checked) */
-  /* Show the checkmark when checked */
-  /* Style the checkmark/indicator */
 }
 .checkbox-container input {
   position: absolute;
@@ -9639,6 +9638,14 @@ button:disabled {
   cursor: pointer;
   height: 0;
   width: 0;
+  /* When the checkbox is checked, add a blue background */
+  /* Show the checkmark when checked */
+}
+.checkbox-container input:checked ~ .checkmark {
+  background-color: #007bff;
+}
+.checkbox-container input:checked ~ .checkmark:after {
+  display: block;
 }
 .checkbox-container .checkmark {
   position: absolute;
@@ -9647,19 +9654,12 @@ button:disabled {
   height: 25px;
   width: 25px;
   background-color: #ddd;
-}
-.checkbox-container input:checked ~ .checkmark {
-  background-color: #007bff;
+  /* Create the checkmark/indicator (hidden when not checked) */
 }
 .checkbox-container .checkmark:after {
   content: "";
   position: absolute;
   display: none;
-}
-.checkbox-container input:checked ~ .checkmark:after {
-  display: block;
-}
-.checkbox-container .checkmark:after {
   left: 9px;
   top: 3px;
   width: 8px;
@@ -9670,7 +9670,6 @@ button:disabled {
   -ms-transform: rotate(45deg);
   transform: rotate(45deg);
 }
-
 .checkbox-container:hover {
   /* On mouse-over, add a grey background color */
   /* On mouse-over, add a grey background color */
@@ -9693,6 +9692,10 @@ button:disabled {
 .btn:focus, .btn:active {
   outline: none !important;
   box-shadow: none !important;
+}
+
+.btn-primary.active {
+  background-color: #003D7F !important;
 }
 
 /*# sourceMappingURL=main.css.map */

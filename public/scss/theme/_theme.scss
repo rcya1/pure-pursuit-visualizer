@@ -16,6 +16,11 @@ button:disabled {
     font-size: 48px;
     margin: 10px;
     text-align: center;
+    color: #696969;
+
+    &:hover {
+        color: #000000;
+    }
 }
 
 .no-padding {
