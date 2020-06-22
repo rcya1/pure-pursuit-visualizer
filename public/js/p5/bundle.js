@@ -569,7 +569,7 @@ const MouseState = {
 // TODO Add an undo button with font-awesome icon
 // TODO Add button to reset the robot position (fa-refresh)
 // TODO Add a background to the sidebar with things that actually look like buttons
-// TODO Make the inject and smooth buttons into icon buttons (custom icons)
+// TODO Make the inject and smooth buttons into icon buttons (custom icons) 
 // TODO Add keyboard shortcuts
 
 var currentSketch = new p5(function(sketch) {
@@ -594,6 +594,7 @@ var currentSketch = new p5(function(sketch) {
 
     let deletePointsCheckbox;
     let deleteAllPointsButton;
+    let resetRobotButton;
 
     let injectSpacingSlider;
     let injectPointsButton;
@@ -645,11 +646,7 @@ var currentSketch = new p5(function(sketch) {
 
         followPathButton = sketch.select('#follow-path-button');
 
-        // Top Configuration Box
-        robotSizeSlider = new dom_util.Slider('#robot-size-slider', 1, 20, 5, 0.1, sketch);
-        userWaypointSizeSlider = new dom_util.Slider('#user-waypoint-size-slider', 1, 3, 1.7, 0.1, sketch);
-
-        // Path Configuration
+        // Icon Bar
         deletePointsCheckbox = sketch.select('#delete-points-checkbox');
         deletePointsCheckbox.mousePressed(function() {
             if(deletePointsCheckbox.hasClass("checked")) deletePointsCheckbox.removeClass("checked");
@@ -660,6 +657,14 @@ var currentSketch = new p5(function(sketch) {
             if(confirm("Are you sure you would like to remove all points?")) 
                 deleteAllPoints();
         });
+        resetRobotButton = sketch.select("#reset-robot-button");
+        resetRobotButton.mousePressed(function() {
+            moveRobotToStart();
+        });
+
+        // Top Configuration Box
+        robotSizeSlider = new dom_util.Slider('#robot-size-slider', 1, 20, 5, 0.1, sketch);
+        userWaypointSizeSlider = new dom_util.Slider('#user-waypoint-size-slider', 1, 3, 1.7, 0.1, sketch);
 
         // Inject Points
         injectSpacingSlider = new dom_util.Slider('#inject-spacing-slider', 1.5, 10, 5, 0.1, sketch);
@@ -954,6 +959,7 @@ var currentSketch = new p5(function(sketch) {
                 }
                 // angle the robot to the second point
                 if(activePoint == 1) {
+                    moveRobotToStart();
                     angleRobot();
                 }
             }
@@ -984,6 +990,7 @@ var currentSketch = new p5(function(sketch) {
         }
         // angle the robot to the second point
         if(activePoint == 1) {
+            moveRobotToStart();
             angleRobot();
         }
     }
@@ -993,6 +1000,7 @@ var currentSketch = new p5(function(sketch) {
         if(userPoints.length > 1) {
             angleRobot();
         }
+        resetFollower();
     }
 
     angleRobot = function() {
