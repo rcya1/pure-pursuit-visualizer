@@ -1,8 +1,4 @@
-const conv = require("./conversions")
 const Vector = require("./vector");
-
-// TODO Make it so that the point cannot jump to segments too far away and facing the opposite direction (90 degree turns should be ok)
-// TODO Implement a feature where if the point is in a threshold just way too far, the robot will just do a turn towards the lookahead
 
 // returns the index of the closest point to the given vector
 // uses the last found point to optimize the search
