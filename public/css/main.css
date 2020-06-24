@@ -9515,9 +9515,19 @@ h3 {
   margin-top: 10px;
 }
 
-#buttons-container {
+#icon-bar {
   display: flex;
   flex-direction: column;
+  background: #dcdcdc;
+  border-left: 1px solid #707070a0;
+}
+#icon-bar .fa-sync-alt {
+  font-size: 250%;
+  margin-left: 17.5%;
+}
+#icon-bar hr {
+  border-color: #c0c0c0a0;
+  margin: 0px auto;
 }
 
 button:disabled {
@@ -9527,7 +9537,7 @@ button:disabled {
 .button-icon {
   cursor: pointer;
   font-size: 48px;
-  margin: 10px;
+  margin: 5px 10px;
   text-align: center;
   color: #696969;
 }

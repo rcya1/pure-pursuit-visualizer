@@ -290,7 +290,7 @@ var currentSketch = new p5(function(sketch) {
     }
 
     display = function() {
-        sketch.background(200);
+        sketch.background(220);
         sketch.rectMode(sketch.CENTER);
         
         // draw all injected points

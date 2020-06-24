@@ -1,4 +1,4 @@
-# Pure Pursuit Visualizer (WIP)
+# Pure Pursuit Visualizer
 
 This project is an implementation of the adaptive pure pursuit algorithm for path following. The application allows you to place points and have a robot follow them, while also allowing certain visualization and following parameters be modified.
 
