@@ -1,6 +1,4 @@
 const conv = require('./conversions');
-const Vector = require('./vector');
-const Waypoint = require('./waypoint');
 
 let drawDebugLine = function(a, b, c, sketch) {
     for(let x = 0; x <= 200; x += 5) {

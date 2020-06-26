@@ -116,9 +116,6 @@ var currentSketch = new p5(function(sketch) {
     }
 
     setUpPathGeneration = function() {
-        robotSizeSlider = new dom_util.Slider('#robot-size-slider', 1, 20, 5, 0.1, sketch);
-        userWaypointSizeSlider = new dom_util.Slider('#user-waypoint-size-slider', 1, 3, 1.7, 0.1, sketch);
-
         // Inject Points
         injectSpacingSlider = new dom_util.Slider('#inject-spacing-slider', 1.5, 10, 5, 0.1, sketch);
         injectSpacingSlider.setCallback(function() {
@@ -140,6 +137,9 @@ var currentSketch = new p5(function(sketch) {
     }
 
     setUpVisuals = function() {
+        robotSizeSlider = new dom_util.Slider('#robot-size-slider', 1, 20, 5, 0.1, sketch);
+        userWaypointSizeSlider = new dom_util.Slider('#user-waypoint-size-slider', 1, 3, 1.7, 0.1, sketch);
+        
         showUserCheckbox = sketch.select('#show-user-checkbox');
         showInjectedCheckbox = sketch.select('#show-injected-checkbox');
         showSmoothedCheckbox = sketch.select('#show-smoothed-checkbox');
@@ -332,6 +332,7 @@ var currentSketch = new p5(function(sketch) {
         canvasHolder.style('display', 'flex');
         canvasHolder.style('justify-content', 'center');
         canvasHolder.style('flex-direction', 'row-reverse');
+        canvas.style('border', '1px solid #707070a0');
         
         canvas.parent('canvas-visualizer');
     }

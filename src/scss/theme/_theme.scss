@@ -5,17 +5,13 @@
 #icon-bar {
     display: flex;
     flex-direction: column;
-    background: #dcdcdc;
-    border-left: 1px solid #707070a0;
+    background: #dfdfdf;
+    border: 1px solid #707070a0;
+    border-left: 0px;
 
     .fa-sync-alt {
         font-size: 250%;
         margin-left: 17.5%;
-    }
-
-    hr {
-        border-color: #c0c0c0a0;
-        margin: 0px auto;
     }
 }
 

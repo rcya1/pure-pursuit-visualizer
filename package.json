@@ -6,7 +6,10 @@
   "scripts": {
     "start": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "watch": "watchify ./public/js/p5/sketch.js -o ./public/js/p5/bundle.js & sass --watch ./public/scss/main.scss:./public/css/main.css"
+    "clean": "rimraf ./build && rimraf ./dist",
+    "compile-ts": "npx tsc && browserify ./build/js/sketch.js -o ./dist/js/bundle.js && node-minify --compressor uglify-js --input './dist/js/bundle.js' --output './dist/js/bundle.min.js'", 
+    "compile-sass": "sass ./src/scss/main.scss:./dist/css/main.css",
+    "build": "npm run clean && npm run compile-ts && npm run compile-sass"
   },
   "repository": {
     "type": "git",
@@ -20,5 +23,13 @@
   "homepage": "https://github.com/Ryan10145/Pure-Pursuit-Visualizer#readme",
   "dependencies": {
     "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "@node-minify/core": "^6.0.0",
+    "@node-minify/uglify-js": "^6.0.0",
+    "browserify": "^16.5.1",
+    "rimraf": "^3.0.2",
+    "sass": "^1.26.9",
+    "typescript": "^3.9.5"
   }
 }
