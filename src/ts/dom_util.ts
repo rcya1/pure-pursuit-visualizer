@@ -70,7 +70,6 @@ export class Slider {
 
         // add the custom callback to the elements
         // forced to use getElementById here because the P5 TypeScript types doesn't define input() properly
-        console.log(this._input.id());
         let input: HTMLElement = document.getElementById(this._input.id());
         input.addEventListener("input", (function(): void {
             this._slider.value(this._input.value());

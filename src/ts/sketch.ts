@@ -79,9 +79,6 @@ const s = (sketch: p5): void => {
     let lenientDragging: boolean = false;
 
     sketch.setup = function(): void {
-        let a: Vector = new Vector(3, 4);
-        a.printInfoVerbose();
-
         canvas = sketch.createCanvas(sketch.windowWidth, sketch.windowHeight);
         canvasHolder = sketch.select('#canvas-visualizer');
         styleCanvas();
