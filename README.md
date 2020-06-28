@@ -12,10 +12,13 @@ However, the following augmentations to the algorithm were made:
 
 ## Project Structure
 
-- All source code is located in the `/src` folder, which includes both TypeScript and Sass code
-- All TypeScript code is compiled into JavaScript code in the `/build` folder
-- All JavaScript code is bundled and minified into `bundle.min.js` in the `/dist` folder
-- All Sass code is compiled into CSS code in the `/dist` folder
+- All source code is located in the `/src` folder, which includes HTML, TypeScript, and Sass code
+- Webpack is used to to bundle all of the code into the `/dist` directory
+- Webpack compiles`p5.js` with the application for the visualization tool
+- Webpack also compiles Bootstrap with the application for the UI elements
+- Express is used to serve the compiled files
+
+The project was originally built with JavaScript with Watchify and CSS, but the transition to TypeScript and Sass was made to improve code quality and reduce bugs.
 
 ## Instructions
 
@@ -26,3 +29,15 @@ npm install
 npm run build
 npm start
 ```
+
+Run the development environment for incremental builds
+
+```terminal
+npm install
+npm run watch
+```
+
+## Credits
+
+- The project structure was borrowed from [pierpo's starter kit for p5 and TypeScript](https://github.com/pierpo/p5-ts-starter-kit)
+- The original project was inspired by [clementmihailescu's project for visualizing pathfinding algorithms](https://github.com/clementmihailescu/Pathfinding-Visualizer)

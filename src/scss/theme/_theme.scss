@@ -25,6 +25,7 @@ button:disabled {
     margin: 5px 10px;
     text-align: center;
     color: #696969;
+    z-index: 5;
 
     &:hover {
         color: #000000;
@@ -35,14 +36,21 @@ button:disabled {
     padding: 0;
 }
 
-.nested-icon-br {
+#delete-nested-icon {
     font-size: 8px;
-    top: 12.5px;
-    left: 22.5px !important;
+    top: 27.5px;
+    left: 34.5px !important;
+    color: #696969;
+    z-index: 1;
+    
+    #delete-points-checkbox:hover {
+        color: #000000;
+    }
 }
 
 #delete-container {
-    left: 3px;
+    left: -10px;
+    bottom: 4px;
 }
 
 #path-gen-buttons {
