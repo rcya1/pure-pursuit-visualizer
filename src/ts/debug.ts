@@ -1,10 +1,10 @@
-import { px, py } from "./conversions"
+import { px, py, SCREEN_WIDTH } from "./conversions"
 import { Vector } from "./vector"
 import { Waypoint } from "./waypoint"
 import * as p5 from 'p5';
 
 export function drawDebugLine(a: number, b: number, c: number, sketch: p5): void {
-    for (let x = 0; x < 200; x += 5) {
+    for (let x = 0; x < SCREEN_WIDTH; x += 5) {
         let y = (-c - a * x) / b;
         sketch.fill(255, 0, 0);
         sketch.noStroke();

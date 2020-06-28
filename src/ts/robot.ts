@@ -1,9 +1,9 @@
 import { Vector } from "./vector"
-import { px, py, PI } from "./conversions"
+import { px, py, PI, SCREEN_WIDTH, SCREEN_HEIGHT } from "./conversions"
 import * as p5 from 'p5';
 
 export class Robot {
-    pos: Vector = new Vector(100, 50);
+    pos: Vector = new Vector(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
     velocity: number = 0.0;
     angle: number = PI / 2;
     angularVelocity: number = 0.0;
@@ -12,7 +12,7 @@ export class Robot {
     rightSpeed: number = 0.0;
 
     constructor() {
-
+        
     }
 
     update(frameRate: number, driveWidth: number) {

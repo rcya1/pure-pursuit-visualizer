@@ -1,4 +1,4 @@
-import {Vector} from "../../src/ts/vector"
+import { Vector } from "../../src/ts/vector"
 import { expect } from 'chai';
 import 'mocha';
 

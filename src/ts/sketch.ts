@@ -1,6 +1,6 @@
 import * as p5 from 'p5';
 import '../scss/main.scss';
-import { cx, cy} from './conversions'
+import { cx, cy, SCREEN_HEIGHT, SCREEN_WIDTH} from './conversions'
 import * as path_gen from './path_gen'
 import * as follower_util from './follower_util'
 import { Slider } from './dom_util'
@@ -335,7 +335,7 @@ const s = (sketch: p5): void => {
     let styleCanvas = function() {
         let holderWidthString: string  = canvasHolder.style('width');
         let holderWidth: number = parseInt(holderWidthString.substring(0, holderWidthString.length - 2));
-        sketch.resizeCanvas(holderWidth * widthScaling, holderWidth * widthScaling / 2.0);
+        sketch.resizeCanvas(holderWidth * widthScaling, holderWidth * widthScaling * SCREEN_HEIGHT / SCREEN_WIDTH);
         
         canvasHolder.style('display', 'flex');
         canvasHolder.style('justify-content', 'center');
@@ -401,9 +401,9 @@ const s = (sketch: p5): void => {
 
         if(activePoint != -1) {
             // clamp the dropped position to inside the sketch
-            userPoints[activePoint].x = Math.min(200, userPoints[activePoint].x);
+            userPoints[activePoint].x = Math.min(SCREEN_WIDTH, userPoints[activePoint].x);
             userPoints[activePoint].x = Math.max(0, userPoints[activePoint].x);
-            userPoints[activePoint].y = Math.min(100, userPoints[activePoint].y);
+            userPoints[activePoint].y = Math.min(SCREEN_HEIGHT, userPoints[activePoint].y);
             userPoints[activePoint].y = Math.max(0, userPoints[activePoint].y);
 
             needAutoInject = true;
