@@ -21,6 +21,10 @@ export class Robot {
 
         if(isNaN(frameRate) || frameRate == 0) frameRate = 60;
         this.angle += this.angularVelocity / frameRate;
+
+        if(this.angle < 0) this.angle += 2 * PI;
+        if(this.angle >= 2 * PI) this.angle -= 2 * PI;
+
         this.pos = this.pos.add(new Vector(this.velocity * Math.cos(this.angle), 
             this.velocity * Math.sin(this.angle)).mult(1 / frameRate));
 
