@@ -3,6 +3,7 @@ import { px, py } from "./conversions"
 import * as p5 from 'p5';
 
 export class Waypoint extends Vector {
+
     targetVelocity: number = -1.0;
 
     constructor(vector: Vector) {

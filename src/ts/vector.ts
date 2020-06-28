@@ -32,7 +32,7 @@ export class Vector {
 
     get magSq(): number {
         if(this._magSq == -1) {
-           this._magSq = this._x * this._x + this._y + this._y; 
+           this._magSq = this._x * this._x + this._y * this._y; 
         }
         return this._magSq;
     }
