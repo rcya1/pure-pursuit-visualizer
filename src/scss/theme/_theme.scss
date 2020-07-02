@@ -2,6 +2,10 @@
     margin-top: 10px;
 }
 
+#visualizer-container {
+    max-width: none !important;
+}
+
 #icon-bar {
     display: flex;
     flex-direction: column;

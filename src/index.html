@@ -31,16 +31,16 @@
         <div class="container-fluid" id="main-container">
             <div class="row">
                 <!-- Canvas + Sidebar -->
-                <div class="col-xl-9 visualizer-container">
-                    <div class="container">
+                <div class="col-xl-9">
+                    <div class="container" id="visualizer-container">
                         <div id="canvas-visualizer">
                             <div id="icon-bar">
-                                <i class="far fa-file button-icon fa-fw" id="delete-all-points-button" title="Delete All Points"></i>
-                                <span class="fa-stack fa-2x" id="delete-container" title="Toggle Adding/Removing Points">
-                                    <i class="fa fa-refresh fa-stack-1x fa-rotate-90" id="delete-nested-icon"></i>
-                                    <i class="fa fa-plus fa-stack-1x button-icon" id="delete-points-checkbox"></i>
+                                <i class="far fa-file button-icon fa-fw" id="delete-all-points-button" title="Delete All Points" aria-hidden="true"></i>
+                                <span class="fa-stack fa-2x" id="delete-container" title="Toggle Adding/Removing Points" aria-hidden="true">
+                                    <i class="fa fa-refresh fa-stack-1x fa-rotate-90" id="delete-nested-icon" aria-hidden="true"></i>
+                                    <i class="fa fa-plus fa-stack-1x button-icon" id="delete-points-checkbox" aria-hidden="true"></i>
                                   </span>
-                                <i class="fa fa-sync-alt button-icon fa-fw", id="reset-robot-button" title="Reset Robot Position"></i>
+                                <i class="fa fa-sync-alt button-icon fa-fw" id="reset-robot-button" title="Reset Robot Position" aria-hidden="true"></i>
                             </div>
                         </div>
                         <br>

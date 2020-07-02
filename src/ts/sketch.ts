@@ -183,7 +183,7 @@ const s = (sketch: p5): void => {
 				lookaheadSlider.getValue(),
 				turningConstantSlider.getValue(),
 				userPoints,
-				robot.pos
+				robot
             ));
         });
 
@@ -207,7 +207,10 @@ const s = (sketch: p5): void => {
 			needAutoInject = true;
 			needAutoSmooth = true;
 			
-			robot.pos = new Vector(obj.robotPos.x, obj.robotPos.y);
+            robot = new Robot();
+            robot.pos.x = obj.robot.pos.x;
+            robot.pos.y = obj.robot.pos.y;
+            robot.angle = obj.robot.angle;
 		});
     }
 

@@ -1,5 +1,5 @@
 import { px, py, SCREEN_WIDTH } from "./conversions"
-import { Vector } from "./vector"
+import { Robot } from "./robot"
 import { Waypoint } from "./waypoint"
 import * as p5 from 'p5';
 
@@ -29,7 +29,7 @@ export function drawDebugCircle(x: number, y: number, r: number, sketch: p5) {
 
 export function getString(_injectSpacing: number, _smoothWeight: number,
     _maxVel: number, _maxAcc: number, _laDist: number, _turnConst: number,
-    _userPoints: Waypoint[], _robotPos: Vector): string {
+    _userPoints: Waypoint[], _robot: Robot): string {
 
     let obj: Object = {
 		injectSpacing: _injectSpacing,
@@ -39,7 +39,7 @@ export function getString(_injectSpacing: number, _smoothWeight: number,
 		laDist: _laDist,
 		turnConst: _turnConst,
 		userPoints: _userPoints,
-		robotPos: _robotPos
+		robot: _robot
     };
 
     return JSON.stringify(obj);
