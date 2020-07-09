@@ -14,6 +14,11 @@ enum MouseState {
     DRAGGING
 }
 
+enum PathGenState {
+    SMOOTHING,
+    SPLINES
+}
+
 const s = (sketch: p5): void => {
 
     const widthScaling: number = 0.9;
@@ -38,6 +43,7 @@ const s = (sketch: p5): void => {
     let deleteAllPointsButton: p5.Element;
     let resetRobotButton: p5.Element;
 
+    // -- path smoothing options --
     let injectSpacingSlider: Slider;
     let injectPointsButton: p5.Element;
 
@@ -46,6 +52,7 @@ const s = (sketch: p5): void => {
     
     let autoInjectCheckbox: p5.Element;
     let autoSmoothCheckbox: p5.Element;
+    // --
 
     let showUserCheckbox: p5.Element;
     let showInjectedCheckbox: p5.Element;
@@ -65,6 +72,10 @@ const s = (sketch: p5): void => {
     let userPoints: Waypoint[] = [];
     let injectedPoints: Waypoint[] = [];
     let smoothedPoints: Waypoint[] = [];
+    let startDirectionVector: Vector = null;
+    let endDirectionVector: Vector = null;
+    
+    let pathGenState: PathGenState = PathGenState.SPLINES;
     let mouseState: MouseState = MouseState.DEFAULT;
     let mouseClickVector: Vector = null;
     let activePoint: number = -1;
@@ -88,7 +99,7 @@ const s = (sketch: p5): void => {
         followPathButton = sketch.select('#follow-path-button');
 
         setUpIconBar();
-        setUpPathGeneration();
+        setUpPathGenerationSmoothing();
         setUpVisuals();
         setUpFollowing();
         resetFollower();
@@ -121,7 +132,7 @@ const s = (sketch: p5): void => {
         });
     }
 
-    let setUpPathGeneration = function(): void {
+    let setUpPathGenerationSmoothing = function(): void {
         // Inject Points
         injectSpacingSlider = new Slider('#inject-spacing-slider', 1.5, 10, 5, 0.1, sketch);
         injectSpacingSlider.setCallback(function() {
@@ -228,15 +239,27 @@ const s = (sketch: p5): void => {
 
         if(!lingeringMouse) calculateActivePoint();
 
+        // TODO Figure out what this does because I forgot
         if(mouseState == MouseState.DRAGGING) {
-            if(activePoint != -1 && mouseClickVector != null) {
+            if(mouseClickVector != null) {
                 // ensure that the translation of the active point is only moved relative to the last mouse location
                 // this way, when you drag it off-center it doesn't jump 
-                userPoints[activePoint].x = userPoints[activePoint].x + 
-                    cx(sketch.mouseX, sketch.width) - mouseClickVector.x;
-                userPoints[activePoint].y = userPoints[activePoint].y + 
-                    cy(sketch.mouseY, sketch.height) - mouseClickVector.y;
-                mouseClickVector = new Vector(cx(sketch.mouseX, sketch.width), cy(sketch.mouseY, sketch.height));
+                if(activePoint >= 0) {
+                    userPoints[activePoint].x += cx(sketch.mouseX, sketch.width) - mouseClickVector.x;
+                    userPoints[activePoint].y += cy(sketch.mouseY, sketch.height) - mouseClickVector.y;
+                }
+                else if(activePoint == -2) {
+                    startDirectionVector.x += cx(sketch.mouseX, sketch.width) - mouseClickVector.x;
+                    startDirectionVector.y += cy(sketch.mouseY, sketch.height) - mouseClickVector.y;
+                }
+                else if(activePoint == -3) {
+                    endDirectionVector.x += cx(sketch.mouseX, sketch.width) - mouseClickVector.x;
+                    endDirectionVector.y += cy(sketch.mouseY, sketch.height) - mouseClickVector.y;
+                }
+
+                if(activePoint != -1) {
+                    mouseClickVector = new Vector(cx(sketch.mouseX, sketch.width), cy(sketch.mouseY, sketch.height));
+                }
             }
             else mouseState = MouseState.DEFAULT;
         }
@@ -271,26 +294,43 @@ const s = (sketch: p5): void => {
             needAutoSmooth = true;
         }
 
-        // handle auto injecting points
-        if(autoInjectCheckbox.elt.checked) {
-            if(needAutoInject) {
-                injectPoints();
+        if(pathGenState == PathGenState.SMOOTHING) {
+            // handle auto injecting points
+            if(autoInjectCheckbox.elt.checked) {
+                if(needAutoInject) {
+                    injectPoints();
+                }
+                injectPointsButton.elt.disabled = true;
             }
-            injectPointsButton.elt.disabled = true;
-        }
-        else {
-            injectPointsButton.elt.disabled = false;
-        }
+            else {
+                injectPointsButton.elt.disabled = false;
+            }
 
-        // handle auto smoothing points
-        if(autoSmoothCheckbox.elt.checked) {
-            if(needAutoSmooth) {
-                smoothPoints();
+            // handle auto smoothing points
+            if(autoSmoothCheckbox.elt.checked) {
+                if(needAutoSmooth) {
+                    smoothPoints();
+                }
+                smoothPointsButton.elt.disabled = true;
             }
-            smoothPointsButton.elt.disabled = true;
+            else {
+                smoothPointsButton.elt.disabled = false;
+            }
         }
         else {
-            smoothPointsButton.elt.disabled = false;
+            if(userPoints.length < 2) {
+                endDirectionVector = null;
+            }
+            if(userPoints.length < 1) {
+                startDirectionVector = null;
+            }
+
+            if(startDirectionVector == null && userPoints.length > 0) {
+                startDirectionVector = new Vector(20.0, 0.0);
+            }
+            if(endDirectionVector == null && userPoints.length > 1) {
+                endDirectionVector = new Vector(20.0, 0.0);
+            }
         }
 
         // handle device orientation switches
@@ -302,18 +342,32 @@ const s = (sketch: p5): void => {
         sketch.background(220);
         sketch.rectMode(sketch.CENTER);
         
-        // draw all injected points
-        if(showInjectedCheckbox.elt.checked) {
-            for(let point of injectedPoints) {
-                point.draw(sketch, userWaypointSizeSlider.getValue() / 3.0, false, 150);
+        if(pathGenState == PathGenState.SMOOTHING) {
+            // draw all injected points
+            if(showInjectedCheckbox.elt.checked) {
+                for(let point of injectedPoints) {
+                    point.draw(sketch, userWaypointSizeSlider.getValue() / 3.0, false, 150);
+                }
+            }
+            // draw all smoothed points
+            if(showSmoothedCheckbox.elt.checked) {
+                for(let point of smoothedPoints) {
+                    point.draw(sketch, userWaypointSizeSlider.getValue() / 1.5, false, 100);
+                }
             }
         }
-        // draw all smoothed points
-        if(showSmoothedCheckbox.elt.checked) {
-            for(let point of smoothedPoints) {
-                point.draw(sketch, userWaypointSizeSlider.getValue() / 1.5, false, 100);
+        else {
+            // draw direction vectors
+            if(startDirectionVector != null) {
+                let startDirection: Waypoint = new Waypoint(userPoints[0].add(startDirectionVector));
+                startDirection.drawColor(sketch, userWaypointSizeSlider.getValue() / 1.25, activePoint == -2, 200, 20, 20);
+            }
+            if(endDirectionVector != null) {
+                let endDirection: Waypoint = new Waypoint(userPoints[userPoints.length - 1].add(endDirectionVector));
+                endDirection.drawColor(sketch, userWaypointSizeSlider.getValue() / 1.25, activePoint == -3, 200, 20, 20);
             }
         }
+
         // draw all of the user points
         if(showUserCheckbox.elt.checked) {
             for(let pointIndex = 0; pointIndex < userPoints.length; pointIndex++) {
@@ -353,7 +407,7 @@ const s = (sketch: p5): void => {
 
             if(deletePointsCheckbox.hasClass("checked")) {
                 // delete the current point
-                if(activePoint != -1) {
+                if(activePoint >= 0) {
                     userPoints.splice(activePoint, 1);
                 }
                 needAutoInject = true;
@@ -399,16 +453,32 @@ const s = (sketch: p5): void => {
     sketch.mouseReleased = function(): void {
         mouseState = MouseState.DEFAULT;
 
-        if(activePoint != -1) {
+        if(activePoint >= 0) {
             // clamp the dropped position to inside the sketch
-            userPoints[activePoint].x = Math.min(SCREEN_WIDTH, userPoints[activePoint].x);
-            userPoints[activePoint].x = Math.max(0, userPoints[activePoint].x);
+            userPoints[activePoint].x = Math.min(SCREEN_WIDTH,  userPoints[activePoint].x);
+            userPoints[activePoint].x = Math.max(0,             userPoints[activePoint].x);
             userPoints[activePoint].y = Math.min(SCREEN_HEIGHT, userPoints[activePoint].y);
-            userPoints[activePoint].y = Math.max(0, userPoints[activePoint].y);
+            userPoints[activePoint].y = Math.max(0,             userPoints[activePoint].y);
 
             needAutoInject = true;
             needAutoSmooth = true;
+        }
+        else if(pathGenState == PathGenState.SPLINES) {
+            if(activePoint == -2) {
+                startDirectionVector.x = Math.min(SCREEN_WIDTH - userPoints[0].x,  startDirectionVector.x);
+                startDirectionVector.x = Math.max(-userPoints[0].x,                startDirectionVector.x);
+                startDirectionVector.y = Math.min(SCREEN_HEIGHT - userPoints[0].y, startDirectionVector.y);
+                startDirectionVector.y = Math.max(-userPoints[0].y,                startDirectionVector.y);
+            }
+            else if(activePoint == -3) {
+                endDirectionVector.x = Math.min(SCREEN_WIDTH - userPoints[userPoints.length - 1].x,  endDirectionVector.x);
+                endDirectionVector.x = Math.max(-userPoints[userPoints.length - 1].x,                endDirectionVector.x);
+                endDirectionVector.y = Math.min(SCREEN_HEIGHT - userPoints[userPoints.length - 1].y, endDirectionVector.y);
+                endDirectionVector.y = Math.max(-userPoints[userPoints.length - 1].y,                endDirectionVector.y);
+            }
+        }
 
+        if(activePoint != -1) {
             activePoint = -1;
         }
     }
@@ -447,14 +517,37 @@ const s = (sketch: p5): void => {
         if(mouseState != MouseState.DRAGGING) {
             let closestDist: number = userWaypointSizeSlider.getValue() * userWaypointSizeSlider.getValue();
             if(lenientDragging) closestDist *= 4; // make the radius twice as large if on mobile
-
             activePoint = -1;
             let mouseVector: Vector = new Vector(cx(sketch.mouseX, sketch.width), cy(sketch.mouseY, sketch.height));
-            for(let pointIndex = 0; pointIndex < userPoints.length; pointIndex++) {
-                let dist: number = userPoints[pointIndex].getDistanceToSq(mouseVector);
-                if(dist < closestDist) {
-                    activePoint = pointIndex;
-                    closestDist = dist;
+
+            // look at the direction vectors for splines first
+            if(pathGenState == PathGenState.SPLINES) {
+                if(startDirectionVector != null) {
+                    let startDirection: Vector = userPoints[0].add(startDirectionVector);
+                    let dist: number = startDirection.getDistanceToSq(mouseVector);
+                    if(dist < closestDist) {
+                        activePoint = -2;
+                        closestDist = dist;
+                    }
+                }
+                if(endDirectionVector != null) {
+                    let endDirection: Vector = userPoints[userPoints.length - 1].add(endDirectionVector);
+                    let dist: number = endDirection.getDistanceToSq(mouseVector);
+                    if(dist < closestDist) {
+                        activePoint = -3;
+                        closestDist = dist;
+                    }
+                }
+            }
+
+            // if none of the direction vectors were chosen, find a user point
+            if(activePoint == -1) {
+                for(let pointIndex = 0; pointIndex < userPoints.length; pointIndex++) {
+                    let dist: number = userPoints[pointIndex].getDistanceToSq(mouseVector);
+                    if(dist < closestDist) {
+                        activePoint = pointIndex;
+                        closestDist = dist;
+                    }
                 }
             }
         }
@@ -473,18 +566,28 @@ const s = (sketch: p5): void => {
     }
 
     let injectPoints = function(): void {
-        path_gen.injectPoints(userPoints, injectedPoints, injectSpacingSlider.getValue());
-        needAutoInject = false;
-        needAutoSmooth = true;
-        resetFollower();
+        if(pathGenState == PathGenState.SMOOTHING) {
+            path_gen.injectPoints(userPoints, injectedPoints, injectSpacingSlider.getValue());
+            needAutoInject = false;
+            needAutoSmooth = true;
+            resetFollower();
+        }
+        else {
+            console.log("ERROR: called injectPoints() during pathGenState != SMOOTHING");
+        }
     }   
 
     let smoothPoints = function(): void {
-        path_gen.smoothPoints(injectedPoints, smoothedPoints, smoothWeightSlider.getValue());
-        path_gen.calculateTargetVelocities(smoothedPoints, maxVelocitySlider.getValue(), maxAccelerationSlider.getValue(), 
-            turningConstantSlider.getValue());
-        needAutoSmooth = false;
-        resetFollower();
+        if(pathGenState == PathGenState.SMOOTHING) {
+            path_gen.smoothPoints(injectedPoints, smoothedPoints, smoothWeightSlider.getValue());
+            path_gen.calculateTargetVelocities(smoothedPoints, maxVelocitySlider.getValue(), maxAccelerationSlider.getValue(), 
+                turningConstantSlider.getValue());
+            needAutoSmooth = false;
+            resetFollower();
+        }
+        else {
+            console.log("ERROR: called injectPoints() during pathGenState != SMOOTHING");
+        }
     }
 
     let moveRobotToStart = function(): void {
@@ -495,6 +598,7 @@ const s = (sketch: p5): void => {
         resetFollower();
     }
 
+    // TODO In the splines mode, make this angle it towards the first direction vector instead
     let angleRobot = function(): void {
         robot.angle = Math.atan2(userPoints[1].y - userPoints[0].y,
             userPoints[1].x - userPoints[0].x);
