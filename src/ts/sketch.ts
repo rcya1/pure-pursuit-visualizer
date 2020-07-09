@@ -435,21 +435,11 @@ const s = (sketch: p5): void => {
     sketch.keyPressed = function(): void {
         keyCodes.push(sketch.keyCode);
         keys.push(sketch.key);
-
-        if(sketch.keyCode == sketch.SHIFT) {
-            if(!deletePointsCheckbox.hasClass("checked")) 
-                deletePointsCheckbox.addClass("checked");
-        }
     }
 
     sketch.keyReleased = function(): void {
         keyCodes.splice(keyCodes.indexOf(sketch.keyCode), 1);
         keys.splice(keys.indexOf(sketch.key), 1);
-
-        if(sketch.keyCode == sketch.SHIFT) {
-            if(deletePointsCheckbox.hasClass("checked")) 
-                deletePointsCheckbox.removeClass("checked");
-        }
     }
 
     // calculate the closest point to the cursor to determine which one to grab
