@@ -19,6 +19,8 @@ enum PathGenState {
     SPLINES
 }
 
+// TODO Make it so that the direction vector is a fixed distance away, but when it goes offscrene, you make it go closer to the 
+// point
 const s = (sketch: p5): void => {
 
     const widthScaling: number = 0.9;
@@ -100,6 +102,7 @@ const s = (sketch: p5): void => {
 
         setUpIconBar();
         setUpPathGenerationSmoothing();
+        setUpPathGenerationSplines();
         setUpVisuals();
         setUpFollowing();
         resetFollower();
@@ -111,22 +114,22 @@ const s = (sketch: p5): void => {
     let setUpIconBar = function(): void {
         deletePointsCheckbox = sketch.select('#delete-points-checkbox');
         deletePointsCheckbox.mousePressed(function(): void {
-            if(deletePointsCheckbox.hasClass("checked")) {
-                deletePointsCheckbox.removeClass("checked");
+            if(deletePointsCheckbox.hasClass('checked')) {
+                deletePointsCheckbox.removeClass('checked');
             }
             else {
-                deletePointsCheckbox.addClass("checked");
+                deletePointsCheckbox.addClass('checked');
             }
         });
 
         deleteAllPointsButton = sketch.select('#delete-all-points-button');
         deleteAllPointsButton.mousePressed(function(): void {
-            if(confirm("Are you sure you would like to remove all points?")) {
+            if(confirm('Are you sure you would like to remove all points?')) {
                 deleteAllPoints();
             }
         });
 
-        resetRobotButton = sketch.select("#reset-robot-button");
+        resetRobotButton = sketch.select('#reset-robot-button');
         resetRobotButton.mousePressed(function(): void {
             moveRobotToStart();
         });
@@ -151,6 +154,10 @@ const s = (sketch: p5): void => {
         smoothPointsButton = sketch.select('#smooth-points-button');
         smoothPointsButton.mousePressed(smoothPoints);
         autoSmoothCheckbox = sketch.select('#auto-smooth-checkbox');
+    }
+
+    let setUpPathGenerationSplines = function(): void {
+        
     }
 
     let setUpVisuals = function(): void {
@@ -200,7 +207,7 @@ const s = (sketch: p5): void => {
 
 		importDataButton = sketch.select('#import-data-button');
 		importDataButton.mousePressed(function() {
-			let dataString = prompt("Enter JSON Data", "");
+			let dataString = prompt('Enter JSON Data', '');
 			let obj = JSON.parse(dataString);
 
 			injectSpacingSlider.setValue(obj.injectSpacing);
@@ -265,24 +272,24 @@ const s = (sketch: p5): void => {
         }
 
         // handle updating the icon
-        if(deletePointsCheckbox.hasClass("checked")) {
-            if(deletePointsCheckbox.hasClass("fa-plus")) {
-                deletePointsCheckbox.removeClass("fa-plus");
-                deletePointsCheckbox.addClass("fa-trash-alt");
+        if(deletePointsCheckbox.hasClass('checked')) {
+            if(deletePointsCheckbox.hasClass('fa-plus')) {
+                deletePointsCheckbox.removeClass('fa-plus');
+                deletePointsCheckbox.addClass('fa-trash-alt');
             }
         }
         else {
-            if(deletePointsCheckbox.hasClass("fa-trash-alt")) {
-                deletePointsCheckbox.removeClass("fa-trash-alt");
-                deletePointsCheckbox.addClass("fa-plus");
+            if(deletePointsCheckbox.hasClass('fa-trash-alt')) {
+                deletePointsCheckbox.removeClass('fa-trash-alt');
+                deletePointsCheckbox.addClass('fa-plus');
             }
         }
 
         // handle updating the cursor sprite
-        if(deletePointsCheckbox.hasClass("checked")) {
-            sketch.cursor('not-allowed');
+        if(deletePointsCheckbox.hasClass('checked') && activePoint != -1) {
+            sketch.cursor('not-allowed')
         }
-        else if(activePoint != -1) {
+        else if(!deletePointsCheckbox.hasClass('checked') && activePoint != -1) {
             sketch.cursor('grab');
         }
         else {
@@ -335,7 +342,17 @@ const s = (sketch: p5): void => {
 
         // handle device orientation switches
         if(sketch.deviceOrientation != lastOrientation) styleCanvas();
-        lastOrientation = sketch.deviceOrientation; 
+        lastOrientation = sketch.deviceOrientation;
+
+        // handle updating the control options for the path generation
+        if(pathGenState == PathGenState.SMOOTHING) {
+            sketch.select('#smoothing-elements').style('display', 'block');
+            sketch.select('#spline-elements').style('display', 'none');
+        }
+        else if(pathGenState == PathGenState.SPLINES) {
+            sketch.select('#smoothing-elements').style('display', 'none');
+            sketch.select('#spline-elements').style('display', 'block');
+        }
     }
 
     let display = function(): void {
@@ -371,7 +388,13 @@ const s = (sketch: p5): void => {
         // draw all of the user points
         if(showUserCheckbox.elt.checked) {
             for(let pointIndex = 0; pointIndex < userPoints.length; pointIndex++) {
-                userPoints[pointIndex].draw(sketch, userWaypointSizeSlider.getValue(), pointIndex == activePoint, 0);
+                if(deletePointsCheckbox.hasClass('checked') && pointIndex == activePoint) {
+                    userPoints[pointIndex].drawColor(sketch, userWaypointSizeSlider.getValue(),
+                        pointIndex == activePoint, 255, 0, 0);
+                }
+                else {
+                    userPoints[pointIndex].draw(sketch, userWaypointSizeSlider.getValue(), pointIndex == activePoint, 0);
+                }
             }
         }
 
@@ -405,7 +428,7 @@ const s = (sketch: p5): void => {
         // ensure the mouse is within the sketch window doing anything
         if(mouseInSketch()) {
 
-            if(deletePointsCheckbox.hasClass("checked")) {
+            if(deletePointsCheckbox.hasClass('checked')) {
                 // delete the current point
                 if(activePoint >= 0) {
                     userPoints.splice(activePoint, 1);
@@ -463,14 +486,16 @@ const s = (sketch: p5): void => {
             needAutoInject = true;
             needAutoSmooth = true;
         }
-        else if(pathGenState == PathGenState.SPLINES) {
-            if(activePoint == -2) {
+
+        if(pathGenState == PathGenState.SPLINES) {
+            if(startDirectionVector != null) {
                 startDirectionVector.x = Math.min(SCREEN_WIDTH - userPoints[0].x,  startDirectionVector.x);
                 startDirectionVector.x = Math.max(-userPoints[0].x,                startDirectionVector.x);
                 startDirectionVector.y = Math.min(SCREEN_HEIGHT - userPoints[0].y, startDirectionVector.y);
                 startDirectionVector.y = Math.max(-userPoints[0].y,                startDirectionVector.y);
             }
-            else if(activePoint == -3) {
+
+            if(endDirectionVector != null) {
                 endDirectionVector.x = Math.min(SCREEN_WIDTH - userPoints[userPoints.length - 1].x,  endDirectionVector.x);
                 endDirectionVector.x = Math.max(-userPoints[userPoints.length - 1].x,                endDirectionVector.x);
                 endDirectionVector.y = Math.min(SCREEN_HEIGHT - userPoints[userPoints.length - 1].y, endDirectionVector.y);
@@ -573,7 +598,7 @@ const s = (sketch: p5): void => {
             resetFollower();
         }
         else {
-            console.log("ERROR: called injectPoints() during pathGenState != SMOOTHING");
+            console.log('ERROR: called injectPoints() during pathGenState != SMOOTHING');
         }
     }   
 
@@ -586,7 +611,7 @@ const s = (sketch: p5): void => {
             resetFollower();
         }
         else {
-            console.log("ERROR: called injectPoints() during pathGenState != SMOOTHING");
+            console.log('ERROR: called injectPoints() during pathGenState != SMOOTHING');
         }
     }
 
