@@ -76,6 +76,8 @@ const s = (sketch: p5): void => {
     let smoothedPoints: Waypoint[] = [];
     let startDirectionVector: Vector = null;
     let endDirectionVector: Vector = null;
+    let directionTempVector: Vector = null;
+    let directionVectorDist: number = 15;
     
     let pathGenState: PathGenState = PathGenState.SPLINES;
     let mouseState: MouseState = MouseState.DEFAULT;
@@ -246,7 +248,6 @@ const s = (sketch: p5): void => {
 
         if(!lingeringMouse) calculateActivePoint();
 
-        // TODO Figure out what this does because I forgot
         if(mouseState == MouseState.DRAGGING) {
             if(mouseClickVector != null) {
                 // ensure that the translation of the active point is only moved relative to the last mouse location
@@ -254,18 +255,57 @@ const s = (sketch: p5): void => {
                 if(activePoint >= 0) {
                     userPoints[activePoint].x += cx(sketch.mouseX, sketch.width) - mouseClickVector.x;
                     userPoints[activePoint].y += cy(sketch.mouseY, sketch.height) - mouseClickVector.y;
+                    mouseClickVector = new Vector(cx(sketch.mouseX, sketch.width), cy(sketch.mouseY, sketch.height));
                 }
-                else if(activePoint == -2) {
-                    startDirectionVector.x += cx(sketch.mouseX, sketch.width) - mouseClickVector.x;
-                    startDirectionVector.y += cy(sketch.mouseY, sketch.height) - mouseClickVector.y;
-                }
-                else if(activePoint == -3) {
-                    endDirectionVector.x += cx(sketch.mouseX, sketch.width) - mouseClickVector.x;
-                    endDirectionVector.y += cy(sketch.mouseY, sketch.height) - mouseClickVector.y;
+                else if(activePoint < -1) {
+                    // handle direction vectors
+                    // calculate the displacement of the mouse, and constrain the vectors to a fixed distance around the original point
+                    let mouseDisplacementX: number = cx(sketch.mouseX, sketch.width) - mouseClickVector.x;
+                    let mouseDisplacementY: number = cy(sketch.mouseY, sketch.height) - mouseClickVector.y;
+
+                    let dirVector: Vector = null;
+                    let origPoint: Vector = null;
+                    if(activePoint == -2) {
+                        dirVector = startDirectionVector;
+                        origPoint = userPoints[0];
+                    }
+                    if(activePoint == -3) {
+                        dirVector = endDirectionVector;
+                        origPoint = userPoints[userPoints.length - 1];
+                    }
+                    let dragPos: Vector = directionTempVector.add(new Vector(mouseDisplacementX, mouseDisplacementY));
+                    let newDirVector: Vector = dragPos.sub(origPoint).normalize().mult(directionVectorDist);
+                    dirVector.x = newDirVector.x;
+                    dirVector.y = newDirVector.y;
                 }
 
-                if(activePoint != -1) {
-                    mouseClickVector = new Vector(cx(sketch.mouseX, sketch.width), cy(sketch.mouseY, sketch.height));
+                // shorten the lengths of the direction vectors if they go off screen
+                if(startDirectionVector != null) {
+                    let currLength: number = directionVectorDist;
+                    let normVector: Vector = startDirectionVector.normalize();
+                    startDirectionVector = normVector.mult(currLength);
+                    while(currLength >= 0 && (startDirectionVector.x >= SCREEN_WIDTH - userPoints[0].x || 
+                        startDirectionVector.x <= -userPoints[0].x || 
+                        startDirectionVector.y >= SCREEN_HEIGHT - userPoints[0].y || 
+                        startDirectionVector.y <= -userPoints[0].y)) {
+
+                        currLength -= 0.25;
+                        startDirectionVector = normVector.mult(currLength);
+                    }
+                }
+
+                if(endDirectionVector != null) {
+                    let currLength: number = directionVectorDist;
+                    let normVector: Vector = endDirectionVector.normalize();
+                    endDirectionVector = normVector.mult(currLength);
+                    while(currLength > 1 && (endDirectionVector.x >= SCREEN_WIDTH - userPoints[userPoints.length - 1].x || 
+                        endDirectionVector.x <= -userPoints[userPoints.length - 1].x || 
+                        endDirectionVector.y >= SCREEN_HEIGHT - userPoints[userPoints.length - 1].y || 
+                        endDirectionVector.y <= -userPoints[userPoints.length - 1].y)) {
+
+                        currLength -= 0.25;
+                        endDirectionVector = normVector.mult(currLength);
+                    }
                 }
             }
             else mouseState = MouseState.DEFAULT;
@@ -333,10 +373,10 @@ const s = (sketch: p5): void => {
             }
 
             if(startDirectionVector == null && userPoints.length > 0) {
-                startDirectionVector = new Vector(20.0, 0.0);
+                startDirectionVector = new Vector(directionVectorDist, 0.0);
             }
             if(endDirectionVector == null && userPoints.length > 1) {
-                endDirectionVector = new Vector(20.0, 0.0);
+                endDirectionVector = new Vector(directionVectorDist, 0.0);
             }
         }
 
@@ -427,7 +467,6 @@ const s = (sketch: p5): void => {
 
         // ensure the mouse is within the sketch window doing anything
         if(mouseInSketch()) {
-
             if(deletePointsCheckbox.hasClass('checked')) {
                 // delete the current point
                 if(activePoint >= 0) {
@@ -456,6 +495,12 @@ const s = (sketch: p5): void => {
                 if(activePoint == 1) {
                     moveRobotToStart();
                     angleRobot();
+                }
+                if(activePoint == -2) {
+                    directionTempVector = userPoints[0].add(startDirectionVector);
+                }
+                if(activePoint == -3) {
+                    directionTempVector = userPoints[userPoints.length - 1].add(endDirectionVector);
                 }
             }
         }
@@ -488,19 +533,6 @@ const s = (sketch: p5): void => {
         }
 
         if(pathGenState == PathGenState.SPLINES) {
-            if(startDirectionVector != null) {
-                startDirectionVector.x = Math.min(SCREEN_WIDTH - userPoints[0].x,  startDirectionVector.x);
-                startDirectionVector.x = Math.max(-userPoints[0].x,                startDirectionVector.x);
-                startDirectionVector.y = Math.min(SCREEN_HEIGHT - userPoints[0].y, startDirectionVector.y);
-                startDirectionVector.y = Math.max(-userPoints[0].y,                startDirectionVector.y);
-            }
-
-            if(endDirectionVector != null) {
-                endDirectionVector.x = Math.min(SCREEN_WIDTH - userPoints[userPoints.length - 1].x,  endDirectionVector.x);
-                endDirectionVector.x = Math.max(-userPoints[userPoints.length - 1].x,                endDirectionVector.x);
-                endDirectionVector.y = Math.min(SCREEN_HEIGHT - userPoints[userPoints.length - 1].y, endDirectionVector.y);
-                endDirectionVector.y = Math.max(-userPoints[userPoints.length - 1].y,                endDirectionVector.y);
-            }
         }
 
         if(activePoint != -1) {
