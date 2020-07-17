@@ -1,6 +1,6 @@
 import { Robot } from "./robot";
-import { Vector } from "./vector";
-import { Waypoint } from "./waypoint";
+import { Vector } from "../util/vector";
+import { Waypoint } from "../util/waypoint";
 
 // returns the index of the closest point to the given vector
 // uses the last found point to optimize the search

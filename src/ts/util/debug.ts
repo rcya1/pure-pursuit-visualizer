@@ -1,5 +1,5 @@
 import { px, py, SCREEN_WIDTH } from "./conversions"
-import { Robot } from "./robot"
+import { Robot } from "../robot/robot"
 import { Waypoint } from "./waypoint"
 import * as p5 from 'p5';
 

@@ -1,5 +1,5 @@
-import { Vector } from "./vector"
-import { Waypoint } from "./waypoint"
+import { Vector } from "../util/vector"
+import { Waypoint } from "../util/waypoint"
 
 export function injectPoints(userPoints: Waypoint[], injectedPoints: Waypoint[], spacing: number): void {
     injectedPoints.splice(0, injectedPoints.length);

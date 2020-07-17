@@ -1,5 +1,5 @@
-import { Vector } from "./vector"
-import { px, py, PI, SCREEN_WIDTH, SCREEN_HEIGHT } from "./conversions"
+import { Vector } from "../util/vector"
+import { px, py, PI, SCREEN_WIDTH, SCREEN_HEIGHT } from "../util/conversions"
 import * as p5 from 'p5';
 
 export class Robot {

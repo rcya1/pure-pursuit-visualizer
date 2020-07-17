@@ -1,13 +1,14 @@
 import * as p5 from 'p5';
 import '../scss/main.scss';
-import { cx, cy, SCREEN_HEIGHT, SCREEN_WIDTH} from './conversions'
-import * as path_gen from './path_gen'
-import * as follower_util from './follower_util'
-import { Slider } from './dom_util'
-import * as debug from './debug'
-import { Robot } from './robot'
-import { Vector } from './vector'
-import { Waypoint } from './waypoint'
+import { cx, cy, SCREEN_HEIGHT, SCREEN_WIDTH} from './util/conversions'
+import * as smoothing_gen from './robot/smoothing-gen'
+import * as pure_pursuit from './robot/pure-pursuit'
+import { Slider } from './dom/dom-elements'
+import * as debug from './util/debug'
+import { Robot } from './robot/robot'
+import { Vector } from './util/vector'
+import { Waypoint } from './util/waypoint'
+import { FollowingSettingsContainer, FollowingSettings } from './dom/settings/following-settings';
 
 enum MouseState {
     DEFAULT,
@@ -19,8 +20,6 @@ enum PathGenState {
     SPLINES
 }
 
-// TODO Make it so that the direction vector is a fixed distance away, but when it goes offscrene, you make it go closer to the 
-// point
 const s = (sketch: p5): void => {
 
     const widthScaling: number = 0.9;
@@ -61,11 +60,8 @@ const s = (sketch: p5): void => {
     let showSmoothedCheckbox: p5.Element;
     let showLACircleCheckbox: p5.Element;
     let showLAPointCheckbox: p5.Element;
-
-    let maxVelocitySlider: Slider;
-    let maxAccelerationSlider: Slider;
-    let lookaheadSlider: Slider;
-    let turningConstantSlider: Slider;
+    
+    let followingSettingsContainer: FollowingSettingsContainer;
 
 	// debug
 	let exportDataButton: p5.Element;
@@ -87,7 +83,7 @@ const s = (sketch: p5): void => {
     let needAutoInject: boolean = true;
     let needAutoSmooth: boolean = true;
 
-    let follower: follower_util.PurePursuitFollower;
+    let follower: pure_pursuit.PurePursuitFollower;
     
     // mobile
     let lingeringMouse: boolean = false;
@@ -106,7 +102,7 @@ const s = (sketch: p5): void => {
         setUpPathGenerationSmoothing();
         setUpPathGenerationSplines();
         setUpVisuals();
-        setUpFollowing();
+        followingSettingsContainer = new FollowingSettingsContainer(sketch, smoothPoints, follower);
         resetFollower();
         setUpDebug();
 
@@ -172,36 +168,18 @@ const s = (sketch: p5): void => {
         showLACircleCheckbox = sketch.select('#show-lookahead-circle-checkbox');
         showLAPointCheckbox = sketch.select('#show-lookahead-point-checkbox');
     }
-    
-    let setUpFollowing = function(): void {
-        maxVelocitySlider = new Slider('#max-velocity-slider', 10, 100, 50, 1, sketch);
-        maxVelocitySlider.setCallback(function() {
-            smoothPoints();
-        });
-        maxAccelerationSlider = new Slider('#max-acceleration-slider', 10, 100, 75, 1, sketch);
-        maxAccelerationSlider.setCallback(function() {
-            follower.maxAcceleration = maxAccelerationSlider.getValue();
-        });
-        lookaheadSlider = new Slider('#lookahead-slider', 5, 40, 15, 1, sketch);
-        lookaheadSlider.setCallback(function() {
-            follower.lookaheadDist = lookaheadSlider.getValue();
-        });
-        turningConstantSlider = new Slider('#turning-constant-slider', 0.5, 2.0, 1.5, 0.1, sketch);
-        turningConstantSlider.setCallback(function() {
-            smoothPoints();
-        });
-    }
 
     let setUpDebug = function(): void {
-		exportDataButton = sketch.select('#export-data-button');
+        exportDataButton = sketch.select('#export-data-button');
+        let followingSettings: FollowingSettings = followingSettingsContainer.getSettings();
 		exportDataButton.mousePressed(function() {
 			console.log(debug.getString(
 				injectSpacingSlider.getValue(),
 				smoothWeightSlider.getValue(),
-				maxVelocitySlider.getValue(),
-				maxAccelerationSlider.getValue(),
-				lookaheadSlider.getValue(),
-				turningConstantSlider.getValue(),
+				followingSettings.maxVelocity,
+				followingSettings.maxAcceleration,
+				followingSettings.lookahead,
+				followingSettings.turningConstant,
 				userPoints,
 				robot
             ));
@@ -213,11 +191,11 @@ const s = (sketch: p5): void => {
 			let obj = JSON.parse(dataString);
 
 			injectSpacingSlider.setValue(obj.injectSpacing);
-			smoothWeightSlider.setValue(obj.smoothWeight);
-			maxVelocitySlider.setValue(obj.maxVel);
-			maxAccelerationSlider.setValue(obj.maxAcc);
-			lookaheadSlider.setValue(obj.laDist);
-			turningConstantSlider.setValue(obj.turnConst);
+            smoothWeightSlider.setValue(obj.smoothWeight);
+            followingSettingsContainer.setMaxVelocity(obj.maxVel);
+            followingSettingsContainer.setMaxAcceleration(obj.maxAcc);
+            followingSettingsContainer.setLookahead(obj.laDist);
+            followingSettingsContainer.setTurningConstant(obj.turnConst);
 		
 			deleteAllPoints();
 			for(let pointIndex = 0; pointIndex < obj.userPoints.length(); pointIndex++) {
@@ -241,7 +219,7 @@ const s = (sketch: p5): void => {
 
     let update = function(): void {
         if(followPathButton.hasClass('active')) {
-            follower_util.followPath(robot, follower, smoothedPoints, sketch.millis());
+            pure_pursuit.followPath(robot, follower, smoothedPoints, sketch.millis());
         }
 
         robot.update(sketch.frameRate(), robotSizeSlider.getValue());
@@ -442,7 +420,7 @@ const s = (sketch: p5): void => {
 
         // debug.drawDebugLine(follower.debug_a, follower.debug_b, follower.debug_c, sketch);
         if(showLAPointCheckbox.elt.checked) debug.drawDebugPoint(follower.debug_la_x, follower.debug_la_y, sketch);
-        if(showLACircleCheckbox.elt.checked) debug.drawDebugCircle(robot.pos.x, robot.pos.y, lookaheadSlider.getValue(), sketch);
+        if(showLACircleCheckbox.elt.checked) debug.drawDebugCircle(robot.pos.x, robot.pos.y, followingSettingsContainer.getLookahead(), sketch);
     }
 
     sketch.windowResized = function(): void {
@@ -611,8 +589,9 @@ const s = (sketch: p5): void => {
     }
 
     let resetFollower = function(): void {
-        follower = new follower_util.PurePursuitFollower(lookaheadSlider.getValue(), robotSizeSlider.getValue(), 
-            maxAccelerationSlider.getValue());
+        follower = new pure_pursuit.PurePursuitFollower(followingSettingsContainer.getMaxVelocity(), 
+            robotSizeSlider.getValue(), 
+            followingSettingsContainer.getMaxAcceleration());
     }
 
     let deleteAllPoints = function(): void {
@@ -624,7 +603,7 @@ const s = (sketch: p5): void => {
 
     let injectPoints = function(): void {
         if(pathGenState == PathGenState.SMOOTHING) {
-            path_gen.injectPoints(userPoints, injectedPoints, injectSpacingSlider.getValue());
+            smoothing_gen.injectPoints(userPoints, injectedPoints, injectSpacingSlider.getValue());
             needAutoInject = false;
             needAutoSmooth = true;
             resetFollower();
@@ -636,9 +615,10 @@ const s = (sketch: p5): void => {
 
     let smoothPoints = function(): void {
         if(pathGenState == PathGenState.SMOOTHING) {
-            path_gen.smoothPoints(injectedPoints, smoothedPoints, smoothWeightSlider.getValue());
-            path_gen.calculateTargetVelocities(smoothedPoints, maxVelocitySlider.getValue(), maxAccelerationSlider.getValue(), 
-                turningConstantSlider.getValue());
+            smoothing_gen.smoothPoints(injectedPoints, smoothedPoints, smoothWeightSlider.getValue());
+            smoothing_gen.calculateTargetVelocities(smoothedPoints, followingSettingsContainer.getMaxVelocity(), 
+                followingSettingsContainer.getMaxAcceleration(), 
+                followingSettingsContainer.getTurningConstant());
             needAutoSmooth = false;
             resetFollower();
         }
