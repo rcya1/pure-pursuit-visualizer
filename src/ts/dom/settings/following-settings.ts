@@ -17,7 +17,7 @@ export class FollowingSettingsContainer extends SettingsContainer {
     private lookaheadSlider: Slider;
     private turningConstantSlider: Slider;
 
-    constructor(sketch: p5, recalculateVelocitiesFunction: () => void, follower: PurePursuitFollower) {
+    constructor(sketch: p5, recalculateVelocitiesFunction: () => void) {
         super(true);
         
         this.maxVelocitySlider = new Slider('#max-velocity-slider', 10, 100, 50, 1, sketch);
@@ -25,17 +25,21 @@ export class FollowingSettingsContainer extends SettingsContainer {
             recalculateVelocitiesFunction();
         });
         this.maxAccelerationSlider = new Slider('#max-acceleration-slider', 10, 100, 75, 1, sketch);
-        this.maxAccelerationSlider.setCallback((function() {
-            follower.maxAcceleration = this.maxAccelerationSlider.getValue();
-        }).bind(this));
         this.lookaheadSlider = new Slider('#lookahead-slider', 5, 40, 15, 1, sketch);
-        this.lookaheadSlider.setCallback((function() {
-            follower.lookaheadDist = this.lookaheadSlider.getValue();
-        }).bind(this));
         this.turningConstantSlider = new Slider('#turning-constant-slider', 0.5, 2.0, 1.5, 0.1, sketch);
         this.turningConstantSlider.setCallback(function() {
             recalculateVelocitiesFunction();
         });
+    }
+
+    attachFollower(follower: PurePursuitFollower): void {
+        this.maxAccelerationSlider.setCallback((function() {
+            follower.maxAcceleration = this.maxAccelerationSlider.getValue();
+        }).bind(this));
+
+        this.lookaheadSlider.setCallback((function() {
+            follower.lookaheadDist = this.lookaheadSlider.getValue();
+        }).bind(this));
     }
     
     updateComponents(): void {
@@ -53,9 +57,9 @@ export class FollowingSettingsContainer extends SettingsContainer {
 
     setSettings(settings: FollowingSettings): void {
         this.setMaxVelocity(settings.maxVelocity);
-        this.setMaxVelocity(settings.maxVelocity);
-        this.setMaxVelocity(settings.maxVelocity);
-        this.setMaxVelocity(settings.maxVelocity);
+        this.setMaxAcceleration(settings.maxAcceleration);
+        this.setLookahead(settings.lookahead);
+        this.setTurningConstant(settings.turningConstant);
     }
 
     getMaxVelocity(): number {

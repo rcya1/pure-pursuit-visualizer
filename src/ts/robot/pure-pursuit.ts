@@ -128,6 +128,26 @@ export class PurePursuitFollower {
         this.driveWidth = driveWidth;
         this.maxAcceleration = maxAcceleration;
     }
+
+    reset(lookaheadDist: number, driveWidth: number, maxAcceleration: number) {
+        this.lookaheadDist = lookaheadDist;
+        this.driveWidth = driveWidth;
+        this.maxAcceleration = maxAcceleration;
+
+        this.lastT = 0.0;
+        this.lastLookAheadIndex = 0;
+        this.lastClosestIndex = 0;
+        this.leftSpeed = 0;
+        this.rightSpeed = 0;
+        this.lastTime = -1;
+        
+        this.debug_a = 0;
+        this.debug_b = 0;
+        this.debug_c = 0;
+            
+        this.debug_la_x = -1257;
+        this.debug_la_y = -1257;
+    }
 }
 
 export function followPath(robot: Robot, follower: PurePursuitFollower, points: Waypoint[], currentTime: number): void {

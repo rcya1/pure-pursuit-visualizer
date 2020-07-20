@@ -9,6 +9,7 @@ import { Robot } from './robot/robot'
 import { Vector } from './util/vector'
 import { Waypoint } from './util/waypoint'
 import { FollowingSettingsContainer, FollowingSettings } from './dom/settings/following-settings';
+import { VisualSettingsContainer } from './dom/settings/visual-settings';
 
 enum MouseState {
     DEFAULT,
@@ -37,9 +38,6 @@ const s = (sketch: p5): void => {
     // DOM elements
     let followPathButton: p5.Element;
 
-    let robotSizeSlider: Slider;
-    let userWaypointSizeSlider: Slider;
-
     let deletePointsCheckbox: p5.Element;
     let deleteAllPointsButton: p5.Element;
     let resetRobotButton: p5.Element;
@@ -54,13 +52,8 @@ const s = (sketch: p5): void => {
     let autoInjectCheckbox: p5.Element;
     let autoSmoothCheckbox: p5.Element;
     // --
-
-    let showUserCheckbox: p5.Element;
-    let showInjectedCheckbox: p5.Element;
-    let showSmoothedCheckbox: p5.Element;
-    let showLACircleCheckbox: p5.Element;
-    let showLAPointCheckbox: p5.Element;
     
+    let visualSettingsContainer: VisualSettingsContainer;
     let followingSettingsContainer: FollowingSettingsContainer;
 
 	// debug
@@ -75,7 +68,7 @@ const s = (sketch: p5): void => {
     let directionTempVector: Vector = null;
     let directionVectorDist: number = 15;
     
-    let pathGenState: PathGenState = PathGenState.SPLINES;
+    let pathGenState: PathGenState = PathGenState.SMOOTHING;
     let mouseState: MouseState = MouseState.DEFAULT;
     let mouseClickVector: Vector = null;
     let activePoint: number = -1;
@@ -101,10 +94,13 @@ const s = (sketch: p5): void => {
         setUpIconBar();
         setUpPathGenerationSmoothing();
         setUpPathGenerationSplines();
-        setUpVisuals();
-        followingSettingsContainer = new FollowingSettingsContainer(sketch, smoothPoints, follower);
-        resetFollower();
+        visualSettingsContainer = new VisualSettingsContainer(sketch);
+        followingSettingsContainer = new FollowingSettingsContainer(sketch, smoothPoints);
+        
         setUpDebug();
+
+        resetFollower();
+        followingSettingsContainer.attachFollower(follower);
 
         lastOrientation = sketch.deviceOrientation;
     }
@@ -156,17 +152,6 @@ const s = (sketch: p5): void => {
 
     let setUpPathGenerationSplines = function(): void {
         
-    }
-
-    let setUpVisuals = function(): void {
-        robotSizeSlider = new Slider('#robot-size-slider', 1, 20, 5, 0.1, sketch);
-        userWaypointSizeSlider = new Slider('#user-waypoint-size-slider', 1, 3, 1.7, 0.1, sketch);
-        
-        showUserCheckbox = sketch.select('#show-user-checkbox');
-        showInjectedCheckbox = sketch.select('#show-injected-checkbox');
-        showSmoothedCheckbox = sketch.select('#show-smoothed-checkbox');
-        showLACircleCheckbox = sketch.select('#show-lookahead-circle-checkbox');
-        showLAPointCheckbox = sketch.select('#show-lookahead-point-checkbox');
     }
 
     let setUpDebug = function(): void {
@@ -222,7 +207,7 @@ const s = (sketch: p5): void => {
             pure_pursuit.followPath(robot, follower, smoothedPoints, sketch.millis());
         }
 
-        robot.update(sketch.frameRate(), robotSizeSlider.getValue());
+        robot.update(sketch.frameRate(), visualSettingsContainer.getRobotSize());
 
         if(!lingeringMouse) calculateActivePoint();
 
@@ -379,15 +364,15 @@ const s = (sketch: p5): void => {
         
         if(pathGenState == PathGenState.SMOOTHING) {
             // draw all injected points
-            if(showInjectedCheckbox.elt.checked) {
+            if(visualSettingsContainer.getShowInjected()) {
                 for(let point of injectedPoints) {
-                    point.draw(sketch, userWaypointSizeSlider.getValue() / 3.0, false, 150);
+                    point.draw(sketch, visualSettingsContainer.getWaypointSize() / 3.0, false, 150);
                 }
             }
             // draw all smoothed points
-            if(showSmoothedCheckbox.elt.checked) {
+            if(visualSettingsContainer.getShowSmoothed()) {
                 for(let point of smoothedPoints) {
-                    point.draw(sketch, userWaypointSizeSlider.getValue() / 1.5, false, 100);
+                    point.draw(sketch, visualSettingsContainer.getWaypointSize() / 1.5, false, 100);
                 }
             }
         }
@@ -395,32 +380,37 @@ const s = (sketch: p5): void => {
             // draw direction vectors
             if(startDirectionVector != null) {
                 let startDirection: Waypoint = new Waypoint(userPoints[0].add(startDirectionVector));
-                startDirection.drawColor(sketch, userWaypointSizeSlider.getValue() / 1.25, activePoint == -2, 200, 20, 20);
+                startDirection.drawColor(sketch, visualSettingsContainer.getWaypointSize() / 1.25, activePoint == -2, 200, 20, 20);
             }
             if(endDirectionVector != null) {
                 let endDirection: Waypoint = new Waypoint(userPoints[userPoints.length - 1].add(endDirectionVector));
-                endDirection.drawColor(sketch, userWaypointSizeSlider.getValue() / 1.25, activePoint == -3, 200, 20, 20);
+                endDirection.drawColor(sketch, visualSettingsContainer.getWaypointSize() / 1.25, activePoint == -3, 200, 20, 20);
             }
         }
 
         // draw all of the user points
-        if(showUserCheckbox.elt.checked) {
+        if(visualSettingsContainer.getShowUser()) {
             for(let pointIndex = 0; pointIndex < userPoints.length; pointIndex++) {
                 if(deletePointsCheckbox.hasClass('checked') && pointIndex == activePoint) {
-                    userPoints[pointIndex].drawColor(sketch, userWaypointSizeSlider.getValue(),
+                    userPoints[pointIndex].drawColor(sketch, visualSettingsContainer.getWaypointSize(),
                         pointIndex == activePoint, 255, 0, 0);
                 }
                 else {
-                    userPoints[pointIndex].draw(sketch, userWaypointSizeSlider.getValue(), pointIndex == activePoint, 0);
+                    userPoints[pointIndex].draw(sketch, visualSettingsContainer.getWaypointSize(), pointIndex == activePoint, 0);
                 }
             }
         }
 
-        robot.draw(sketch, robotSizeSlider.getValue());
+        robot.draw(sketch, visualSettingsContainer.getRobotSize());
 
         // debug.drawDebugLine(follower.debug_a, follower.debug_b, follower.debug_c, sketch);
-        if(showLAPointCheckbox.elt.checked) debug.drawDebugPoint(follower.debug_la_x, follower.debug_la_y, sketch);
-        if(showLACircleCheckbox.elt.checked) debug.drawDebugCircle(robot.pos.x, robot.pos.y, followingSettingsContainer.getLookahead(), sketch);
+        if(visualSettingsContainer.getShowLAPoint()) {
+            debug.drawDebugPoint(follower.debug_la_x, follower.debug_la_y, sketch);
+        }
+
+        if(visualSettingsContainer.getShowLACircle()) {
+            debug.drawDebugCircle(robot.pos.x, robot.pos.y, followingSettingsContainer.getLookahead(), sketch);
+        }
     }
 
     sketch.windowResized = function(): void {
@@ -550,7 +540,7 @@ const s = (sketch: p5): void => {
     // calculate the closest point to the cursor to determine which one to grab
     let calculateActivePoint = function(): void {
         if(mouseState != MouseState.DRAGGING) {
-            let closestDist: number = userWaypointSizeSlider.getValue() * userWaypointSizeSlider.getValue();
+            let closestDist: number = visualSettingsContainer.getWaypointSize() ** 2;
             if(lenientDragging) closestDist *= 4; // make the radius twice as large if on mobile
             activePoint = -1;
             let mouseVector: Vector = new Vector(cx(sketch.mouseX, sketch.width), cy(sketch.mouseY, sketch.height));
@@ -589,9 +579,16 @@ const s = (sketch: p5): void => {
     }
 
     let resetFollower = function(): void {
-        follower = new pure_pursuit.PurePursuitFollower(followingSettingsContainer.getMaxVelocity(), 
-            robotSizeSlider.getValue(), 
-            followingSettingsContainer.getMaxAcceleration());
+        if(follower == null) {
+            follower = new pure_pursuit.PurePursuitFollower(followingSettingsContainer.getLookahead(), 
+                visualSettingsContainer.getRobotSize(), 
+                followingSettingsContainer.getMaxAcceleration());
+        }
+        else {
+            follower.reset(followingSettingsContainer.getLookahead(), 
+                visualSettingsContainer.getRobotSize(), 
+                followingSettingsContainer.getMaxAcceleration());
+        }
     }
 
     let deleteAllPoints = function(): void {
