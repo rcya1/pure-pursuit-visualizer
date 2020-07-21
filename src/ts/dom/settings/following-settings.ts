@@ -24,12 +24,19 @@ export class FollowingSettingsContainer extends SettingsContainer {
         this.maxVelocitySlider.setCallback(function() {
             recalculateVelocitiesFunction();
         });
+        
         this.maxAccelerationSlider = new Slider('#max-acceleration-slider', 10, 100, 75, 1, sketch);
         this.lookaheadSlider = new Slider('#lookahead-slider', 5, 40, 15, 1, sketch);
+
         this.turningConstantSlider = new Slider('#turning-constant-slider', 0.5, 2.0, 1.5, 0.1, sketch);
         this.turningConstantSlider.setCallback(function() {
             recalculateVelocitiesFunction();
         });
+
+        this.register(this.maxVelocitySlider);
+        this.register(this.maxAccelerationSlider);
+        this.register(this.lookaheadSlider);
+        this.register(this.turningConstantSlider);
     }
 
     attachFollower(follower: PurePursuitFollower): void {

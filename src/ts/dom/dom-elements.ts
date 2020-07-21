@@ -1,6 +1,7 @@
 import * as p5 from 'p5';
+import { Component } from './settings/settings-container';
 
-export class Slider {
+export class Slider implements Component {
 
     private _container: p5.Element;
     private _input: p5.Element;
@@ -52,6 +53,14 @@ export class Slider {
         this._slider.class('slider');
 
         this.setCallback(function() {});
+    }
+
+    hide(): void {
+        this._container.hide();
+    }
+
+    show(): void {
+        this._container.show();
     }
 
     getValue(): number {

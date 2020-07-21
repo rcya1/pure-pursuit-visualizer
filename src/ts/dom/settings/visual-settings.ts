@@ -35,6 +35,15 @@ export class VisualSettingsContainer extends SettingsContainer {
         this.showSmoothedCheckbox = sketch.select('#show-smoothed-checkbox');
         this.showLACircleCheckbox = sketch.select('#show-lookahead-circle-checkbox');
         this.showLAPointCheckbox = sketch.select('#show-lookahead-point-checkbox');
+
+        this.register(this.robotSizeSlider);
+        this.register(this.userWaypointSizeSlider);
+
+        this.register(this.showUserCheckbox);
+        this.register(this.showInjectedCheckbox);
+        this.register(this.showSmoothedCheckbox);
+        this.register(this.showLACircleCheckbox);
+        this.register(this.showLAPointCheckbox);
     }
     
     updateComponents(): void {
