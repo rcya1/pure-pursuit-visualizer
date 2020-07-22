@@ -8,7 +8,6 @@ However, the following augmentations to the algorithm were made:
 
 - The algorithm will only look for look ahead points farther than the last found point
 - When starting the algorithm, the robot will start on the point that is closest on it and look forward from there
-- The robot will make 180 degree turns if the lookahead point is within a certain angle threshold (TODO)
 
 ## Project Structure
 
