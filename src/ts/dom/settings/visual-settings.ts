@@ -1,6 +1,7 @@
 import { SettingsContainer } from './settings-container'
 import * as p5 from 'p5';
-import { Slider } from '../dom-elements';
+import { Slider } from '../slider';
+import { DOMElement } from '../component'
 
 export interface VisualSettings {
     robotSize: number;
@@ -18,11 +19,11 @@ export class VisualSettingsContainer extends SettingsContainer {
     private robotSizeSlider: Slider;
     private userWaypointSizeSlider: Slider;
 
-    private showUserCheckbox: p5.Element;
-    private showInjectedCheckbox: p5.Element;
-    private showSmoothedCheckbox: p5.Element;
-    private showLACircleCheckbox: p5.Element;
-    private showLAPointCheckbox: p5.Element;
+    private showUserCheckbox: DOMElement;
+    private showInjectedCheckbox: DOMElement;
+    private showSmoothedCheckbox: DOMElement;
+    private showLACircleCheckbox: DOMElement;
+    private showLAPointCheckbox: DOMElement;
 
     constructor(sketch: p5) {
         super(true);
@@ -30,11 +31,11 @@ export class VisualSettingsContainer extends SettingsContainer {
         this.robotSizeSlider = new Slider('#robot-size-slider', 1, 20, 5, 0.1, sketch);
         this.userWaypointSizeSlider = new Slider('#user-waypoint-size-slider', 1, 3, 1.7, 0.1, sketch);
         
-        this.showUserCheckbox = sketch.select('#show-user-checkbox');
-        this.showInjectedCheckbox = sketch.select('#show-injected-checkbox');
-        this.showSmoothedCheckbox = sketch.select('#show-smoothed-checkbox');
-        this.showLACircleCheckbox = sketch.select('#show-lookahead-circle-checkbox');
-        this.showLAPointCheckbox = sketch.select('#show-lookahead-point-checkbox');
+        this.showUserCheckbox = new DOMElement(sketch.select('#show-user-checkbox'));
+        this.showInjectedCheckbox = new DOMElement(sketch.select('#show-injected-checkbox'));
+        this.showSmoothedCheckbox = new DOMElement(sketch.select('#show-smoothed-checkbox'));
+        this.showLACircleCheckbox = new DOMElement(sketch.select('#show-lookahead-circle-checkbox'));
+        this.showLAPointCheckbox = new DOMElement(sketch.select('#show-lookahead-point-checkbox'));
 
         this.register(this.robotSizeSlider);
         this.register(this.userWaypointSizeSlider);
@@ -83,23 +84,23 @@ export class VisualSettingsContainer extends SettingsContainer {
     }
 
     getShowUser(): boolean {
-        return this.showUserCheckbox.elt.checked;
+        return this.showUserCheckbox.element.elt.checked;
     }
 
     getShowInjected(): boolean {
-        return this.showInjectedCheckbox.elt.checked;
+        return this.showInjectedCheckbox.element.elt.checked;
     }
 
     getShowSmoothed(): boolean {
-        return this.showSmoothedCheckbox.elt.checked;
+        return this.showSmoothedCheckbox.element.elt.checked;
     }
 
     getShowLACircle(): boolean {
-        return this.showLACircleCheckbox.elt.checked;
+        return this.showLACircleCheckbox.element.elt.checked;
     }
     
     getShowLAPoint(): boolean {
-        return this.showLAPointCheckbox.elt.checked;
+        return this.showLAPointCheckbox.element.elt.checked;
     }
 
     setRobotSize(robotSize: number) {
@@ -111,22 +112,22 @@ export class VisualSettingsContainer extends SettingsContainer {
     }
     
     setShowUser(showUser: boolean) {
-        this.showUserCheckbox.elt.checked = showUser;
+        this.showUserCheckbox.element.elt.checked = showUser;
     }
     
     setShowInjected(showInjected: boolean) {
-        this.showInjectedCheckbox.elt.checked = showInjected;
+        this.showInjectedCheckbox.element.elt.checked = showInjected;
     }
 
     setShowSmoothed(showSmoothed: boolean) {
-        this.showSmoothedCheckbox.elt.checked = showSmoothed;
+        this.showSmoothedCheckbox.element.elt.checked = showSmoothed;
     }
 
     setShowLACircle(showLACircle: boolean) {
-        this.showLACircleCheckbox.elt.checked = showLACircle;
+        this.showLACircleCheckbox.element.elt.checked = showLACircle;
     }
 
     setShowLAPoint(showLAPoint: boolean) {
-        this.showLAPointCheckbox.elt.checked = showLAPoint;
+        this.showLAPointCheckbox.element.elt.checked = showLAPoint;
     }
 }

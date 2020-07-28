@@ -1,7 +1,4 @@
-export interface Component {
-    hide(): void;
-    show(): void;
-}
+import { Component } from '../component'
 
 export abstract class SettingsContainer {
 

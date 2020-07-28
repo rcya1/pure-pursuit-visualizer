@@ -1,7 +1,6 @@
 import { SettingsContainer } from './settings-container'
 import * as p5 from 'p5';
-import { Slider } from '../dom-elements';
-import { PurePursuitFollower } from '../../robot/pure-pursuit'
+import { Slider } from '../slider';
 
 export interface FollowingSettings {
     maxVelocity: number;
@@ -17,36 +16,17 @@ export class FollowingSettingsContainer extends SettingsContainer {
     private lookaheadSlider: Slider;
     private turningConstantSlider: Slider;
 
-    constructor(sketch: p5, recalculateVelocitiesFunction: () => void) {
+    constructor(sketch: p5) {
         super(true);
-        
         this.maxVelocitySlider = new Slider('#max-velocity-slider', 10, 100, 50, 1, sketch);
-        this.maxVelocitySlider.setCallback(function() {
-            recalculateVelocitiesFunction();
-        });
-        
         this.maxAccelerationSlider = new Slider('#max-acceleration-slider', 10, 100, 75, 1, sketch);
         this.lookaheadSlider = new Slider('#lookahead-slider', 5, 40, 15, 1, sketch);
-
         this.turningConstantSlider = new Slider('#turning-constant-slider', 0.5, 2.0, 1.5, 0.1, sketch);
-        this.turningConstantSlider.setCallback(function() {
-            recalculateVelocitiesFunction();
-        });
 
         this.register(this.maxVelocitySlider);
         this.register(this.maxAccelerationSlider);
         this.register(this.lookaheadSlider);
         this.register(this.turningConstantSlider);
-    }
-
-    attachFollower(follower: PurePursuitFollower): void {
-        this.maxAccelerationSlider.setCallback((function() {
-            follower.maxAcceleration = this.maxAccelerationSlider.getValue();
-        }).bind(this));
-
-        this.lookaheadSlider.setCallback((function() {
-            follower.lookaheadDist = this.lookaheadSlider.getValue();
-        }).bind(this));
     }
     
     updateComponents(): void {
