@@ -10,8 +10,10 @@ import { Vector } from '../util/vector';
 import { smoothPoints, calculateTargetVelocities, injectPoints } from '../robot/smoothing-gen';
 import { drawDebugPoint, drawDebugCircle } from '../util/debug';
 import { Waypoint } from '../util/waypoint';
-import { IconBar } from '../dom/icon-bar';
+import { IconBar, CursorActionState } from '../dom/icon-bar';
 
+// TODO make the -1 through -3 into constants
+// TODO Fix the spline distance thing
 export class App {
 
     sketch: p5;
@@ -24,7 +26,7 @@ export class App {
     activePointIndex: number;
     follower: PurePursuitFollower;
     
-    pathGenState: PathGenState = PathGenState.SMOOTHING;
+    pathGenState: PathGenState = PathGenState.SPLINES;
 
     directionVectorDist: number = 15; // TEMP
 
@@ -158,29 +160,33 @@ export class App {
     }
 
     private updateDraggingPoints(mouseState: MouseState) {
-        let mouseCX: number = cx(this.sketch.mouseX, this.sketch.width);
-        let mouseCY: number = cy(this.sketch.mouseY, this.sketch.height);
-
-        if(mouseState.mouseClickState != MouseClickState.DRAGGING || mouseState.lastClickLocation == null) {
+        // if not actually dragging the mouse, then exit
+        if(mouseState.mouseClickState != MouseClickState.DRAGGING || mouseState.lastLocation == null) {
             mouseState.mouseClickState = MouseClickState.DEFAULT;
             return;
         }
 
+        let mouseCX: number = cx(this.sketch.mouseX, this.sketch.width);
+        let mouseCY: number = cy(this.sketch.mouseY, this.sketch.height);
+
         // ensure that the translation of the active point is only moved relative to the last mouse location
         // this way, when you drag it off-center it doesn't jump
-        let lastClickLocation: Vector = mouseState.lastClickLocation;
+        let lastLocation: Vector = mouseState.lastLocation;
 
         if(this.activePointIndex >= 0) {
-            this.pointsData.userPoints[this.activePointIndex].x += mouseCX - lastClickLocation.x;
-            this.pointsData.userPoints[this.activePointIndex].y += mouseCX - lastClickLocation.y;
-            lastClickLocation = new Vector(mouseCX, mouseCY);
+            this.pointsData.userPoints[this.activePointIndex].x += mouseCX - lastLocation.x;
+            this.pointsData.userPoints[this.activePointIndex].y += mouseCY - lastLocation.y;
+
+            lastLocation.x = mouseCX;
+            lastLocation.y = mouseCY;
         }
         // handle direction vectors
         else if(this.activePointIndex < -1) {
             // calculate the displacement of the mouse and constrain the vectors to a fixed distance 
             // around the original point
-            let mouseDisplacementX: number = mouseCX - lastClickLocation.x;
-            let mouseDisplacementY: number = mouseCY - lastClickLocation.y;
+
+            let mouseDisplacementX: number = mouseCX - lastLocation.x;
+            let mouseDisplacementY: number = mouseCY - lastLocation.y;
             let splinesPointData: SplinesPointsData = this.pointsData as SplinesPointsData;
             let numPoints = splinesPointData.userPoints.length;
 
@@ -342,7 +348,15 @@ export class App {
         // draw all of the user points
         if(this.settings.getVisualSettings().showUser) {
             for(let pointIndex = 0; pointIndex < this.pointsData.userPoints.length; pointIndex++) {
-                // TODO Fill in
+                // change the color dependening on whether the point is being hovered and deleted
+                if(this.iconBar.getCursorActionState() == CursorActionState.REMOVING && pointIndex == this.activePointIndex) {
+                    this.pointsData.userPoints[pointIndex].drawColor(this.sketch, this.settings.getVisualSettings().waypointSize,
+                        pointIndex == this.activePointIndex, 255, 0, 0);
+                }
+                else {
+                    this.pointsData.userPoints[pointIndex].draw(this.sketch, this.settings.getVisualSettings().waypointSize,
+                        pointIndex == this.activePointIndex, 0);
+                }
             }
         }
 
@@ -358,14 +372,88 @@ export class App {
     mousePressed(mobileConfig: MobileConfig, mouseState: MouseState) {
         this.calculateActivePoint(mobileConfig, mouseState);
 
+        if(this.iconBar.getCursorActionState() == CursorActionState.ADDING) {
+            if(this.activePointIndex == -1) {
+                let waypoint: Waypoint = new Waypoint(mouseState.lastLocation);
+                this.pointsData.userPoints.push(waypoint);
+                this.activePointIndex = this.pointsData.userPoints.length - 1;
+            }
+
+            // move robot to the first point
+            if(this.activePointIndex == 0) {
+                this.moveRobotToStart();
+            }
+            // angle the robot to the second point
+            else if(this.activePointIndex == 1) {
+                this.moveRobotToStart();
+                this.angleRobot();
+            }
+
+            // set up dragging the direction vectors
+            if(this.pathGenState == PathGenState.SPLINES) {
+                let splinesPointsData = this.pointsData as SplinesPointsData;
+
+                // store the original positions of the direction vectors before dragging them
+                if(this.activePointIndex == -2) {
+                    splinesPointsData.directionTempVector = splinesPointsData.userPoints[0]
+                        .add(splinesPointsData.startDirectionVector);
+                }
+                else if(this.activePointIndex == -3) {
+                    splinesPointsData.directionTempVector = splinesPointsData.userPoints[splinesPointsData.userPoints.length - 1]
+                        .add(splinesPointsData.endDirectionVector);
+                }
+            }
+        }
+        else {
+            if(this.activePointIndex >= 0) {
+                this.pointsData.userPoints.splice(this.activePointIndex, 1);
+                
+                if(this.pathGenState == PathGenState.SMOOTHING) {
+                    let smoothingPointsData = this.pointsData as SmoothingPointsData;
+                    smoothingPointsData.needAutoInject = true;
+                    smoothingPointsData.needAutoSmooth = true;
+                }
+            }
+        }
     }
 
     mouseDragged() {
-
+        // move robot to the first point
+        if(this.activePointIndex == 0) {
+            this.moveRobotToStart();
+        }
+        // angle the robot to the second point
+        else if(this.activePointIndex == 1) {
+            this.moveRobotToStart();
+            this.angleRobot();
+        }
     }
 
     mouseReleased() {
+        if(this.activePointIndex >= 0) {
+            // clamp the dropped position to inside the sketch
+            this.pointsData.userPoints[this.activePointIndex].x = Math.min(SCREEN_WIDTH,  
+                this.pointsData.userPoints[this.activePointIndex].x);
+                
+            this.pointsData.userPoints[this.activePointIndex].x = Math.max(0,             
+                this.pointsData.userPoints[this.activePointIndex].x);
 
+            this.pointsData.userPoints[this.activePointIndex].y = Math.min(SCREEN_HEIGHT, 
+                this.pointsData.userPoints[this.activePointIndex].y);
+
+            this.pointsData.userPoints[this.activePointIndex].y = Math.max(0,             
+                this.pointsData.userPoints[this.activePointIndex].y);
+
+            if(this.pathGenState == PathGenState.SMOOTHING) {
+                let smoothingPointsData = this.pointsData as SmoothingPointsData;
+                smoothingPointsData.needAutoInject = true;
+                smoothingPointsData.needAutoSmooth = true;
+            }
+        }
+        
+        if(this.activePointIndex != -1) {
+            this.activePointIndex = -1;
+        }
     }
 
     keyPressed() {

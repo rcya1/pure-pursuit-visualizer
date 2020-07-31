@@ -1,6 +1,6 @@
 import * as p5 from 'p5';
 import '../scss/main.scss';
-import { SCREEN_HEIGHT, SCREEN_WIDTH} from './util/conversions'
+import { SCREEN_HEIGHT, SCREEN_WIDTH, cx, cy} from './util/conversions'
 import { Vector } from './util/vector'
 import { App } from './visualization/app';
 
@@ -11,7 +11,7 @@ export enum MouseClickState {
 
 export class MouseState {
     mouseClickState: MouseClickState;
-    lastClickLocation: Vector;
+    lastLocation: Vector;
 }
 
 export class MobileConfig {
@@ -50,7 +50,7 @@ const s = (sketch: p5): void => {
         };
         mouseState = {
             mouseClickState: MouseClickState.DEFAULT,
-            lastClickLocation: null
+            lastLocation: null
         }
     }
 
@@ -78,7 +78,14 @@ const s = (sketch: p5): void => {
 
     sketch.mousePressed = function(): void {
         if(mouseInSketch()) {
+            if(mouseState.lastLocation == null) {
+                mouseState.lastLocation = new Vector(0, 0);
+            }
+            mouseState.lastLocation.x = cx(sketch.mouseX, sketch.width);
+            mouseState.lastLocation.y = cy(sketch.mouseY, sketch.height);
+
             app.mousePressed(mobileConfig, mouseState);
+            mouseState.mouseClickState = MouseClickState.DRAGGING;
         }
     }
 
@@ -88,6 +95,7 @@ const s = (sketch: p5): void => {
 
     sketch.mouseReleased = function(): void {
         app.mouseReleased();
+        mouseState.mouseClickState = MouseClickState.DEFAULT;
     }
 
     sketch.touchStarted = function(): void {

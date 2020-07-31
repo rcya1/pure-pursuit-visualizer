@@ -64,5 +64,5 @@ export class IconBar {
         else {
             return CursorActionState.ADDING;
         }
-    } 
+    }
 }
