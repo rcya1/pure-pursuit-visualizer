@@ -29,12 +29,16 @@ npm run build
 npm start
 ```
 
+The website should now be running locally at localhost:1257.
+
 Run the development environment for incremental builds
 
 ```terminal
 npm install
 npm run watch
 ```
+
+The website should now be running locally at localhost:1257 and any saved changes should be autoamtically updated.
 
 ## Credits
 

@@ -7,7 +7,7 @@ module.exports = {
   mode: 'development',
   devtool: 'source-map',
   devServer: {
-    contentBase: path.join(__dirname, 'dist'),
+    contentBase: path.join(__dirname, 'docs'),
     compress: true,
     port: 1257
   },
@@ -42,7 +42,7 @@ module.exports = {
     }),
   ],
   output: {
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, 'docs'),
     filename: 'bundle.js'
   },
   resolve: {
